@@ -2,7 +2,7 @@
 
 * Owner: Dan Mangum (@hasheddan)
 * Reviewers: Upbound Go SDK Maintainers
-* Status: Draft
+* Status: Accepted
 
 ## Motivation
 
@@ -272,6 +272,10 @@ The closest alternative in terms of equivalent trade-offs would be the single
 client with many services, but going that direction would lead to more
 significant breaking changes in the future if we wanted to pursue an independent
 versioning strategy.
+
+Because we are pursuing a slightly more complex architecture for the SDK, we
+should make sure to use as much shared tooling and configuration as possible and
+not allow clients to diverge except in cases where it is absolutely necessary.
 
 ### Error Handling
 
