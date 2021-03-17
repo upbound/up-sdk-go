@@ -117,6 +117,16 @@ separation. However, separate client implementations does serve to facilitate
 method discovery and customization that is specific to a given service, which
 can reduce bloat of a single shared client.
 
+> Versioning together in this strategy refers to module versioning. Versioning
+> via packages can be accomplished by having something like an `organizationsv1`
+> package and a separate `organizationsv2` package. However, these packages
+> would always be released together, so it is mostly suitable for large breaking
+> changes to a service where it is expected that the old and new versions will
+> continue to be served together in perpetuity. For example, the [aws-sdk-go-v2
+> services](https://github.com/aws/aws-sdk-go-v2/tree/main/service) are each
+> their own submodule, but multiple services have a `v2` variant package as
+> well.
+
 ### Client per Service - Services Versioned Independently
 
 Example: [aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2)
