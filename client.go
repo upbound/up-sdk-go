@@ -14,11 +14,14 @@ import (
 	uerrors "github.com/upbound/up-sdk-go/errors"
 )
 
+// Client is an HTTP client for communicating with Upbound Cloud.
 type Client interface {
 	NewRequest(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error)
 	Do(req *http.Request, obj interface{}) error
 }
 
+// HTTPClient implements the Client interface and allows for overriding of base
+// URL, error handling, and user agent.
 type HTTPClient struct {
 	// BaseURL is the base Upbound API URL.
 	BaseURL *url.URL
@@ -33,6 +36,7 @@ type HTTPClient struct {
 	UserAgent string
 }
 
+// A ResponseErrorHandler handles errors in HTTP responses.
 type ResponseErrorHandler interface {
 	Handle(res *http.Response) error
 }
@@ -84,6 +88,7 @@ func (c *HTTPClient) Do(req *http.Request, obj interface{}) error {
 	return nil
 }
 
+// handleErrors invokes the underlying response error handler.
 func (c *HTTPClient) handleErrors(res *http.Response) error {
 	return c.ErrorHandler.Handle(res)
 }
