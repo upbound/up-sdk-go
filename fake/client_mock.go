@@ -22,7 +22,7 @@ func NewMockNewRequestFn(req *http.Request, err error) func(ctx context.Context,
 	}
 }
 
-// NewMockNewRequestFn creates a new MockDo function.
+// NewMockDoFn creates a new MockDo function.
 func NewMockDoFn(err error) func(req *http.Request, obj interface{}) error {
 	return func(req *http.Request, obj interface{}) error {
 		return err

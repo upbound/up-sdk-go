@@ -74,7 +74,7 @@ func (c *HTTPClient) Do(req *http.Request, obj interface{}) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer res.Body.Close() // nolint:errcheck
 	if err := c.handleErrors(res); err != nil {
 		return err
 	}
