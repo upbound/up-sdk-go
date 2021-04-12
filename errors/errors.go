@@ -11,8 +11,10 @@ type ErrorType string
 
 // Upbound SDK error types.
 const (
-	ErrorTypeNotFound ErrorType = "NotFound"
-	ErrorTypeUnknown  ErrorType = "Unknown"
+	ErrorTypeForbidden    ErrorType = "Forbidden"
+	ErrorTypeNotFound     ErrorType = "NotFound"
+	ErrorTypeUnauthorized ErrorType = "Unauthorized"
+	ErrorTypeUnknown      ErrorType = "Unknown"
 )
 
 // Error is an Upbound SDK error.
