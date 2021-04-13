@@ -6,15 +6,15 @@ import (
 	"github.com/google/uuid"
 )
 
-// ControlPlaneStatus is the status of a control plane on Upbound Cloud.
-type ControlPlaneStatus string
+// Status is the status of a control plane on Upbound Cloud.
+type Status string
 
 // A control plane will always be in one of the following phases.
 const (
-	ControlPlaneStatusProvisioning ControlPlaneStatus = "provisioning"
-	ControlPlaneStatusUpdating     ControlPlaneStatus = "updating"
-	ControlPlaneStatusReady        ControlPlaneStatus = "ready"
-	ControlPlaneStatusDeleting     ControlPlaneStatus = "deleting"
+	StatusProvisioning Status = "provisioning"
+	StatusUpdating     Status = "updating"
+	StatusReady        Status = "ready"
+	StatusDeleting     Status = "deleting"
 )
 
 // ControlPlane describes a control plane.
@@ -31,27 +31,27 @@ type ControlPlane struct {
 	DeletedAt   *time.Time `json:"deletedAt,omitempty"`
 }
 
-// ControlPlanePermissionGroup describes control plane permissions for the
-// authenticated user.
-type ControlPlanePermissionGroup string
+// PermissionGroup describes control plane permissions for the authenticated
+// user.
+type PermissionGroup string
 
 const (
-	// ControlPlanePermissionMember has the ability to read the basic
-	// environment of the team
-	ControlPlanePermissionMember ControlPlanePermissionGroup = "member"
-	// ControlPlanePermissionOwner has the ability to modify any object in a
-	// linked control plane, including deleting the control plane.
-	ControlPlanePermissionOwner ControlPlanePermissionGroup = "owner"
-	// ControlPlanePermissionNone has no permissions on the control plane.
-	ControlPlanePermissionNone ControlPlanePermissionGroup = "none"
+	// PermissionMember has the ability to read the basic environment of the
+	// team.
+	PermissionMember PermissionGroup = "member"
+	// PermissionOwner has the ability to modify any object in a linked control
+	// plane, including deleting the control plane.
+	PermissionOwner PermissionGroup = "owner"
+	// PermissionNone has no permissions on the control plane.
+	PermissionNone PermissionGroup = "none"
 )
 
 // ControlPlaneResponse is the HTTP body returned by the Upbound API when
 // fetching control planes.
 type ControlPlaneResponse struct {
-	ControlPlane           ControlPlane                `json:"controlPlane"`
-	ControlPlaneStatus     ControlPlaneStatus          `json:"controlPlaneStatus,omitempty"`
-	ControlPlanePermission ControlPlanePermissionGroup `json:"controlPlanePermission,omitempty"`
+	ControlPlane ControlPlane    `json:"controlPlane"`
+	Status       Status          `json:"status,omitempty"`
+	Permission   PermissionGroup `json:"permission,omitempty"`
 }
 
 // ControlPlaneCreateParameters are the parameters for creating a control plane.
