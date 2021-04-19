@@ -47,7 +47,7 @@ func New(err error, msg string, errType ErrorType) *Error {
 // IsNotFound returns true if the error is an Upbound SDK NotFound error, and
 // false otherwise.
 func IsNotFound(err error) bool {
-	e, ok := err.(interface {
+	e, ok := err.(interface { // nolint:errorlint
 		IsNotFound() bool
 	})
 	if !ok {
