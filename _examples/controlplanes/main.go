@@ -30,16 +30,14 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	httpClient := &up.HTTPClient{
-		BaseURL: base,
-		HTTP: &http.Client{
+	upClient := up.NewClient(func(c *up.HTTPClient) {
+		c.BaseURL = base
+		c.HTTP = &http.Client{
 			Jar: cj,
-		},
-		UserAgent:    "up-sdk-go",
-		ErrorHandler: &up.DefaultErrorHandler{},
-	}
+		}
+	})
 	cfg := up.NewConfig(func(cfg *up.Config) {
-		cfg.Client = httpClient
+		cfg.Client = upClient
 	})
 	auth := &struct {
 		ID       string `json:"id"`
@@ -52,7 +50,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	req, err := http.NewRequest("POST", "https://api.dev-deba7a0e.u6d.dev/v1/login", bytes.NewReader(jsonStr))
+	req, err := http.NewRequest(http.MethodPost, "https://api.dev-deba7a0e.u6d.dev/v1/login", bytes.NewReader(jsonStr))
 	if err != nil {
 		panic(err)
 	}
@@ -71,8 +69,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Permission: %s\n", cp.ControlPlanePermission)
-	fmt.Printf("Status: %s\n", cp.ControlPlaneStatus)
 	fmt.Printf("Info: %v\n", cp.ControlPlane)
 	fmt.Println("Getting control plane...")
 	res, err := client.Get(context.Background(), cp.ControlPlane.ID)
@@ -80,4 +76,6 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("Info: %v\n", res.ControlPlane)
+	fmt.Printf("Permission: %s\n", res.Permission)
+	fmt.Printf("Status: %s\n", res.Status)
 }
