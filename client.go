@@ -8,16 +8,43 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"time"
 
 	"github.com/pkg/errors"
 
 	uerrors "github.com/upbound/up-sdk-go/errors"
 )
 
+const (
+	defaultBaseURL     = "https://api.upbound.io"
+	defaultUserAgent   = "up-sdk-go"
+	defaultHTTPTimeout = 10 * time.Second
+)
+
 // Client is an HTTP client for communicating with Upbound Cloud.
 type Client interface {
 	NewRequest(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error)
 	Do(req *http.Request, obj interface{}) error
+}
+
+// A ClientModifierFn modifies an HTTP client.
+type ClientModifierFn func(*HTTPClient)
+
+// NewClient builds a new default HTTP client for Upbound Cloud.
+func NewClient(modifiers ...ClientModifierFn) *HTTPClient {
+	b, _ := url.Parse(defaultBaseURL)
+	c := &HTTPClient{
+		BaseURL:      b,
+		ErrorHandler: &DefaultErrorHandler{},
+		HTTP: &http.Client{
+			Timeout: defaultHTTPTimeout,
+		},
+		UserAgent: defaultUserAgent,
+	}
+	for _, m := range modifiers {
+		m(c)
+	}
+	return c
 }
 
 // HTTPClient implements the Client interface and allows for overriding of base
