@@ -50,8 +50,8 @@ const (
 // fetching control planes.
 type ControlPlaneResponse struct {
 	ControlPlane ControlPlane    `json:"controlPlane"`
-	Status       Status          `json:"status,omitempty"`
-	Permission   PermissionGroup `json:"permission,omitempty"`
+	Status       Status          `json:"controlPlanestatus,omitempty"`
+	Permission   PermissionGroup `json:"controlPlanePermission,omitempty"`
 }
 
 // ControlPlaneCreateParameters are the parameters for creating a control plane.
