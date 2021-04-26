@@ -55,7 +55,7 @@ func TestCreate(t *testing.T) {
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
-			c := NewControlPlanesClient(tc.cfg)
+			c := NewClient(tc.cfg)
 			res, err := c.Create(context.Background(), tc.params)
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nCreate(...): -want error, +got error:\n%s", tc.reason, diff)
@@ -109,7 +109,7 @@ func TestGet(t *testing.T) {
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
-			c := NewControlPlanesClient(tc.cfg)
+			c := NewClient(tc.cfg)
 			res, err := c.Get(context.Background(), uuid.UUID{})
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nCreate(...): -want error, +got error:\n%s", tc.reason, diff)
@@ -161,7 +161,7 @@ func TestDelete(t *testing.T) {
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
-			c := NewControlPlanesClient(tc.cfg)
+			c := NewClient(tc.cfg)
 			err := c.Delete(context.Background(), uuid.UUID{})
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nCreate(...): -want error, +got error:\n%s", tc.reason, diff)

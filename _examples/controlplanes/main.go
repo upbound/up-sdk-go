@@ -59,7 +59,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	client := controlplanes.NewControlPlanesClient(cfg)
+	client := controlplanes.NewClient(cfg)
 	fmt.Println("Creating control plane...")
 	cp, err := client.Create(context.Background(), &controlplanes.ControlPlaneCreateParameters{
 		Name:        "test",

@@ -16,8 +16,8 @@ type Client struct {
 	*up.Config
 }
 
-// NewControlPlanesClient build a control planes client from the passed config.
-func NewControlPlanesClient(cfg *up.Config) *Client {
+// NewClient build a control planes client from the passed config.
+func NewClient(cfg *up.Config) *Client {
 	return &Client{
 		cfg,
 	}
