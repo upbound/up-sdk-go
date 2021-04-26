@@ -12,11 +12,10 @@ import (
 	"path"
 
 	"github.com/upbound/up-sdk-go"
-	"github.com/upbound/up-sdk-go/service/controlplanes"
+	"github.com/upbound/up-sdk-go/service/namespaces"
 )
 
-// Creates a control plane in the authenticated user's namespace, then gets the
-// control plane using the returned ID.
+// Lists all namespaces the authenticated user has access to.
 func main() {
 	// Prompt for auth input
 	fmt.Println("Enter username: ")
@@ -65,23 +64,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	client := controlplanes.NewClient(cfg)
-	fmt.Println("Creating control plane...")
-	cp, err := client.Create(context.Background(), &controlplanes.ControlPlaneCreateParameters{
-		Name:        "test",
-		Namespace:   user,
-		Description: "An example control plane.",
-	})
+	client := namespaces.NewClient(cfg)
+	ns, err := client.List(context.Background())
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Info: %v\n", cp.ControlPlane)
-	fmt.Println("Getting control plane...")
-	res, err := client.Get(context.Background(), cp.ControlPlane.ID)
-	if err != nil {
-		panic(err)
+	for _, n := range ns {
+		fmt.Println(n.Namespace.Name)
 	}
-	fmt.Printf("Info: %v\n", res.ControlPlane)
-	fmt.Printf("Permission: %s\n", res.Permission)
-	fmt.Printf("Status: %s\n", res.Status)
 }
