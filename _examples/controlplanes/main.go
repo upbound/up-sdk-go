@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"os"
+	"path"
 
 	"github.com/upbound/up-sdk-go"
 	"github.com/upbound/up-sdk-go/service/controlplanes"
@@ -24,8 +26,12 @@ func main() {
 	var password string
 	fmt.Scanln(&password)
 
-	// Temporarily use dev API
-	base, _ := url.Parse("https://api.dev-deba7a0e.u6d.dev")
+	var api string
+	if api = os.Getenv("UP_ENDPOINT"); api == "" {
+		api = "https://api.upbound.io"
+	}
+
+	base, _ := url.Parse(api)
 	cj, err := cookiejar.New(nil)
 	if err != nil {
 		panic(err)
@@ -50,7 +56,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	req, err := http.NewRequest(http.MethodPost, "https://api.dev-deba7a0e.u6d.dev/v1/login", bytes.NewReader(jsonStr))
+	req, err := http.NewRequest(http.MethodPost, path.Join(api, "v1", "login"), bytes.NewReader(jsonStr))
 	if err != nil {
 		panic(err)
 	}
