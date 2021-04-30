@@ -1,9 +1,9 @@
-package namespaces
+package accounts
 
 import "time"
 
-// Namespace is an Upbound Cloud namespace.
-type Namespace struct {
+// Account is an Upbound Cloud account.
+type Account struct {
 	Name string `json:"name,omitempty"`
 	Type Type   `json:"type,omitempty"`
 }
@@ -12,10 +12,10 @@ type Namespace struct {
 type Type string
 
 const (
-	// NamespaceOrganization is an organization namespace.
-	NamespaceOrganization Type = "organization"
-	// NamespaceUser is a user namespace.
-	NamespaceUser Type = "user"
+	// AccountOrganization is an organization account.
+	AccountOrganization Type = "organization"
+	// AccountUser is a user account.
+	AccountUser Type = "user"
 )
 
 // User is a user on Upbound Cloud.
@@ -61,10 +61,10 @@ const (
 	OrganizationOwner OrganizationPermissionGroup = "owner"
 )
 
-// NamespaceResponse is the API response when requesting information on a
-// namespace.
-type NamespaceResponse struct {
-	Namespace    Namespace     `json:"namespace"`
+// AccountResponse is the API response when requesting information on a
+// account.
+type AccountResponse struct {
+	Account      Account       `json:"account"`
 	Organization *Organization `json:"organization,omitempty"`
 	User         *User         `json:"user,omitempty"`
 }
