@@ -9,7 +9,6 @@ import (
 	"net/http/cookiejar"
 	"net/url"
 	"os"
-	"path"
 
 	"github.com/upbound/up-sdk-go"
 	"github.com/upbound/up-sdk-go/service/accounts"
@@ -55,7 +54,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	req, err := http.NewRequest(http.MethodPost, path.Join(api, "v1", "login"), bytes.NewReader(jsonStr))
+	u, err := base.Parse("/v1/login")
+	if err != nil {
+		panic(err)
+	}
+	req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewReader(jsonStr))
 	if err != nil {
 		panic(err)
 	}
