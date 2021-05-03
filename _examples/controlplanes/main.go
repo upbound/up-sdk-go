@@ -72,7 +72,7 @@ func main() {
 	fmt.Println("Creating control plane...")
 	cp, err := client.Create(context.Background(), &controlplanes.ControlPlaneCreateParameters{
 		Name:        "test",
-		Namespace:   user,
+		Account:     user,
 		Description: "An example control plane.",
 	})
 	if err != nil {
