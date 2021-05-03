@@ -56,7 +56,7 @@ type ControlPlaneResponse struct {
 
 // ControlPlaneCreateParameters are the parameters for creating a control plane.
 type ControlPlaneCreateParameters struct {
-	Namespace     string `json:"namespace"`
+	Account       string `json:"account"`
 	Name          string `json:"name"`
 	Description   string `json:"description"`
 	SelfHosted    bool   `json:"selfHosted,omitempty"`
