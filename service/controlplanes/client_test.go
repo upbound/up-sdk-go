@@ -127,7 +127,6 @@ func TestDelete(t *testing.T) {
 	cases := map[string]struct {
 		reason string
 		cfg    *up.Config
-		params *ControlPlaneCreateParameters
 		err    error
 	}{
 		"NewRequestFailed": {
