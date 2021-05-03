@@ -1,4 +1,4 @@
-package namespaces
+package accounts
 
 import (
 	"context"
@@ -10,29 +10,29 @@ import (
 )
 
 const (
-	basePath          = "v1/namespaces"
+	basePath          = "v1/accounts"
 	controlPlanesPath = "controlPlanes"
 )
 
-// Client is a namespaces client.
+// Client is a accounts client.
 type Client struct {
 	*up.Config
 }
 
-// NewClient builds a namespaces client from the passed config.
+// NewClient builds a accounts client from the passed config.
 func NewClient(cfg *up.Config) *Client {
 	return &Client{
 		cfg,
 	}
 }
 
-// Get a namespace on Upbound Cloud.
-func (c *Client) Get(ctx context.Context, name string) (*NamespaceResponse, error) {
+// Get a account on Upbound Cloud.
+func (c *Client) Get(ctx context.Context, name string) (*AccountResponse, error) {
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, name, nil)
 	if err != nil {
 		return nil, err
 	}
-	ns := &NamespaceResponse{}
+	ns := &AccountResponse{}
 	err = c.Client.Do(req, &ns)
 	if err != nil {
 		return nil, err
@@ -40,13 +40,13 @@ func (c *Client) Get(ctx context.Context, name string) (*NamespaceResponse, erro
 	return ns, nil
 }
 
-// List all namespaces for the authenticated user on Upbound Cloud.
-func (c *Client) List(ctx context.Context) ([]NamespaceResponse, error) {
+// List all accounts for the authenticated user on Upbound Cloud.
+func (c *Client) List(ctx context.Context) ([]AccountResponse, error) {
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, "", nil)
 	if err != nil {
 		return nil, err
 	}
-	ns := []NamespaceResponse{}
+	ns := []AccountResponse{}
 	err = c.Client.Do(req, &ns)
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func (c *Client) List(ctx context.Context) ([]NamespaceResponse, error) {
 	return ns, nil
 }
 
-// ListControlPlanes lists all control planes in the given namespace on Upbound Cloud.
+// ListControlPlanes lists all control planes in the given account on Upbound Cloud.
 func (c *Client) ListControlPlanes(ctx context.Context, name string) ([]controlplanes.ControlPlaneResponse, error) {
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, path.Join(name, controlPlanesPath), nil)
 	if err != nil {

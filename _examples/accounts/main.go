@@ -9,10 +9,9 @@ import (
 	"net/http/cookiejar"
 	"net/url"
 	"os"
-	"path"
 
 	"github.com/upbound/up-sdk-go"
-	"github.com/upbound/up-sdk-go/service/namespaces"
+	"github.com/upbound/up-sdk-go/service/accounts"
 )
 
 // Lists all namespaces the authenticated user has access to.
@@ -55,7 +54,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	req, err := http.NewRequest(http.MethodPost, path.Join(api, "v1", "login"), bytes.NewReader(jsonStr))
+	u, err := base.Parse("/v1/login")
+	if err != nil {
+		panic(err)
+	}
+	req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewReader(jsonStr))
 	if err != nil {
 		panic(err)
 	}
@@ -64,12 +67,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	client := namespaces.NewClient(cfg)
-	ns, err := client.List(context.Background())
+	client := accounts.NewClient(cfg)
+	accounts, err := client.List(context.Background())
 	if err != nil {
 		panic(err)
 	}
-	for _, n := range ns {
-		fmt.Println(n.Namespace.Name)
+	for _, a := range accounts {
+		fmt.Println(a.Account.Name)
 	}
 }

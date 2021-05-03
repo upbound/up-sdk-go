@@ -1,4 +1,4 @@
-package namespaces
+package accounts
 
 import (
 	"context"
@@ -20,7 +20,7 @@ func TestGet(t *testing.T) {
 		reason string
 		cfg    *up.Config
 		name   string
-		want   *NamespaceResponse
+		want   *AccountResponse
 		err    error
 	}{
 		"NewRequestFailed": {
@@ -50,7 +50,7 @@ func TestGet(t *testing.T) {
 					MockDo:         fake.NewMockDoFn(nil),
 				},
 			},
-			want: &NamespaceResponse{},
+			want: &AccountResponse{},
 		},
 	}
 	for name, tc := range cases {
@@ -73,7 +73,7 @@ func TestList(t *testing.T) {
 	cases := map[string]struct {
 		reason string
 		cfg    *up.Config
-		want   []NamespaceResponse
+		want   []AccountResponse
 		err    error
 	}{
 		"NewRequestFailed": {
@@ -103,7 +103,7 @@ func TestList(t *testing.T) {
 					MockDo:         fake.NewMockDoFn(nil),
 				},
 			},
-			want: []NamespaceResponse{},
+			want: []AccountResponse{},
 		},
 	}
 	for name, tc := range cases {
