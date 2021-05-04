@@ -75,7 +75,7 @@ func main() {
 	fmt.Println("Creating control plane token...")
 	cp, err := client.Create(context.Background(), &tokens.TokenCreateParameters{
 		Attributes: tokens.TokenAttributes{
-			"cool token",
+			Name: "cool token",
 		},
 		Relationships: tokens.TokenRelationships{
 			Owner: tokens.TokenOwner{
