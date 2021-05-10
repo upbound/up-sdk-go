@@ -79,6 +79,10 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("Info: %v\n", cp.ControlPlane)
+	fmt.Println("Setting control plane to view only...")
+	if err := client.SetViewOnly(context.Background(), cp.ControlPlane.ID, true); err != nil {
+		panic(err)
+	}
 	fmt.Println("Getting control plane...")
 	res, err := client.Get(context.Background(), cp.ControlPlane.ID)
 	if err != nil {
@@ -87,4 +91,5 @@ func main() {
 	fmt.Printf("Info: %v\n", res.ControlPlane)
 	fmt.Printf("Permission: %s\n", res.Permission)
 	fmt.Printf("Status: %s\n", res.Status)
+	fmt.Printf("View Only: %s\n", res.ControlPlane.CreatedAt)
 }
