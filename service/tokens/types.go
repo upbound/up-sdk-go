@@ -42,7 +42,7 @@ type TokenResponse struct {
 
 // TokensResponse is the response returned from token operations.
 // TODO(hasheddan): consider making token responses strongly typed.
-type TokensResponse struct {
+type TokensResponse struct { //nolint:golint
 	DataSet []DataSet `json:"data"`
 }
 
