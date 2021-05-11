@@ -54,12 +54,12 @@ func (c *Client) Create(ctx context.Context, params *TokenCreateParameters) (*To
 	if err != nil {
 		return nil, err
 	}
-	ns := &TokenResponse{}
-	err = c.Client.Do(req, &ns)
+	t := &TokenResponse{}
+	err = c.Client.Do(req, &t)
 	if err != nil {
 		return nil, err
 	}
-	return ns, nil
+	return t, nil
 }
 
 // Get a token on Upbound Cloud.
@@ -68,12 +68,12 @@ func (c *Client) Get(ctx context.Context, id uuid.UUID) (*TokenResponse, error) 
 	if err != nil {
 		return nil, err
 	}
-	ns := &TokenResponse{}
-	err = c.Client.Do(req, &ns)
+	t := &TokenResponse{}
+	err = c.Client.Do(req, &t)
 	if err != nil {
 		return nil, err
 	}
-	return ns, nil
+	return t, nil
 }
 
 // Update a token on Upbound Cloud.
@@ -91,12 +91,12 @@ func (c *Client) Update(ctx context.Context, params *TokenUpdateParameters) (*To
 	if err != nil {
 		return nil, err
 	}
-	ns := &TokenResponse{}
-	err = c.Client.Do(req, &ns)
+	t := &TokenResponse{}
+	err = c.Client.Do(req, &t)
 	if err != nil {
 		return nil, err
 	}
-	return ns, nil
+	return t, nil
 }
 
 // Delete a token on Upbound Cloud.
