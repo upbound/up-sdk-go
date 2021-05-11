@@ -22,10 +22,12 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/upbound/up-sdk-go"
+	"github.com/upbound/up-sdk-go/service/tokens"
 )
 
 const (
 	basePath     = "v1/controlPlanes"
+	tokensPath   = "tokens"
 	viewOnlyPath = "viewOnly"
 )
 
@@ -67,6 +69,20 @@ func (c *Client) Get(ctx context.Context, id uuid.UUID) (*ControlPlaneResponse, 
 		return nil, err
 	}
 	return cp, nil
+}
+
+// GetTokens a control plane on Upbound Cloud.
+func (c *Client) GetTokens(ctx context.Context, id uuid.UUID) (*tokens.TokensResponse, error) { // nolint:interfacer
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, path.Join(id.String(), tokensPath), nil)
+	if err != nil {
+		return nil, err
+	}
+	t := &tokens.TokensResponse{}
+	err = c.Client.Do(req, &t)
+	if err != nil {
+		return nil, err
+	}
+	return t, nil
 }
 
 // Delete a control plane on Upbound Cloud.

@@ -40,6 +40,12 @@ type TokenResponse struct {
 	DataSet `json:"data"`
 }
 
+// TokensResponse is the response returned from token operations.
+// TODO(hasheddan): consider making token responses strongly typed.
+type TokensResponse struct {
+	DataSet []DataSet `json:"data"`
+}
+
 // RelationshipSet represents set of relationships.
 type RelationshipSet map[string]interface{}
 

@@ -25,6 +25,7 @@ import (
 
 	"github.com/upbound/up-sdk-go"
 	"github.com/upbound/up-sdk-go/fake"
+	"github.com/upbound/up-sdk-go/service/tokens"
 )
 
 func TestCreate(t *testing.T) {
@@ -130,6 +131,64 @@ func TestGet(t *testing.T) {
 			}
 			if diff := cmp.Diff(tc.want, res); diff != "" {
 				t.Errorf("\n%s\nGet(...): -want, +got:\n%s", tc.reason, diff)
+			}
+		})
+	}
+}
+
+func TestGetTokens(t *testing.T) {
+	errBoom := errors.New("boom")
+	uid := uuid.MustParse("4654b8b5-c01d-4fbe-8800-22c347c21383")
+
+	cases := map[string]struct {
+		reason string
+		cfg    *up.Config
+		id     uuid.UUID
+		want   *tokens.TokensResponse
+		err    error
+	}{
+		"NewRequestFailed": {
+			reason: "Failing to construct a request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+				},
+			},
+			id:  uid,
+			err: errBoom,
+		},
+		"DoFailed": {
+			reason: "Failing to execute request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
+					MockDo:         fake.NewMockDoFn(errBoom),
+				},
+			},
+			id:  uid,
+			err: errBoom,
+		},
+		"Successful": {
+			reason: "A successful request should not return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
+					MockDo:         fake.NewMockDoFn(nil),
+				},
+			},
+			id:   uid,
+			want: &tokens.TokensResponse{},
+		},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			c := NewClient(tc.cfg)
+			res, err := c.GetTokens(context.Background(), tc.id)
+			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
+				t.Errorf("\n%s\nGetTokens(...): -want error, +got error:\n%s", tc.reason, diff)
+			}
+			if diff := cmp.Diff(tc.want, res); diff != "" {
+				t.Errorf("\n%s\nGetTokens(...): -want, +got:\n%s", tc.reason, diff)
 			}
 		})
 	}
