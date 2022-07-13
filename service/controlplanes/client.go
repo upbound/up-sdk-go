@@ -66,6 +66,20 @@ func (c *Client) Get(ctx context.Context, account, name string) (*ControlPlaneRe
 	return cp, nil
 }
 
+// List all control planes in the given account on Upbound.
+func (c *Client) List(ctx context.Context, account string) ([]ControlPlaneResponse, error) {
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, account, nil)
+	if err != nil {
+		return nil, err
+	}
+	cp := []ControlPlaneResponse{}
+	err = c.Client.Do(req, &cp)
+	if err != nil {
+		return nil, err
+	}
+	return cp, nil
+}
+
 // Delete a control plane on Upbound.
 func (c *Client) Delete(ctx context.Context, account, name string) error { // nolint:interfacer
 	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, path.Join(account, name), nil)

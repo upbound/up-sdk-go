@@ -69,6 +69,7 @@ func (c *Client) List(ctx context.Context) ([]AccountResponse, error) {
 }
 
 // ListControlPlanes lists all control planes in the given account on Upbound.
+// DEPRECATED: please use List method in controlplanes package.
 func (c *Client) ListControlPlanes(ctx context.Context, name string) ([]controlplanes.ControlPlaneResponse, error) {
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, path.Join(name, controlPlanesPath), nil)
 	if err != nil {
