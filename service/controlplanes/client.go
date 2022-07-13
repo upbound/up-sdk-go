@@ -19,16 +19,11 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/google/uuid"
-
 	"github.com/upbound/up-sdk-go"
-	"github.com/upbound/up-sdk-go/service/tokens"
 )
 
 const (
-	basePath     = "v1/controlPlanes"
-	tokensPath   = "tokens"
-	viewOnlyPath = "viewOnly"
+	basePath = "v1/controlPlanes"
 )
 
 // Client is a control planes client.
@@ -43,9 +38,9 @@ func NewClient(cfg *up.Config) *Client {
 	}
 }
 
-// Create a control plane on Upbound Cloud.
-func (c *Client) Create(ctx context.Context, params *ControlPlaneCreateParameters) (*ControlPlaneResponse, error) {
-	req, err := c.Client.NewRequest(ctx, http.MethodPost, basePath, "", params)
+// Create a control plane on Upbound.
+func (c *Client) Create(ctx context.Context, account string, params *ControlPlaneCreateParameters) (*ControlPlaneResponse, error) {
+	req, err := c.Client.NewRequest(ctx, http.MethodPost, basePath, account, params)
 	if err != nil {
 		return nil, err
 	}
@@ -57,9 +52,9 @@ func (c *Client) Create(ctx context.Context, params *ControlPlaneCreateParameter
 	return cp, nil
 }
 
-// Get a control plane on Upbound Cloud.
-func (c *Client) Get(ctx context.Context, id uuid.UUID) (*ControlPlaneResponse, error) { // nolint:interfacer
-	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, id.String(), nil)
+// Get a control plane on Upbound.
+func (c *Client) Get(ctx context.Context, account, name string) (*ControlPlaneResponse, error) { // nolint:interfacer
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, path.Join(account, name), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -71,34 +66,9 @@ func (c *Client) Get(ctx context.Context, id uuid.UUID) (*ControlPlaneResponse, 
 	return cp, nil
 }
 
-// GetTokens a control plane on Upbound Cloud.
-func (c *Client) GetTokens(ctx context.Context, id uuid.UUID) (*tokens.TokensResponse, error) { // nolint:interfacer
-	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, path.Join(id.String(), tokensPath), nil)
-	if err != nil {
-		return nil, err
-	}
-	t := &tokens.TokensResponse{}
-	err = c.Client.Do(req, &t)
-	if err != nil {
-		return nil, err
-	}
-	return t, nil
-}
-
-// Delete a control plane on Upbound Cloud.
-func (c *Client) Delete(ctx context.Context, id uuid.UUID) error { // nolint:interfacer
-	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, id.String(), nil)
-	if err != nil {
-		return err
-	}
-	return c.Client.Do(req, nil)
-}
-
-// SetViewOnly sets the view-only value of a control plane on Upbound Cloud.
-func (c *Client) SetViewOnly(ctx context.Context, id uuid.UUID, viewOnly bool) error { // nolint:interfacer
-	req, err := c.Client.NewRequest(ctx, http.MethodPut, basePath, path.Join(id.String(), viewOnlyPath), &controlPlaneViewOnlyParameters{
-		IsViewOnly: viewOnly,
-	})
+// Delete a control plane on Upbound.
+func (c *Client) Delete(ctx context.Context, account, name string) error { // nolint:interfacer
+	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, path.Join(account, name), nil)
 	if err != nil {
 		return err
 	}

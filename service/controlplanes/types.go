@@ -20,7 +20,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Status is the status of a control plane on Upbound Cloud.
+// Status is the status of a control plane on Upbound.
 type Status string
 
 // A control plane will always be in one of the following phases.
@@ -38,12 +38,9 @@ type ControlPlane struct {
 	Description string     `json:"description,omitempty"`
 	CreatorID   uint       `json:"creatorId,omitempty"`
 	Reserved    bool       `json:"reserved"`
-	SelfHosted  bool       `json:"selfHosted"`
 	CreatedAt   *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt   *time.Time `json:"updatedAt,omitempty"`
 	ExpiresAt   time.Time  `json:"expiresAt"`
-	DeletedAt   *time.Time `json:"deletedAt,omitempty"`
-	IsViewOnly  bool       `json:"isViewOnly"`
 }
 
 // PermissionGroup describes control plane permissions for the authenticated
@@ -71,15 +68,6 @@ type ControlPlaneResponse struct {
 
 // ControlPlaneCreateParameters are the parameters for creating a control plane.
 type ControlPlaneCreateParameters struct {
-	Account       string `json:"account"`
-	Name          string `json:"name"`
-	Description   string `json:"description"`
-	SelfHosted    bool   `json:"selfHosted,omitempty"`
-	KubeClusterID string `json:"kubeClusterID,omitempty"`
-}
-
-// controlPlaneViewOnlyParameters are the parameters for setting a control
-// plane's view-only field.
-type controlPlaneViewOnlyParameters struct {
-	IsViewOnly bool `json:"isViewOnly"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
