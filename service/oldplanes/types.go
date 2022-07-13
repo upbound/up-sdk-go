@@ -22,7 +22,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Status is the status of a control plane on Upbound Cloud.
+// Status is the status of a control plane on Upbound.
 type Status string
 
 // A control plane will always be in one of the following phases.
