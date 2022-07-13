@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// DEPRECATED(hasheddan): please use the controlplanes package.
-
 package oldplanes
 
 import (
@@ -39,6 +37,7 @@ type Client struct {
 }
 
 // NewClient build a control planes client from the passed config.
+// Deprecated: please use the controlplanes package.
 func NewClient(cfg *up.Config) *Client {
 	return &Client{
 		cfg,
@@ -46,6 +45,7 @@ func NewClient(cfg *up.Config) *Client {
 }
 
 // Create a control plane on Upbound.
+// Deprecated: please use the controlplanes package.
 func (c *Client) Create(ctx context.Context, params *ControlPlaneCreateParameters) (*ControlPlaneResponse, error) {
 	req, err := c.Client.NewRequest(ctx, http.MethodPost, basePath, "", params)
 	if err != nil {
@@ -60,6 +60,7 @@ func (c *Client) Create(ctx context.Context, params *ControlPlaneCreateParameter
 }
 
 // Get a control plane on Upbound.
+// Deprecated: please use the controlplanes package.
 func (c *Client) Get(ctx context.Context, id uuid.UUID) (*ControlPlaneResponse, error) { // nolint:interfacer
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, id.String(), nil)
 	if err != nil {
@@ -74,6 +75,7 @@ func (c *Client) Get(ctx context.Context, id uuid.UUID) (*ControlPlaneResponse, 
 }
 
 // GetTokens a control plane on Upbound.
+// Deprecated: please use the controlplanes package.
 func (c *Client) GetTokens(ctx context.Context, id uuid.UUID) (*tokens.TokensResponse, error) { // nolint:interfacer
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, path.Join(id.String(), tokensPath), nil)
 	if err != nil {
@@ -88,6 +90,7 @@ func (c *Client) GetTokens(ctx context.Context, id uuid.UUID) (*tokens.TokensRes
 }
 
 // Delete a control plane on Upbound.
+// Deprecated: please use the controlplanes package.
 func (c *Client) Delete(ctx context.Context, id uuid.UUID) error { // nolint:interfacer
 	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, id.String(), nil)
 	if err != nil {
@@ -97,6 +100,7 @@ func (c *Client) Delete(ctx context.Context, id uuid.UUID) error { // nolint:int
 }
 
 // SetViewOnly sets the view-only value of a control plane on Upbound.
+// Deprecated: please use the controlplanes package.
 func (c *Client) SetViewOnly(ctx context.Context, id uuid.UUID, viewOnly bool) error { // nolint:interfacer
 	req, err := c.Client.NewRequest(ctx, http.MethodPut, basePath, path.Join(id.String(), viewOnlyPath), &controlPlaneViewOnlyParameters{
 		IsViewOnly: viewOnly,
