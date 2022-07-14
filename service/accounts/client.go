@@ -40,7 +40,7 @@ func NewClient(cfg *up.Config) *Client {
 	}
 }
 
-// Get a account on Upbound Cloud.
+// Get a account on Upbound.
 func (c *Client) Get(ctx context.Context, name string) (*AccountResponse, error) {
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, name, nil)
 	if err != nil {
@@ -54,7 +54,7 @@ func (c *Client) Get(ctx context.Context, name string) (*AccountResponse, error)
 	return ns, nil
 }
 
-// List all accounts for the authenticated user on Upbound Cloud.
+// List all accounts for the authenticated user on Upbound.
 func (c *Client) List(ctx context.Context) ([]AccountResponse, error) {
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, "", nil)
 	if err != nil {
@@ -68,7 +68,8 @@ func (c *Client) List(ctx context.Context) ([]AccountResponse, error) {
 	return ns, nil
 }
 
-// ListControlPlanes lists all control planes in the given account on Upbound Cloud.
+// ListControlPlanes lists all control planes in the given account on Upbound.
+// Deprecated: please use List method in controlplanes package.
 func (c *Client) ListControlPlanes(ctx context.Context, name string) ([]controlplanes.ControlPlaneResponse, error) {
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, path.Join(name, controlPlanesPath), nil)
 	if err != nil {

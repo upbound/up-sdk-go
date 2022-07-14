@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package controlplanes
+package oldplanes
 
 import (
 	"time"
@@ -38,9 +38,12 @@ type ControlPlane struct {
 	Description string     `json:"description,omitempty"`
 	CreatorID   uint       `json:"creatorId,omitempty"`
 	Reserved    bool       `json:"reserved"`
+	SelfHosted  bool       `json:"selfHosted"`
 	CreatedAt   *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt   *time.Time `json:"updatedAt,omitempty"`
 	ExpiresAt   time.Time  `json:"expiresAt"`
+	DeletedAt   *time.Time `json:"deletedAt,omitempty"`
+	IsViewOnly  bool       `json:"isViewOnly"`
 }
 
 // PermissionGroup describes control plane permissions for the authenticated
@@ -68,6 +71,15 @@ type ControlPlaneResponse struct {
 
 // ControlPlaneCreateParameters are the parameters for creating a control plane.
 type ControlPlaneCreateParameters struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Account       string `json:"account"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	SelfHosted    bool   `json:"selfHosted,omitempty"`
+	KubeClusterID string `json:"kubeClusterID,omitempty"`
+}
+
+// controlPlaneViewOnlyParameters are the parameters for setting a control
+// plane's view-only field.
+type controlPlaneViewOnlyParameters struct {
+	IsViewOnly bool `json:"isViewOnly"`
 }

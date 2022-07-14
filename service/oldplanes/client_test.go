@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package controlplanes
+package oldplanes
 
 import (
 	"context"
@@ -20,10 +20,12 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
 	"github.com/upbound/up-sdk-go"
 	"github.com/upbound/up-sdk-go/fake"
+	"github.com/upbound/up-sdk-go/service/tokens"
 )
 
 func TestCreate(t *testing.T) {
@@ -69,7 +71,7 @@ func TestCreate(t *testing.T) {
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
 			c := NewClient(tc.cfg)
-			res, err := c.Create(context.Background(), "upbound", tc.params)
+			res, err := c.Create(context.Background(), tc.params)
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nCreate(...): -want error, +got error:\n%s", tc.reason, diff)
 			}
@@ -123,7 +125,7 @@ func TestGet(t *testing.T) {
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
 			c := NewClient(tc.cfg)
-			res, err := c.Get(context.Background(), "upbound", "test")
+			res, err := c.Get(context.Background(), uuid.UUID{})
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nGet(...): -want error, +got error:\n%s", tc.reason, diff)
 			}
@@ -134,13 +136,15 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func TestList(t *testing.T) {
+func TestGetTokens(t *testing.T) {
 	errBoom := errors.New("boom")
+	uid := uuid.MustParse("4654b8b5-c01d-4fbe-8800-22c347c21383")
 
 	cases := map[string]struct {
 		reason string
 		cfg    *up.Config
-		want   []ControlPlaneResponse
+		id     uuid.UUID
+		want   *tokens.TokensResponse
 		err    error
 	}{
 		"NewRequestFailed": {
@@ -150,6 +154,7 @@ func TestList(t *testing.T) {
 					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
 				},
 			},
+			id:  uid,
 			err: errBoom,
 		},
 		"DoFailed": {
@@ -160,6 +165,7 @@ func TestList(t *testing.T) {
 					MockDo:         fake.NewMockDoFn(errBoom),
 				},
 			},
+			id:  uid,
 			err: errBoom,
 		},
 		"Successful": {
@@ -170,18 +176,19 @@ func TestList(t *testing.T) {
 					MockDo:         fake.NewMockDoFn(nil),
 				},
 			},
-			want: []ControlPlaneResponse{},
+			id:   uid,
+			want: &tokens.TokensResponse{},
 		},
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
 			c := NewClient(tc.cfg)
-			res, err := c.List(context.Background(), "upbound")
+			res, err := c.GetTokens(context.Background(), tc.id)
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
-				t.Errorf("\n%s\nList(...): -want error, +got error:\n%s", tc.reason, diff)
+				t.Errorf("\n%s\nGetTokens(...): -want error, +got error:\n%s", tc.reason, diff)
 			}
 			if diff := cmp.Diff(tc.want, res); diff != "" {
-				t.Errorf("\n%s\nList(...): -want, +got:\n%s", tc.reason, diff)
+				t.Errorf("\n%s\nGetTokens(...): -want, +got:\n%s", tc.reason, diff)
 			}
 		})
 	}
@@ -227,9 +234,57 @@ func TestDelete(t *testing.T) {
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
 			c := NewClient(tc.cfg)
-			err := c.Delete(context.Background(), "upbound", "test")
+			err := c.Delete(context.Background(), uuid.UUID{})
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nDelete(...): -want error, +got error:\n%s", tc.reason, diff)
+			}
+		})
+	}
+}
+
+func TestSetViewOnly(t *testing.T) {
+	errBoom := errors.New("boom")
+
+	cases := map[string]struct {
+		reason string
+		cfg    *up.Config
+		err    error
+	}{
+		"NewRequestFailed": {
+			reason: "Failing to construct a request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+				},
+			},
+			err: errBoom,
+		},
+		"DoFailed": {
+			reason: "Failing to execute request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
+					MockDo:         fake.NewMockDoFn(errBoom),
+				},
+			},
+			err: errBoom,
+		},
+		"Successful": {
+			reason: "A successful request should not return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
+					MockDo:         fake.NewMockDoFn(nil),
+				},
+			},
+		},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			c := NewClient(tc.cfg)
+			err := c.SetViewOnly(context.Background(), uuid.UUID{}, true)
+			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
+				t.Errorf("\n%s\nSetViewOnly(...): -want error, +got error:\n%s", tc.reason, diff)
 			}
 		})
 	}

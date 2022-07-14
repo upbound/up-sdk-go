@@ -42,7 +42,7 @@ func NewClient(cfg *up.Config) *Client {
 	}
 }
 
-// Create a token on Upbound Cloud.
+// Create a token on Upbound.
 func (c *Client) Create(ctx context.Context, params *TokenCreateParameters) (*TokenResponse, error) {
 	body := &tokenCreateRequest{
 		Data: tokenCreateParameters{
@@ -62,7 +62,7 @@ func (c *Client) Create(ctx context.Context, params *TokenCreateParameters) (*To
 	return t, nil
 }
 
-// Get a token on Upbound Cloud.
+// Get a token on Upbound.
 func (c *Client) Get(ctx context.Context, id uuid.UUID) (*TokenResponse, error) { // nolint:interfacer
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, id.String(), nil)
 	if err != nil {
@@ -76,7 +76,7 @@ func (c *Client) Get(ctx context.Context, id uuid.UUID) (*TokenResponse, error) 
 	return t, nil
 }
 
-// Update a token on Upbound Cloud.
+// Update a token on Upbound.
 func (c *Client) Update(ctx context.Context, params *TokenUpdateParameters) (*TokenResponse, error) {
 	body := &tokenUpdateRequest{
 		Data: tokenUpdateParameters{
@@ -99,7 +99,7 @@ func (c *Client) Update(ctx context.Context, params *TokenUpdateParameters) (*To
 	return t, nil
 }
 
-// Delete a token on Upbound Cloud.
+// Delete a token on Upbound.
 func (c *Client) Delete(ctx context.Context, id uuid.UUID) error { // nolint:interfacer
 	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, id.String(), nil)
 	if err != nil {

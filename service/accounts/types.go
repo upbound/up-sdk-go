@@ -16,7 +16,7 @@ package accounts
 
 import "time"
 
-// Account is an Upbound Cloud account.
+// Account is an Upbound account.
 type Account struct {
 	Name string `json:"name,omitempty"`
 	Type Type   `json:"type,omitempty"`
@@ -32,7 +32,7 @@ const (
 	AccountUser Type = "user"
 )
 
-// User is a user on Upbound Cloud.
+// User is a user on Upbound.
 // TODO(hasheddan): move to user service when implemented.
 type User struct {
 	ID              uint       `json:"id,omitempty"`
@@ -49,7 +49,7 @@ type User struct {
 	PersonalTrial   *time.Time `json:"personalTrial,omitempty"`
 }
 
-// Organization is an organization on Upbound Cloud.
+// Organization is an organization on Upbound.
 // TODO(hasheddan): move to org service when implemented.
 type Organization struct {
 	ID                   uint       `json:"id,omitempty"`
@@ -75,8 +75,7 @@ const (
 	OrganizationOwner OrganizationPermissionGroup = "owner"
 )
 
-// AccountResponse is the API response when requesting information on a
-// account.
+// AccountResponse is the API response when requesting information on a account.
 type AccountResponse struct {
 	Account      Account       `json:"account"`
 	Organization *Organization `json:"organization,omitempty"`

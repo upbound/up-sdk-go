@@ -35,7 +35,7 @@ const (
 	defaultHTTPTimeout = 10 * time.Second
 )
 
-// Client is an HTTP client for communicating with Upbound Cloud.
+// Client is an HTTP client for communicating with Upbound.
 type Client interface {
 	NewRequest(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error)
 	Do(req *http.Request, obj interface{}) error
@@ -44,7 +44,7 @@ type Client interface {
 // A ClientModifierFn modifies an HTTP client.
 type ClientModifierFn func(*HTTPClient)
 
-// NewClient builds a new default HTTP client for Upbound Cloud.
+// NewClient builds a new default HTTP client for Upbound.
 func NewClient(modifiers ...ClientModifierFn) *HTTPClient {
 	b, _ := url.Parse(defaultBaseURL)
 	c := &HTTPClient{
