@@ -37,8 +37,8 @@ const (
 
 // Client is an HTTP client for communicating with Upbound.
 type Client interface {
-	NewRequest(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error)
-	Do(req *http.Request, obj interface{}) error
+	NewRequest(ctx context.Context, method, prefix, urlPath string, body any) (*http.Request, error)
+	Do(req *http.Request, obj any) error
 }
 
 // A ClientModifierFn modifies an HTTP client.
@@ -83,7 +83,7 @@ type ResponseErrorHandler interface {
 }
 
 // NewRequest builds an HTTP request.
-func (c *HTTPClient) NewRequest(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+func (c *HTTPClient) NewRequest(ctx context.Context, method, prefix, urlPath string, body any) (*http.Request, error) {
 	u, err := c.BaseURL.Parse(path.Join(prefix, urlPath))
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (c *HTTPClient) NewRequest(ctx context.Context, method, prefix, urlPath str
 }
 
 // Do performs an HTTP request and reads the body into the provided interface.
-func (c *HTTPClient) Do(req *http.Request, obj interface{}) error {
+func (c *HTTPClient) Do(req *http.Request, obj any) error {
 	res, err := c.HTTP.Do(req)
 	if err != nil {
 		return err

@@ -47,13 +47,13 @@ type TokensResponse struct { //nolint:golint
 }
 
 // RelationshipSet represents set of relationships.
-type RelationshipSet map[string]interface{}
+type RelationshipSet map[string]any
 
 // AttributeSet represents set of attributes.
-type AttributeSet map[string]interface{}
+type AttributeSet map[string]any
 
 // Meta represents metadata.
-type Meta map[string]interface{}
+type Meta map[string]any
 
 // DataSet represents a set of data in a token response body.
 type DataSet struct {
