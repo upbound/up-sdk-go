@@ -16,6 +16,9 @@ package controlplanes
 
 import (
 	"context"
+	"net/http"
+	"net/url"
+	"strconv"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -24,6 +27,7 @@ import (
 
 	"github.com/upbound/up-sdk-go"
 	"github.com/upbound/up-sdk-go/fake"
+	"github.com/upbound/up-sdk-go/service/common"
 )
 
 func TestCreate(t *testing.T) {
@@ -136,11 +140,18 @@ func TestGet(t *testing.T) {
 
 func TestList(t *testing.T) {
 	errBoom := errors.New("boom")
+	testAccount := "upbound"
+	testURL, _ := url.Parse("https://localhost:8080")
 
+	type args struct {
+		account string
+		opts    []common.ListOption
+	}
 	cases := map[string]struct {
 		reason string
+		args   args
 		cfg    *up.Config
-		want   []ControlPlaneResponse
+		want   *ControlPlaneListResponse
 		err    error
 	}{
 		"NewRequestFailed": {
@@ -154,29 +165,138 @@ func TestList(t *testing.T) {
 		},
 		"DoFailed": {
 			reason: "Failing to execute request should return an error.",
+			args: args{
+				account: testAccount,
+				opts:    []common.ListOption{common.WithSize(50)},
+			},
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(errBoom),
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != testAccount {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						r, _ := http.NewRequest(http.MethodGet, testURL.String(), nil)
+						return r, nil
+					},
+					MockDo: func(req *http.Request, _ interface{}) error {
+						if req.URL.Host != testURL.Host {
+							t.Errorf("unexpected host: %s", req.URL.Host)
+						}
+						return errBoom
+					},
 				},
 			},
 			err: errBoom,
 		},
 		"Successful": {
 			reason: "A successful request should not return an error.",
+			args: args{
+				account: testAccount,
+			},
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(nil),
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != testAccount {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						r, _ := http.NewRequest(http.MethodGet, testURL.String(), nil)
+						return r, nil
+					},
+					MockDo: func(req *http.Request, _ interface{}) error {
+						if req.URL.Host != testURL.Host {
+							t.Errorf("unexpected host: %s", req.URL.Host)
+						}
+						return nil
+					},
 				},
 			},
-			want: []ControlPlaneResponse{},
+			want: &ControlPlaneListResponse{},
+		},
+		"Successfulcommon.WithSize": {
+			reason: "A successful request with size should not return an error.",
+			args: args{
+				account: testAccount,
+				opts:    []common.ListOption{common.WithSize(50)},
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != testAccount {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						r, _ := http.NewRequest(http.MethodGet, testURL.String(), nil)
+						return r, nil
+					},
+					MockDo: func(req *http.Request, _ interface{}) error {
+						if req.URL.Host != testURL.Host {
+							t.Errorf("unexpected host: %s", req.URL.Host)
+						}
+						if req.URL.Query().Get(common.SizeParam) != strconv.FormatInt(50, 10) {
+							t.Errorf("unexpected size: %s", req.URL.Query().Get(common.SizeParam))
+						}
+						return nil
+					},
+				},
+			},
+			want: &ControlPlaneListResponse{},
+		},
+		"SuccessfulWithPage": {
+			reason: "A successful request with page should not return an error.",
+			args: args{
+				account: testAccount,
+				opts:    []common.ListOption{common.WithPage(50)},
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != testAccount {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						r, _ := http.NewRequest(http.MethodGet, testURL.String(), nil)
+						return r, nil
+					},
+					MockDo: func(req *http.Request, _ interface{}) error {
+						if req.URL.Host != testURL.Host {
+							t.Errorf("unexpected host: %s", req.URL.Host)
+						}
+						if req.URL.Query().Get(common.PageParam) != strconv.FormatInt(50, 10) {
+							t.Errorf("unexpected page: %s", req.URL.Query().Get(common.PageParam))
+						}
+						return nil
+					},
+				},
+			},
+			want: &ControlPlaneListResponse{},
 		},
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
 			c := NewClient(tc.cfg)
-			res, err := c.List(context.Background(), "upbound")
+			res, err := c.List(context.Background(), tc.args.account, tc.args.opts...)
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nList(...): -want error, +got error:\n%s", tc.reason, diff)
 			}
