@@ -66,6 +66,8 @@ type ControlPlaneResponse struct {
 	Permission   PermissionGroup `json:"controlPlanePermission,omitempty"`
 }
 
+// ControlPlaneListResponse is the HTTP body returned when listing control
+// planes.
 type ControlPlaneListResponse struct {
 	ControlPlanes []ControlPlaneResponse `json:"controlPlanes"`
 	Size          int                    `json:"size"`

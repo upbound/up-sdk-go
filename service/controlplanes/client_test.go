@@ -181,7 +181,7 @@ func TestList(t *testing.T) {
 						if urlPath != testAccount {
 							t.Errorf("unexpected account: %s", urlPath)
 						}
-						r, _ := http.NewRequest(http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -211,7 +211,7 @@ func TestList(t *testing.T) {
 						if urlPath != testAccount {
 							t.Errorf("unexpected account: %s", urlPath)
 						}
-						r, _ := http.NewRequest(http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -224,7 +224,7 @@ func TestList(t *testing.T) {
 			},
 			want: &ControlPlaneListResponse{},
 		},
-		"Successfulcommon.WithSize": {
+		"SuccessfulWithSize": {
 			reason: "A successful request with size should not return an error.",
 			args: args{
 				account: testAccount,
@@ -242,7 +242,7 @@ func TestList(t *testing.T) {
 						if urlPath != testAccount {
 							t.Errorf("unexpected account: %s", urlPath)
 						}
-						r, _ := http.NewRequest(http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -276,7 +276,7 @@ func TestList(t *testing.T) {
 						if urlPath != testAccount {
 							t.Errorf("unexpected account: %s", urlPath)
 						}
-						r, _ := http.NewRequest(http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {

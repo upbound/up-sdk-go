@@ -20,11 +20,13 @@ import (
 )
 
 const (
+	// PageParam is the name of the page query parameter.
 	PageParam = "page"
+	// SizeParam is the name fo the size query parameter.
 	SizeParam = "size"
 )
 
-// ListOptions modifies a list request.
+// ListOption modifies a list request.
 type ListOption func(*http.Request)
 
 // WithSize sets the maximum number of entities included in the list response.

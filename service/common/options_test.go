@@ -15,6 +15,7 @@
 package common
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -23,7 +24,7 @@ import (
 
 func TestWithPage(t *testing.T) {
 	o := WithPage(50)
-	r, _ := http.NewRequest(http.MethodGet, "https://localhost:8080", nil)
+	r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "https://localhost:8080", nil)
 	o(r)
 	if diff := cmp.Diff("50", r.URL.Query().Get(PageParam)); diff != "" {
 		t.Errorf("\n%s\nWithPage(...): -want, +got:\n%s", "should set page query parameter correctly", diff)
@@ -32,7 +33,7 @@ func TestWithPage(t *testing.T) {
 
 func TestWithSize(t *testing.T) {
 	o := WithSize(30)
-	r, _ := http.NewRequest(http.MethodGet, "https://localhost:8080", nil)
+	r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "https://localhost:8080", nil)
 	o(r)
 	if diff := cmp.Diff("30", r.URL.Query().Get(SizeParam)); diff != "" {
 		t.Errorf("\n%s\nWithSize(...): -want, +got:\n%s", "should set size query parameter correctly", diff)
