@@ -20,6 +20,7 @@ import (
 	"path"
 
 	"github.com/upbound/up-sdk-go"
+	"github.com/upbound/up-sdk-go/service/common"
 )
 
 const (
@@ -67,13 +68,16 @@ func (c *Client) Get(ctx context.Context, account, name string) (*ControlPlaneRe
 }
 
 // List all control planes in the given account on Upbound.
-func (c *Client) List(ctx context.Context, account string) ([]ControlPlaneResponse, error) {
+func (c *Client) List(ctx context.Context, account string, opts ...common.ListOption) (*ControlPlaneListResponse, error) {
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, account, nil)
 	if err != nil {
 		return nil, err
 	}
-	cp := []ControlPlaneResponse{}
-	err = c.Client.Do(req, &cp)
+	for _, o := range opts {
+		o(req)
+	}
+	cp := &ControlPlaneListResponse{}
+	err = c.Client.Do(req, cp)
 	if err != nil {
 		return nil, err
 	}
