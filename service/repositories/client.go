@@ -41,7 +41,9 @@ func NewClient(cfg *up.Config) *Client {
 
 // CreateOrUpdate a repository on Upbound.
 func (c *Client) CreateOrUpdate(ctx context.Context, account string, name string) error {
-	req, err := c.Client.NewRequest(ctx, http.MethodPut, basePath, path.Join(account, name), nil)
+	// TODO(hasheddan): allow passing parameters in body when supported by API.
+	// For now, a body is expected, but it may be empty.
+	req, err := c.Client.NewRequest(ctx, http.MethodPut, basePath, path.Join(account, name), struct{}{})
 	if err != nil {
 		return err
 	}
