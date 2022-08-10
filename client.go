@@ -93,8 +93,7 @@ func (c *HTTPClient) NewRequest(ctx context.Context, method, prefix, urlPath str
 		buf = &bytes.Buffer{}
 		enc := json.NewEncoder(buf)
 		enc.SetEscapeHTML(false)
-		err := enc.Encode(body)
-		if err != nil {
+		if err := enc.Encode(body); err != nil {
 			return nil, err
 		}
 	}
