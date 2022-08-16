@@ -1,0 +1,85 @@
+// Copyright 2021 Upbound Inc
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package organizations
+
+import (
+	"context"
+	"net/http"
+	"strconv"
+
+	"github.com/upbound/up-sdk-go"
+)
+
+const (
+	basePath = "v1/organizations"
+)
+
+// Client is an organizations client.
+type Client struct {
+	*up.Config
+}
+
+// NewClient builds an organizations client from the passed config.
+func NewClient(cfg *up.Config) *Client {
+	return &Client{
+		cfg,
+	}
+}
+
+// Create an organization on Upbound.
+func (c *Client) Create(ctx context.Context, params *OrganizationCreateParameters) error {
+	req, err := c.Client.NewRequest(ctx, http.MethodPost, basePath, "", params)
+	if err != nil {
+		return err
+	}
+	return c.Client.Do(req, nil)
+}
+
+// Get an organization on Upbound.
+func (c *Client) Get(ctx context.Context, id uint) (*Organization, error) {
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, strconv.FormatUint(uint64(id), 10), nil)
+	if err != nil {
+		return nil, err
+	}
+	org := &Organization{}
+	err = c.Client.Do(req, &org)
+	if err != nil {
+		return nil, err
+	}
+	return org, nil
+}
+
+// List all organizations for the authenticated user on Upbound.
+func (c *Client) List(ctx context.Context) ([]Organization, error) {
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, "", nil)
+	if err != nil {
+		return nil, err
+	}
+	orgs := []Organization{}
+	err = c.Client.Do(req, &orgs)
+	if err != nil {
+		return nil, err
+	}
+	return orgs, nil
+}
+
+// Delete an organization on Upbound.
+func (c *Client) Delete(ctx context.Context, id uint) error {
+	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, strconv.FormatUint(uint64(id), 10), nil)
+	if err != nil {
+		return err
+	}
+	return c.Client.Do(req, nil)
+}
