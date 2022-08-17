@@ -60,7 +60,7 @@ func (c *Client) Create(ctx context.Context, params *RobotCreateParameters) (*Ro
 }
 
 // Get gets a robot on Upbound.
-func (c *Client) Get(ctx context.Context, id uuid.UUID) (*RobotResponse, error) {
+func (c *Client) Get(ctx context.Context, id uuid.UUID) (*RobotResponse, error) { // nolint:interfacer
 	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, id.String(), nil)
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func (c *Client) Get(ctx context.Context, id uuid.UUID) (*RobotResponse, error) 
 }
 
 // Delete an robot on Upbound.
-func (c *Client) Delete(ctx context.Context, id uuid.UUID) error {
+func (c *Client) Delete(ctx context.Context, id uuid.UUID) error { // nolint:interfacer
 	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, id.String(), nil)
 	if err != nil {
 		return err
