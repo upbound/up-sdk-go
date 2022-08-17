@@ -14,7 +14,10 @@
 
 package tokens
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"github.com/upbound/up-sdk-go/service/common"
+)
 
 // TokenOwnerType is the type of owner of the token.
 type TokenOwnerType string
@@ -37,31 +40,13 @@ const (
 // TokenResponse is the response returned from token operations.
 // TODO(hasheddan): consider making token responses strongly typed.
 type TokenResponse struct {
-	DataSet `json:"data"`
+	common.DataSet `json:"data"`
 }
 
 // TokensResponse is the response returned from token operations.
 // TODO(hasheddan): consider making token responses strongly typed.
 type TokensResponse struct { //nolint:golint
-	DataSet []DataSet `json:"data"`
-}
-
-// RelationshipSet represents set of relationships.
-type RelationshipSet map[string]interface{}
-
-// AttributeSet represents set of attributes.
-type AttributeSet map[string]interface{}
-
-// Meta represents metadata.
-type Meta map[string]interface{}
-
-// DataSet represents a set of data in a token response body.
-type DataSet struct {
-	Type            string    `json:"type"`
-	ID              uuid.UUID `json:"id"`
-	AttributeSet    `json:"attributes"`
-	RelationshipSet `json:"relationships"`
-	Meta            `json:"meta"`
+	DataSet []common.DataSet `json:"data"`
 }
 
 // TokenCreateParameters are the parameters for creating a token.
