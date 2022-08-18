@@ -17,6 +17,7 @@ package organizations
 import (
 	"context"
 	"net/http"
+	"path"
 	"strconv"
 
 	"github.com/upbound/up-sdk-go"
@@ -73,6 +74,22 @@ func (c *Client) List(ctx context.Context) ([]Organization, error) {
 		return nil, err
 	}
 	return orgs, nil
+}
+
+// ListRobots list all robots the user can access in the organization on
+// Upbound.
+// TODO(hasheddan): move this to robots client when API is updated.
+func (c *Client) ListRobots(ctx context.Context, id uint) ([]Robot, error) {
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, path.Join(strconv.FormatUint(uint64(id), 10), "robots"), nil)
+	if err != nil {
+		return nil, err
+	}
+	rs := []Robot{}
+	err = c.Client.Do(req, &rs)
+	if err != nil {
+		return nil, err
+	}
+	return rs, nil
 }
 
 // Delete an organization on Upbound.

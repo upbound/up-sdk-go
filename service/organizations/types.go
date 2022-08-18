@@ -14,6 +14,12 @@
 
 package organizations
 
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
 // Organization is an organization on Upbound.
 type Organization struct {
 	ID                   uint                        `json:"id"`
@@ -22,6 +28,16 @@ type Organization struct {
 	CreatorID            uint                        `json:"creatorId"`
 	Role                 OrganizationPermissionGroup `json:"role"`
 	ReservedEnvironments int                         `json:"reservedEnvironments"`
+}
+
+// Robot is a robot account on Upbound.
+type Robot struct {
+	ID          uuid.UUID   `json:"id"`
+	Name        string      `json:"name"`
+	Description string      `json:"description"`
+	TeamIDs     []uuid.UUID `json:"teamIDs"`
+	TokenIDs    []uuid.UUID `json:"tokenIDs"`
+	CreatedAt   time.Time   `json:"createdAt"`
 }
 
 // OrganizationPermissionGroup is the type of permission a user has in the
