@@ -16,6 +16,8 @@ package robots
 
 import (
 	"context"
+	"net/http"
+	"path"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -25,6 +27,7 @@ import (
 
 	"github.com/upbound/up-sdk-go"
 	"github.com/upbound/up-sdk-go/fake"
+	"github.com/upbound/up-sdk-go/service/tokens"
 )
 
 func TestCreate(t *testing.T) {
@@ -41,7 +44,21 @@ func TestCreate(t *testing.T) {
 			reason: "Failing to construct a request should return an error.",
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodPost {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						if urlPath != "" {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						if _, ok := body.(*robotCreateRequest); !ok {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, errBoom
+					},
 				},
 			},
 			err: errBoom,
@@ -50,8 +67,22 @@ func TestCreate(t *testing.T) {
 			reason: "Failing to execute request should return an error.",
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(errBoom),
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodPost {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						if urlPath != "" {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						if _, ok := body.(*robotCreateRequest); !ok {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(errBoom),
 				},
 			},
 			err: errBoom,
@@ -60,8 +91,22 @@ func TestCreate(t *testing.T) {
 			reason: "A successful request should not return an error.",
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(nil),
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodPost {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						if urlPath != "" {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						if _, ok := body.(*robotCreateRequest); !ok {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(nil),
 				},
 			},
 			want: &RobotResponse{},
@@ -96,7 +141,21 @@ func TestGet(t *testing.T) {
 			reason: "Failing to construct a request should return an error.",
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						if urlPath != uid.String() {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, errBoom
+					},
 				},
 			},
 			id:  uid,
@@ -106,8 +165,22 @@ func TestGet(t *testing.T) {
 			reason: "Failing to execute request should return an error.",
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(errBoom),
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						if urlPath != uid.String() {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(errBoom),
 				},
 			},
 			id:  uid,
@@ -117,8 +190,22 @@ func TestGet(t *testing.T) {
 			reason: "A successful request should not return an error.",
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(nil),
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						if urlPath != uid.String() {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(nil),
 				},
 			},
 			id:   uid,
@@ -139,31 +226,64 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func TestDelete(t *testing.T) {
+func TestListTokens(t *testing.T) {
 	errBoom := errors.New("boom")
+	uid := uuid.MustParse("4654b8b5-c01d-4fbe-8800-22c347c21383")
 
 	cases := map[string]struct {
 		reason string
 		cfg    *up.Config
+		id     uuid.UUID
+		want   *tokens.TokensResponse
 		err    error
 	}{
 		"NewRequestFailed": {
 			reason: "Failing to construct a request should return an error.",
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						if urlPath != path.Join(uid.String(), tokensPath) {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, errBoom
+					},
 				},
 			},
+			id:  uid,
 			err: errBoom,
 		},
 		"DoFailed": {
 			reason: "Failing to execute request should return an error.",
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(errBoom),
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						if urlPath != path.Join(uid.String(), tokensPath) {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(errBoom),
 				},
 			},
+			id:  uid,
 			err: errBoom,
 		},
 		"Successful": {
@@ -174,12 +294,108 @@ func TestDelete(t *testing.T) {
 					MockDo:         fake.NewMockDoFn(nil),
 				},
 			},
+			id:   uid,
+			want: &tokens.TokensResponse{},
 		},
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
 			c := NewClient(tc.cfg)
-			err := c.Delete(context.Background(), uuid.UUID{})
+			res, err := c.ListTokens(context.Background(), tc.id)
+			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
+				t.Errorf("\n%s\nListTokens(...): -want error, +got error:\n%s", tc.reason, diff)
+			}
+			if diff := cmp.Diff(tc.want, res); diff != "" {
+				t.Errorf("\n%s\nListTokens(...): -want, +got:\n%s", tc.reason, diff)
+			}
+		})
+	}
+}
+
+func TestDelete(t *testing.T) {
+	errBoom := errors.New("boom")
+	uid := uuid.MustParse("4654b8b5-c01d-4fbe-8800-22c347c21383")
+
+	cases := map[string]struct {
+		reason string
+		cfg    *up.Config
+		err    error
+	}{
+		"NewRequestFailed": {
+			reason: "Failing to construct a request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodDelete {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						if urlPath != uid.String() {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, errBoom
+					},
+				},
+			},
+			err: errBoom,
+		},
+		"DoFailed": {
+			reason: "Failing to execute request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodDelete {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						if urlPath != uid.String() {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(errBoom),
+				},
+			},
+			err: errBoom,
+		},
+		"Successful": {
+			reason: "A successful request should not return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodDelete {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						if urlPath != uid.String() {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(nil),
+				},
+			},
+		},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			c := NewClient(tc.cfg)
+			err := c.Delete(context.Background(), uid)
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nDelete(...): -want error, +got error:\n%s", tc.reason, diff)
 			}
