@@ -17,14 +17,17 @@ package robots
 import (
 	"context"
 	"net/http"
+	"path"
 
 	"github.com/google/uuid"
 
 	"github.com/upbound/up-sdk-go"
+	"github.com/upbound/up-sdk-go/service/tokens"
 )
 
 const (
-	basePath = "v2/robots"
+	basePath   = "v2/robots"
+	tokensPath = "tokens"
 )
 
 // Client is an robots client.
@@ -61,11 +64,24 @@ func (c *Client) Create(ctx context.Context, params *RobotCreateParameters) (*Ro
 
 // Get gets a robot on Upbound.
 func (c *Client) Get(ctx context.Context, id uuid.UUID) (*RobotResponse, error) { // nolint:interfacer
-	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, id.String(), nil)
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, id.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 	r := &RobotResponse{}
+	if err := c.Client.Do(req, r); err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+// ListTokens lists tokens for a robot on Upbound.
+func (c *Client) ListTokens(ctx context.Context, id uuid.UUID) (*tokens.TokensResponse, error) { // nolint:interfacer
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, path.Join(id.String(), tokensPath), nil)
+	if err != nil {
+		return nil, err
+	}
+	r := &tokens.TokensResponse{}
 	if err := c.Client.Do(req, r); err != nil {
 		return nil, err
 	}
