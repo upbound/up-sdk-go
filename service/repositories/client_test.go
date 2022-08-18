@@ -18,6 +18,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"path"
 	"strconv"
 	"testing"
 
@@ -32,37 +33,98 @@ import (
 
 func TestCreate(t *testing.T) {
 	errBoom := errors.New("boom")
+	testAccount := "testA"
+	testRepo := "testR"
 
+	type args struct {
+		account string
+		name    string
+	}
 	cases := map[string]struct {
 		reason string
+		args   args
 		cfg    *up.Config
 		err    error
 	}{
 		"NewRequestFailed": {
 			reason: "Failing to construct a request should return an error.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+			},
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodPut {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						if body != struct{}{} {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, errBoom
+					},
 				},
 			},
 			err: errBoom,
 		},
 		"DoFailed": {
 			reason: "Failing to execute request should return an error.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+			},
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(errBoom),
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodPut {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						if body != struct{}{} {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(errBoom),
 				},
 			},
 			err: errBoom,
 		},
 		"Successful": {
 			reason: "A successful request should not return an error.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+			},
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(nil),
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodPut {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						if body != struct{}{} {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(nil),
 				},
 			},
 		},
@@ -70,7 +132,7 @@ func TestCreate(t *testing.T) {
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
 			c := NewClient(tc.cfg)
-			err := c.CreateOrUpdate(context.Background(), "upbound", "test")
+			err := c.CreateOrUpdate(context.Background(), tc.args.account, tc.args.name)
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nCreateOrUpdate(...): -want error, +got error:\n%s", tc.reason, diff)
 			}
@@ -80,38 +142,90 @@ func TestCreate(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	errBoom := errors.New("boom")
+	testAccount := "testA"
+	testRepo := "testR"
 
+	type args struct {
+		account string
+		name    string
+	}
 	cases := map[string]struct {
 		reason string
+		args   args
 		cfg    *up.Config
 		want   *RepositoryResponse
 		err    error
 	}{
 		"NewRequestFailed": {
 			reason: "Failing to construct a request should return an error.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+			},
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						return nil, errBoom
+					},
 				},
 			},
 			err: errBoom,
 		},
 		"DoFailed": {
 			reason: "Failing to execute request should return an error.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+			},
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(errBoom),
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(errBoom),
 				},
 			},
 			err: errBoom,
 		},
 		"Successful": {
 			reason: "A successful request should not return an error.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+			},
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(nil),
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(nil),
 				},
 			},
 			want: &RepositoryResponse{},
@@ -120,7 +234,7 @@ func TestGet(t *testing.T) {
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
 			c := NewClient(tc.cfg)
-			res, err := c.Get(context.Background(), "upbound", "test")
+			res, err := c.Get(context.Background(), tc.args.account, tc.args.name)
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nGet(...): -want error, +got error:\n%s", tc.reason, diff)
 			}
@@ -149,9 +263,26 @@ func TestList(t *testing.T) {
 	}{
 		"NewRequestFailed": {
 			reason: "Failing to construct a request should return an error.",
+			args: args{
+				account: testAccount,
+			},
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						if urlPath != testAccount {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, errBoom
+					},
 				},
 			},
 			err: errBoom,
@@ -173,6 +304,9 @@ func TestList(t *testing.T) {
 						}
 						if urlPath != testAccount {
 							t.Errorf("unexpected account: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
 						}
 						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
 						return r, nil
@@ -204,6 +338,9 @@ func TestList(t *testing.T) {
 						if urlPath != testAccount {
 							t.Errorf("unexpected account: %s", urlPath)
 						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
 						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
@@ -234,6 +371,9 @@ func TestList(t *testing.T) {
 						}
 						if urlPath != testAccount {
 							t.Errorf("unexpected account: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
 						}
 						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
 						return r, nil
@@ -269,6 +409,9 @@ func TestList(t *testing.T) {
 						if urlPath != testAccount {
 							t.Errorf("unexpected account: %s", urlPath)
 						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
 						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
@@ -302,37 +445,98 @@ func TestList(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	errBoom := errors.New("boom")
+	testAccount := "testA"
+	testRepo := "testR"
 
+	type args struct {
+		account string
+		name    string
+	}
 	cases := map[string]struct {
 		reason string
+		args   args
 		cfg    *up.Config
 		err    error
 	}{
 		"NewRequestFailed": {
 			reason: "Failing to construct a request should return an error.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+			},
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodDelete {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, errBoom
+					},
 				},
 			},
 			err: errBoom,
 		},
 		"DoFailed": {
 			reason: "Failing to execute request should return an error.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+			},
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(errBoom),
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodDelete {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(errBoom),
 				},
 			},
 			err: errBoom,
 		},
 		"Successful": {
 			reason: "A successful request should not return an error.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+			},
 			cfg: &up.Config{
 				Client: &fake.MockClient{
-					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
-					MockDo:         fake.NewMockDoFn(nil),
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodDelete {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						if body != nil {
+							t.Errorf("unexpected body: %v", body)
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(nil),
 				},
 			},
 		},
@@ -340,7 +544,7 @@ func TestDelete(t *testing.T) {
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
 			c := NewClient(tc.cfg)
-			err := c.Delete(context.Background(), "upbound", "test")
+			err := c.Delete(context.Background(), tc.args.account, tc.args.name)
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nDelete(...): -want error, +got error:\n%s", tc.reason, diff)
 			}
