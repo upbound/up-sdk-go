@@ -368,3 +368,350 @@ func TestDelete(t *testing.T) {
 		})
 	}
 }
+
+func TestRemoveMember(t *testing.T) {
+	errBoom := errors.New("boom")
+
+	cases := map[string]struct {
+		reason string
+		cfg    *up.Config
+		err    error
+	}{
+		"NewRequestFailed": {
+			reason: "Failing to construct a request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+				},
+			},
+			err: errBoom,
+		},
+		"DoFailed": {
+			reason: "Failing to execute request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
+					MockDo:         fake.NewMockDoFn(errBoom),
+				},
+			},
+			err: errBoom,
+		},
+		"Successful": {
+			reason: "A successful request should not return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
+					MockDo:         fake.NewMockDoFn(nil),
+				},
+			},
+		},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			c := NewClient(tc.cfg)
+			err := c.RemoveMember(context.Background(), 99999, 9999)
+			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
+				t.Errorf("\n%s\nRemoveMember(...): -want error, +got error:\n%s", tc.reason, diff)
+			}
+		})
+	}
+}
+
+func TestDeleteInvite(t *testing.T) {
+	errBoom := errors.New("boom")
+
+	cases := map[string]struct {
+		reason string
+		cfg    *up.Config
+		err    error
+	}{
+		"NewRequestFailed": {
+			reason: "Failing to construct a request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+				},
+			},
+			err: errBoom,
+		},
+		"DoFailed": {
+			reason: "Failing to execute request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
+					MockDo:         fake.NewMockDoFn(errBoom),
+				},
+			},
+			err: errBoom,
+		},
+		"Successful": {
+			reason: "A successful request should not return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
+					MockDo:         fake.NewMockDoFn(nil),
+				},
+			},
+		},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			c := NewClient(tc.cfg)
+			err := c.DeleteInvite(context.Background(), 99999, 9999)
+			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
+				t.Errorf("\n%s\nDeleteInvite(...): -want error, +got error:\n%s", tc.reason, diff)
+			}
+		})
+	}
+}
+
+func TestCreateInvite(t *testing.T) {
+	errBoom := errors.New("boom")
+
+	cases := map[string]struct {
+		reason string
+		cfg    *up.Config
+		params *OrganizationInviteCreateParameters
+		err    error
+	}{
+		"NewRequestFailed": {
+			reason: "Failing to construct a request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+				},
+			},
+			err: errBoom,
+		},
+		"DoFailed": {
+			reason: "Failing to execute request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
+					MockDo:         fake.NewMockDoFn(errBoom),
+				},
+			},
+			err: errBoom,
+		},
+		"Successful": {
+			reason: "A successful request should not return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, nil),
+					MockDo:         fake.NewMockDoFn(nil),
+				},
+			},
+		},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			c := NewClient(tc.cfg)
+			err := c.CreateInvite(context.Background(), 9999, tc.params)
+			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
+				t.Errorf("\n%s\nCreateInvite(...): -want error, +got error:\n%s", tc.reason, diff)
+			}
+		})
+	}
+}
+
+func TestListMembers(t *testing.T) {
+	errBoom := errors.New("boom")
+	testURL, _ := url.Parse("https://localhost:8080")
+	var id uint = 999
+	type args struct {
+		org uint
+	}
+	cases := map[string]struct {
+		reason string
+		args   args
+		cfg    *up.Config
+		want   []Member
+		err    error
+	}{
+		"NewRequestFailed": {
+			reason: "Failing to construct a request should return an error.",
+			args: args{
+				org: id,
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+				},
+			},
+			err: errBoom,
+		},
+		"DoFailed": {
+			reason: "Failing to execute request should return an error.",
+			args: args{
+				org: id,
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(strconv.FormatUint(uint64(id), 10), "members") {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						return r, nil
+					},
+					MockDo: func(req *http.Request, _ interface{}) error {
+						if req.URL.Host != testURL.Host {
+							t.Errorf("unexpected host: %s", req.URL.Host)
+						}
+						return errBoom
+					},
+				},
+			},
+			err: errBoom,
+		},
+		"Successful": {
+			reason: "A successful request should not return an error.",
+			args: args{
+				org: id,
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(strconv.FormatUint(uint64(id), 10), "members") {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						return r, nil
+					},
+					MockDo: func(req *http.Request, _ interface{}) error {
+						if req.URL.Host != testURL.Host {
+							t.Errorf("unexpected host: %s", req.URL.Host)
+						}
+						return nil
+					},
+				},
+			},
+			want: []Member{},
+		},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			c := NewClient(tc.cfg)
+			res, err := c.ListMembers(context.Background(), tc.args.org)
+			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
+				t.Errorf("\n%s\nListMembers(...): -want error, +got error:\n%s", tc.reason, diff)
+			}
+			if diff := cmp.Diff(tc.want, res); diff != "" {
+				t.Errorf("\n%s\nListMembers(...): -want, +got:\n%s", tc.reason, diff)
+			}
+		})
+	}
+}
+
+func TestListInvites(t *testing.T) {
+	errBoom := errors.New("boom")
+	testURL, _ := url.Parse("https://localhost:8080")
+	var id uint = 999
+	type args struct {
+		org uint
+	}
+	cases := map[string]struct {
+		reason string
+		args   args
+		cfg    *up.Config
+		want   []Invite
+		err    error
+	}{
+		"NewRequestFailed": {
+			reason: "Failing to construct a request should return an error.",
+			args: args{
+				org: id,
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: fake.NewMockNewRequestFn(nil, errBoom),
+				},
+			},
+			err: errBoom,
+		},
+		"DoFailed": {
+			reason: "Failing to execute request should return an error.",
+			args: args{
+				org: id,
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(strconv.FormatUint(uint64(id), 10), "invites") {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						return r, nil
+					},
+					MockDo: func(req *http.Request, _ interface{}) error {
+						if req.URL.Host != testURL.Host {
+							t.Errorf("unexpected host: %s", req.URL.Host)
+						}
+						return errBoom
+					},
+				},
+			},
+			err: errBoom,
+		},
+		"Successful": {
+			reason: "A successful request should not return an error.",
+			args: args{
+				org: id,
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(strconv.FormatUint(uint64(id), 10), "invites") {
+							t.Errorf("unexpected path: %s", urlPath)
+						}
+						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						return r, nil
+					},
+					MockDo: func(req *http.Request, _ interface{}) error {
+						if req.URL.Host != testURL.Host {
+							t.Errorf("unexpected host: %s", req.URL.Host)
+						}
+						return nil
+					},
+				},
+			},
+			want: []Invite{},
+		},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			c := NewClient(tc.cfg)
+			res, err := c.ListInvites(context.Background(), tc.args.org)
+			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
+				t.Errorf("\n%s\nListInvites(...): -want error, +got error:\n%s", tc.reason, diff)
+			}
+			if diff := cmp.Diff(tc.want, res); diff != "" {
+				t.Errorf("\n%s\nListInvites(...): -want, +got:\n%s", tc.reason, diff)
+			}
+		})
+	}
+}

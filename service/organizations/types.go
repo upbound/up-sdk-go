@@ -56,3 +56,29 @@ type OrganizationCreateParameters struct {
 	Name        string `json:"name"`
 	DisplayName string `json:"displayName"`
 }
+
+// User is a user on Upbound.
+type User struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+}
+
+// Member is a member of an organization.
+type Member struct {
+	Permission OrganizationPermissionGroup `json:"permission"`
+	User       User                        `json:"user"`
+}
+
+// Invite is a pending organization member.
+type Invite struct {
+	ID         uint                        `json:"id"`
+	Email      string                      `json:"email"`
+	Permission OrganizationPermissionGroup `json:"permission"`
+	CreatedAt  string                      `json:"createdAt"`
+}
+
+// OrganizationInviteCreateParameters are the parameters for creating a user invite to an organization.
+type OrganizationInviteCreateParameters struct {
+	Email      string                      `json:"email"`
+	Permission OrganizationPermissionGroup `json:"organizationPermission"`
+}
