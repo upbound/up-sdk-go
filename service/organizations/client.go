@@ -16,6 +16,7 @@ package organizations
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"path"
 	"strconv"
@@ -95,6 +96,62 @@ func (c *Client) ListRobots(ctx context.Context, id uint) ([]Robot, error) {
 // Delete an organization on Upbound.
 func (c *Client) Delete(ctx context.Context, id uint) error {
 	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, strconv.FormatUint(uint64(id), 10), nil)
+	if err != nil {
+		return err
+	}
+	return c.Client.Do(req, nil)
+}
+
+// ListInvites list all invites for the organization on Upbound.
+func (c *Client) ListInvites(ctx context.Context, orgID uint) ([]Invite, error) {
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, fmt.Sprintf("%d/invites", orgID), nil)
+	if err != nil {
+		return nil, err
+	}
+	invites := []Invite{}
+	err = c.Client.Do(req, &invites)
+	if err != nil {
+		return nil, err
+	}
+	return invites, nil
+}
+
+// DeleteInvite deletes an invite for the organization on Upbound.
+func (c *Client) DeleteInvite(ctx context.Context, orgID uint, inviteID uint) error {
+	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, fmt.Sprintf("%d/invites/%d", orgID, inviteID), nil)
+	if err != nil {
+		return err
+	}
+	return c.Client.Do(req, nil)
+}
+
+// CreateInvite creates an invite for the organization on Upbound.
+func (c *Client) CreateInvite(ctx context.Context, orgID uint, params *OrganizationInviteCreateParameters) error {
+	req, err := c.Client.NewRequest(ctx, http.MethodPost, basePath, fmt.Sprintf("%d/invites", orgID), params)
+	if err != nil {
+		return err
+	}
+
+	return c.Client.Do(req, nil)
+}
+
+// ListMembers list all members for the organization on Upbound.
+func (c *Client) ListMembers(ctx context.Context, orgID uint) ([]Member, error) {
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, fmt.Sprintf("%d/members", orgID), nil)
+	if err != nil {
+		return nil, err
+	}
+	members := []Member{}
+	err = c.Client.Do(req, &members)
+	if err != nil {
+		return nil, err
+	}
+	return members, nil
+}
+
+// RemoveMember removes a member for the organization on Upbound.
+func (c *Client) RemoveMember(ctx context.Context, orgID uint, userID uint) error {
+	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, fmt.Sprintf("%d/members/%d", orgID, userID), nil)
 	if err != nil {
 		return err
 	}
