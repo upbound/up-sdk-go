@@ -142,20 +142,25 @@ func (h *DefaultErrorHandler) Handle(res *http.Response) error {
 	if status >= 200 && status < 300 {
 		return nil
 	}
-	var errBody uerrors.ErrorResponse
-	defer res.Body.Close() // nolint:errcheck
-	if err := json.NewDecoder(res.Body).Decode(&errBody); err != nil {
-		errBody = uerrors.ErrorResponse{Title: "could not read error body"}
-	}
+	var rErr uerrors.Error
+	var details *string
 
-	switch status {
-	case http.StatusNotFound:
-		return uerrors.New(errBody, "resource not found", uerrors.ErrorTypeNotFound)
-	case http.StatusForbidden:
-		return uerrors.New(errBody, "forbidden", uerrors.ErrorTypeForbidden)
-	case http.StatusUnauthorized:
-		return uerrors.New(errBody, "permission denied", uerrors.ErrorTypeUnauthorized)
-	default:
-		return uerrors.New(errBody, "unknown error", uerrors.ErrorTypeUnknown)
+	b, err := io.ReadAll(res.Body)
+	// if we can read the body, try to unmarshal it into an error
+	// and if that fails, use the body as the details
+	if err == nil {
+		if err := json.Unmarshal(b, &rErr); err == nil {
+			return &rErr
+		}
+
+		bd := string(b)
+		if bd != "" {
+			details = &bd
+		}
+	}
+	return &uerrors.Error{
+		Status: status,
+		Title:  http.StatusText(status),
+		Detail: details,
 	}
 }

@@ -16,37 +16,20 @@ package errors
 
 import (
 	"fmt"
+	"net/http"
 )
 
 var _ error = &Error{}
 
-// ErrorType indicates the type of error.
-type ErrorType string
-
-// Upbound SDK error types.
-const (
-	ErrorTypeForbidden    ErrorType = "Forbidden"
-	ErrorTypeNotFound     ErrorType = "NotFound"
-	ErrorTypeUnauthorized ErrorType = "Unauthorized"
-	ErrorTypeUnknown      ErrorType = "Unknown"
-)
-
-// Error is an Upbound SDK error.
+// Error is an Upbound SDK error response.
 type Error struct {
-	Response ErrorResponse
-	Type     ErrorType
-	Message  string
-}
-
-// ErrorResponse is an Upbound SDK error response.
-type ErrorResponse struct {
 	Status int     `json:"status"`
 	Title  string  `json:"title"`
 	Detail *string `json:"detail,omitempty"`
 }
 
 // Error returns the error message with the underlying error.
-func (e *ErrorResponse) Error() string {
+func (e *Error) Error() string {
 	detail := ""
 	if e.Detail != nil {
 		detail = fmt.Sprintf(": %s", *e.Detail)
@@ -54,24 +37,10 @@ func (e *ErrorResponse) Error() string {
 	return fmt.Sprintf("%s%s", e.Title, detail)
 }
 
-// Error returns the error message with the underlying error.
-func (e *Error) Error() string {
-	return fmt.Sprintf("%s: %s", e.Message, e.Response.Error())
-}
-
 // IsNotFound returns true if the error type is ErrorTypeNotFound, and false
 // otherwise.
 func (e *Error) IsNotFound() bool {
-	return e.Type == ErrorTypeNotFound
-}
-
-// New constructs a new Upbound SDK error.
-func New(err ErrorResponse, msg string, errType ErrorType) *Error {
-	return &Error{
-		Response: err,
-		Type:     errType,
-		Message:  msg,
-	}
+	return e.Status == http.StatusNotFound
 }
 
 // IsNotFound returns true if the error is an Upbound SDK NotFound error, and

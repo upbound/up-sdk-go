@@ -15,6 +15,7 @@
 package errors
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -29,15 +30,13 @@ func TestIsNotFound(t *testing.T) {
 	}{
 		"TestNotErrIsNotFound": {
 			reason: "Error with type other than ErrorTypeNotFound should return false.",
-			err: &Error{
-				Type: ErrorTypeUnknown,
-			},
-			want: false,
+			err:    &Error{Status: http.StatusInternalServerError, Title: http.StatusText(http.StatusInternalServerError)},
+			want:   false,
 		},
 		"TestIsErrIsNotFound": {
 			reason: "Error with type ErrorTypeNotFound should return true.",
 			err: &Error{
-				Type: ErrorTypeNotFound,
+				Status: http.StatusNotFound,
 			},
 			want: true,
 		},
