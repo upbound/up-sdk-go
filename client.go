@@ -24,8 +24,6 @@ import (
 	"path"
 	"time"
 
-	"github.com/pkg/errors"
-
 	uerrors "github.com/upbound/up-sdk-go/errors"
 )
 
@@ -144,19 +142,20 @@ func (h *DefaultErrorHandler) Handle(res *http.Response) error {
 	if status >= 200 && status < 300 {
 		return nil
 	}
-	errBody := "could not read error body"
-	b, err := io.ReadAll(res.Body)
-	if err == nil {
-		errBody = string(b)
+	var errBody uerrors.ErrorResponse
+	defer res.Body.Close() // nolint:errcheck
+	if err := json.NewDecoder(res.Body).Decode(&errBody); err != nil {
+		errBody = uerrors.ErrorResponse{Title: "could not read error body"}
 	}
+
 	switch status {
 	case http.StatusNotFound:
-		return uerrors.New(errors.New(errBody), "resource not found", uerrors.ErrorTypeNotFound)
+		return uerrors.New(errBody, "resource not found", uerrors.ErrorTypeNotFound)
 	case http.StatusForbidden:
-		return uerrors.New(errors.New(errBody), "forbidden", uerrors.ErrorTypeForbidden)
+		return uerrors.New(errBody, "forbidden", uerrors.ErrorTypeForbidden)
 	case http.StatusUnauthorized:
-		return uerrors.New(errors.New(errBody), "permission denied", uerrors.ErrorTypeUnauthorized)
+		return uerrors.New(errBody, "permission denied", uerrors.ErrorTypeUnauthorized)
 	default:
-		return uerrors.New(errors.New(errBody), "unknown error", uerrors.ErrorTypeUnknown)
+		return uerrors.New(errBody, "unknown error", uerrors.ErrorTypeUnknown)
 	}
 }

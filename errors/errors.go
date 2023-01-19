@@ -33,14 +33,30 @@ const (
 
 // Error is an Upbound SDK error.
 type Error struct {
-	Err     error
-	Type    ErrorType
-	Message string
+	Response ErrorResponse
+	Type     ErrorType
+	Message  string
+}
+
+// ErrorResponse is an Upbound SDK error response.
+type ErrorResponse struct {
+	Status int     `json:"status"`
+	Title  string  `json:"title"`
+	Detail *string `json:"detail,omitempty"`
+}
+
+// Error returns the error message with the underlying error.
+func (e *ErrorResponse) Error() string {
+	detail := ""
+	if e.Detail != nil {
+		detail = fmt.Sprintf(": %s", *e.Detail)
+	}
+	return fmt.Sprintf("%s%s", e.Title, detail)
 }
 
 // Error returns the error message with the underlying error.
 func (e *Error) Error() string {
-	return fmt.Sprintf("%s: %s", e.Message, e.Err.Error())
+	return fmt.Sprintf("%s: %s", e.Message, e.Response.Error())
 }
 
 // IsNotFound returns true if the error type is ErrorTypeNotFound, and false
@@ -50,11 +66,11 @@ func (e *Error) IsNotFound() bool {
 }
 
 // New constructs a new Upbound SDK error.
-func New(err error, msg string, errType ErrorType) *Error {
+func New(err ErrorResponse, msg string, errType ErrorType) *Error {
 	return &Error{
-		Err:     err,
-		Type:    errType,
-		Message: msg,
+		Response: err,
+		Type:     errType,
+		Message:  msg,
 	}
 }
 
