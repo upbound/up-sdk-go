@@ -24,8 +24,6 @@ import (
 	"path"
 	"time"
 
-	"github.com/pkg/errors"
-
 	uerrors "github.com/upbound/up-sdk-go/errors"
 )
 
@@ -144,19 +142,25 @@ func (h *DefaultErrorHandler) Handle(res *http.Response) error {
 	if status >= 200 && status < 300 {
 		return nil
 	}
-	errBody := "could not read error body"
+	var rErr uerrors.Error
+	var details *string
+
 	b, err := io.ReadAll(res.Body)
+	// if we can read the body, try to unmarshal it into an error
+	// and if that fails, use the body as the details
 	if err == nil {
-		errBody = string(b)
+		if err := json.Unmarshal(b, &rErr); err == nil {
+			return &rErr
+		}
+
+		bd := string(b)
+		if bd != "" {
+			details = &bd
+		}
 	}
-	switch status {
-	case http.StatusNotFound:
-		return uerrors.New(errors.New(errBody), "resource not found", uerrors.ErrorTypeNotFound)
-	case http.StatusForbidden:
-		return uerrors.New(errors.New(errBody), "forbidden", uerrors.ErrorTypeForbidden)
-	case http.StatusUnauthorized:
-		return uerrors.New(errors.New(errBody), "permission denied", uerrors.ErrorTypeUnauthorized)
-	default:
-		return uerrors.New(errors.New(errBody), "unknown error", uerrors.ErrorTypeUnknown)
+	return &uerrors.Error{
+		Status: status,
+		Title:  http.StatusText(status),
+		Detail: details,
 	}
 }
