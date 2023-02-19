@@ -7,7 +7,11 @@ development and subject to breaking changes.
 
 The following services are currently supported:
 - Accounts
+- Configurations
 - Control Planes
+- Organizations
+- Repositories
+- Robots
 - Tokens
 
 ## Authentication
