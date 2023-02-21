@@ -20,7 +20,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// ConfigurationResponse represents the concept of a Configuration Upbound.
+// ConfigurationResponse represents the concept of a Configuration on Upbound.
 // It is used to configure a Managed Control Plane with a set of API types
 // and optional extensions.
 type ConfigurationResponse struct {
