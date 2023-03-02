@@ -33,14 +33,15 @@ const (
 
 // ControlPlane describes a control plane.
 type ControlPlane struct {
-	ID          uuid.UUID  `json:"id,omitempty"`
-	Name        string     `json:"name,omitempty"`
-	Description string     `json:"description,omitempty"`
-	CreatorID   uint       `json:"creatorId,omitempty"`
-	Reserved    bool       `json:"reserved"`
-	CreatedAt   *time.Time `json:"createdAt,omitempty"`
-	UpdatedAt   *time.Time `json:"updatedAt,omitempty"`
-	ExpiresAt   time.Time  `json:"expiresAt"`
+	ID            uuid.UUID                 `json:"id,omitempty"`
+	Name          string                    `json:"name,omitempty"`
+	Description   string                    `json:"description,omitempty"`
+	CreatorID     uint                      `json:"creatorId,omitempty"`
+	Reserved      bool                      `json:"reserved"`
+	CreatedAt     *time.Time                `json:"createdAt,omitempty"`
+	UpdatedAt     *time.Time                `json:"updatedAt,omitempty"`
+	ExpiresAt     time.Time                 `json:"expiresAt"`
+	Configuration ControlPlaneConfiguration `json:"configuration"`
 }
 
 // PermissionGroup describes control plane permissions for the authenticated
@@ -77,6 +78,35 @@ type ControlPlaneListResponse struct {
 
 // ControlPlaneCreateParameters are the parameters for creating a control plane.
 type ControlPlaneCreateParameters struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	ConfigurationID uuid.UUID `json:"configurationId"`
+	Name            string    `json:"name"`
+	Description     string    `json:"description"`
+}
+
+// ConfigurationStatus represents the different states of a Configuration relative to a Managed Control Plane.
+type ConfigurationStatus string
+
+const (
+	// ConfigurationInstallationQueued means queued to begin installation in a Managed Control Plane
+	ConfigurationInstallationQueued ConfigurationStatus = "installationQueued"
+	// ConfigurationUpgradeQueued means queued to upgrade to a specified version in a Managed Control Plane
+	ConfigurationUpgradeQueued ConfigurationStatus = "upgradeQueued"
+	// ConfigurationInstalling means currently installing into the Managed Control Plane
+	ConfigurationInstalling ConfigurationStatus = "installing"
+	// ConfigurationReady means ready for use in the Managed Control Plane
+	ConfigurationReady ConfigurationStatus = "ready"
+	// ConfigurationUpgrading means currently upgrading to a specified version in the Managed Control Plane
+	ConfigurationUpgrading ConfigurationStatus = "upgrading"
+)
+
+// ControlPlaneConfiguration represents an instance of a Configuration associated with a
+// Managed Control Plane on Upbound.
+type ControlPlaneConfiguration struct {
+	ID             uuid.UUID           `json:"id"`
+	Name           *string             `json:"name"`
+	CurrentVersion *string             `json:"currentVersion"`
+	DesiredVersion *string             `json:"desiredVersion"`
+	Status         ConfigurationStatus `json:"status"`
+	SyncedAt       *time.Time          `json:"syncedAt,omitempty"`
+	DeployedAt     *time.Time          `json:"deployedAt,omitempty"`
 }

@@ -80,3 +80,15 @@ func (c *Client) Create(ctx context.Context, account string, params *Configurati
 	}
 	return configuration, nil
 }
+
+// Delete a configuration on an Upbound account by name.
+// This operation can potentially orphan Managed Control Planes that have deployed
+// the configuration, as they can no longer update them. The API will return an
+// HTTP 403 status code in this case indicating that the configuration is still in use.
+func (c *Client) Delete(ctx context.Context, account, name string) error {
+	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, fmt.Sprintf("%s/%s", account, name), nil)
+	if err != nil {
+		return err
+	}
+	return c.Client.Do(req, nil)
+}
