@@ -65,11 +65,12 @@ func (c *Client) Login(ctx context.Context) (LoginResponse, error) {
 		return loginResponse, err
 	}
 
-	response, _, err := hc.DoRaw(req) //nolint:bodyclose
+	response, err := hc.HTTP.Do(req)
 	hc.HTTP.CheckRedirect = oldRedirect
 	if err != nil {
 		return loginResponse, err
 	}
+	defer response.Body.Close() // nolint:errcheck
 	loginResponse.StatusCode = response.StatusCode
 	loginResponse.RedirectURL, err = url.Parse(response.Header.Get("location"))
 	return loginResponse, err
