@@ -39,8 +39,8 @@ func NewClient(cfg *up.Config) *Client {
 }
 
 // Login does a gitsources login.
-func (c *Client) Login(ctx context.Context) (GitsourcesLoginResponse, error) {
-	var loginResponse GitsourcesLoginResponse
+func (c *Client) Login(ctx context.Context) (LoginResponse, error) {
+	var loginResponse LoginResponse
 
 	// We have to use the HTTPClient because unlike other Upbound APIs,
 	// the body will be HTML. We need to extract the data we need from
@@ -65,12 +65,12 @@ func (c *Client) Login(ctx context.Context) (GitsourcesLoginResponse, error) {
 		return loginResponse, err
 	}
 
-	response, _, err := hc.DoRaw(req)
+	response, _, err := hc.DoRaw(req) //nolint:bodyclose
 	hc.HTTP.CheckRedirect = oldRedirect
 	if err != nil {
 		return loginResponse, err
 	}
 	loginResponse.StatusCode = response.StatusCode
-	loginResponse.RedirectUrl, err = url.Parse(response.Header.Get("location"))
+	loginResponse.RedirectURL, err = url.Parse(response.Header.Get("location"))
 	return loginResponse, err
 }

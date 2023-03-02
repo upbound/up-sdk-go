@@ -126,7 +126,7 @@ func (c *HTTPClient) Do(req *http.Request, obj interface{}) error {
 	return nil
 }
 
-// Do performs an HTTP request and returns the full response.
+// DoRaw performs an HTTP request and returns the full response.
 // This is useful for clients that need to read headers and/or the
 // HTTP status code.
 func (c *HTTPClient) DoRaw(req *http.Request) (*http.Response, string, error) {

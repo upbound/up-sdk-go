@@ -20,6 +20,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// Provider is the type of Git provider, such as "github"
 type Provider string
 
 // Tokens can be owned by a user, control plane, or robot.

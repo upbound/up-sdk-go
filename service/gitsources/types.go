@@ -18,8 +18,8 @@ import (
 	"net/url"
 )
 
-// GitsourcesLoginResponse represents the information we get when we do a gitsources login.
-type GitsourcesLoginResponse struct {
-	RedirectUrl *url.URL
+// LoginResponse represents the information we get when we do a gitsources login.
+type LoginResponse struct {
+	RedirectURL *url.URL
 	StatusCode  int
 }
