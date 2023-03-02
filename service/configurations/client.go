@@ -67,7 +67,7 @@ func (c *Client) Get(ctx context.Context, account, name string) (*ConfigurationR
 // Create a configuration on Upbound
 // Note that when using GitHub, this will make a new repo, and that requires
 // the GitHub app to be authorized and installed. That's a separate API, which
-// begins with the gitsources login. The full login is implemented in the CLI.
+// begins with the gitsources login. The full login is implemented in the CLI (https://github.com/upbound/up).
 func (c *Client) Create(ctx context.Context, account string, params *ConfigurationCreateParameters) (*ConfigurationResponse, error) {
 	req, err := c.Client.NewRequest(ctx, http.MethodPost, basePath, account, params)
 	if err != nil {
