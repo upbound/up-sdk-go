@@ -15,8 +15,9 @@
 package controlplanes
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/google/uuid"
 
 	"github.com/upbound/up-sdk-go/service/common"
 )
@@ -30,7 +31,7 @@ const (
 type ControlPlaneListOption common.ListOption
 
 // WithConfiguration sets the configurationId to filter the list response.
-func WithConfiguration(id fmt.Stringer) ControlPlaneListOption {
+func WithConfiguration(id uuid.UUID) ControlPlaneListOption { // nolint:interfacer
 	return func(r *http.Request) {
 		q := r.URL.Query()
 		q.Add(ConfigurationIDParam, id.String())
