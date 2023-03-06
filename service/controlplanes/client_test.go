@@ -23,6 +23,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
 	"github.com/upbound/up-sdk-go"
@@ -285,6 +286,40 @@ func TestList(t *testing.T) {
 						}
 						if req.URL.Query().Get(common.PageParam) != strconv.FormatInt(50, 10) {
 							t.Errorf("unexpected page: %s", req.URL.Query().Get(common.PageParam))
+						}
+						return nil
+					},
+				},
+			},
+			want: &ControlPlaneListResponse{},
+		},
+		"SuccessfulWithConfiguration": {
+			reason: "A successful request with a Configuration filter should not return an error.",
+			args: args{
+				account: testAccount,
+				opts:    []common.ListOption{common.ListOption(WithConfiguration(uuid.Nil))},
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != testAccount {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						return r, nil
+					},
+					MockDo: func(req *http.Request, _ interface{}) error {
+						if req.URL.Host != testURL.Host {
+							t.Errorf("unexpected host: %s", req.URL.Host)
+						}
+						if req.URL.Query().Get(ConfigurationIDParam) != uuid.Nil.String() {
+							t.Errorf("unexpected configurationId: %s", req.URL.Query().Get(ConfigurationIDParam))
 						}
 						return nil
 					},
