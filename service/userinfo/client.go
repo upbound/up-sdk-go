@@ -38,12 +38,12 @@ func NewClient(cfg *up.Config) *Client {
 }
 
 // Get gets user information on Upbound.
-func (c *Client) Get(ctx context.Context) (*Response, error) { // nolint:interfacer
+func (c *Client) Get(ctx context.Context) (*GetResponse, error) { // nolint:interfacer
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, "", nil)
 	if err != nil {
 		return nil, err
 	}
-	r := &Response{}
+	r := &GetResponse{}
 	if err := c.Client.Do(req, r); err != nil {
 		return nil, err
 	}

@@ -16,8 +16,8 @@ package userinfo
 
 import "time"
 
-// Response is information about a user on Upbound.
-type Response struct {
+// GetResponse is information about a user on Upbound.
+type GetResponse struct {
 	Features []string `json:"features"`
 	User     User     `json:"user"`
 }
