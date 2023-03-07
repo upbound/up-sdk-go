@@ -17,6 +17,7 @@ package gitsources
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 
@@ -26,6 +27,7 @@ import (
 const (
 	basePath  = "v1/gitSources"
 	loginPath = "github/client/login"
+	portParam = "cli"
 )
 
 // Client is a gitsources client.
@@ -39,7 +41,7 @@ func NewClient(cfg *up.Config) *Client {
 }
 
 // Login does a gitsources login.
-func (c *Client) Login(ctx context.Context) (LoginResponse, error) {
+func (c *Client) Login(ctx context.Context, port int) (LoginResponse, error) {
 	var loginResponse LoginResponse
 
 	// We have to use the HTTPClient because unlike other Upbound APIs,
@@ -60,7 +62,11 @@ func (c *Client) Login(ctx context.Context) (LoginResponse, error) {
 		return http.ErrUseLastResponse
 	}
 
-	req, err := hc.NewRequest(ctx, http.MethodGet, basePath, loginPath, nil)
+	path := loginPath
+	if port != 0 {
+		path += fmt.Sprintf("?%s=%d", portParam, port)
+	}
+	req, err := hc.NewRequest(ctx, http.MethodGet, basePath, path, nil)
 	if err != nil {
 		return loginResponse, err
 	}
