@@ -59,3 +59,17 @@ type ConfigurationCreateParameters struct {
 	Repo       string   `json:"repo"`       // Name of the repo. Usually the same as the configuration name
 	TemplateID string   `json:"templateId"` // Name of the template we clone. There is no API for this today.
 }
+
+// ConfigurationTemplateReponse is a single configuration template
+// The ID of the template is the TemplateId for the ConfigurationCreateParameters
+type ConfigurationTemplateReponse struct {
+	ID       string `json:"id"`
+	ImageURI string `json:"imageUri"`
+	Name     string `json:"name"`
+	Repo     string `json:"repo"`
+}
+
+// ConfigurationTemplateListResponse is a list of configuration templates
+type ConfigurationTemplateListResponse struct {
+	Templates []ConfigurationTemplateReponse `json:"templates"`
+}
