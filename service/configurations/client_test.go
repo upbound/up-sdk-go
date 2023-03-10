@@ -72,7 +72,7 @@ func TestList(t *testing.T) {
 						if urlPath != account {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -102,7 +102,7 @@ func TestList(t *testing.T) {
 						if urlPath != account {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -178,7 +178,7 @@ func TestGet(t *testing.T) {
 						if urlPath != path.Join(account, name) {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -209,7 +209,7 @@ func TestGet(t *testing.T) {
 						if urlPath != path.Join(account, name) {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -351,6 +351,79 @@ func TestDelete(t *testing.T) {
 			err := c.Delete(context.Background(), tc.args.account, tc.args.name)
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nDelete(...): -want error, +got error:\n%s", tc.reason, diff)
+			}
+		})
+	}
+}
+
+func TestListTemplates(t *testing.T) {
+	errBoom := errors.New("boom")
+	testURL, _ := url.Parse("https://localhost:8080")
+	testCases := map[string]struct {
+		reason string
+		cfg    *up.Config
+		want   *ConfigurationTemplateListResponse
+		err    error
+	}{
+		"DoFailed": {
+			reason: "Failing to execute request should return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != templatesBasePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
+						return r, nil
+					},
+					MockDo: func(req *http.Request, _ interface{}) error {
+						if req.URL.Host != testURL.Host {
+							t.Errorf("unexpected host: %s", req.URL.Host)
+						}
+						return errBoom
+					},
+				},
+			},
+			err: errBoom,
+		},
+		"Successful": {
+			reason: "A successful request should not return an error.",
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodGet {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != templatesBasePath {
+							t.Errorf("unexpected prefix: %s", prefix)
+						}
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
+						return r, nil
+					},
+					MockDo: func(req *http.Request, _ interface{}) error {
+						if req.URL.Host != testURL.Host {
+							t.Errorf("unexpected host: %s", req.URL.Host)
+						}
+						return nil
+					},
+				},
+			},
+			want: &ConfigurationTemplateListResponse{},
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			c := NewClient(tc.cfg)
+			res, err := c.ListTemplates(context.Background())
+			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
+				t.Errorf("\n%s\nListTemplates(...): -want error, +got error:\n%s", tc.reason, diff)
+			}
+			if diff := cmp.Diff(tc.want, res); diff != "" {
+				t.Errorf("\n%s\nListTemplates(...): -want, +got:\n%s", tc.reason, diff)
 			}
 		})
 	}

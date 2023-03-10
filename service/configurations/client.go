@@ -23,7 +23,8 @@ import (
 )
 
 const (
-	basePath = "v1/configurations"
+	basePath          = "v1/configurations"
+	templatesBasePath = "v1/configurationTemplates"
 )
 
 // Client is a configurations client.
@@ -91,4 +92,18 @@ func (c *Client) Delete(ctx context.Context, account, name string) error {
 		return err
 	}
 	return c.Client.Do(req, nil)
+}
+
+// ListTemplates all configuration Templates that can be used to make a configuration
+func (c *Client) ListTemplates(ctx context.Context) (*ConfigurationTemplateListResponse, error) {
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, templatesBasePath, "", nil)
+	if err != nil {
+		return nil, err
+	}
+	templates := &ConfigurationTemplateListResponse{}
+	err = c.Client.Do(req, &templates)
+	if err != nil {
+		return nil, err
+	}
+	return templates, nil
 }
