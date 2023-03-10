@@ -72,7 +72,7 @@ func TestList(t *testing.T) {
 						if urlPath != account {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -102,7 +102,7 @@ func TestList(t *testing.T) {
 						if urlPath != account {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -178,7 +178,7 @@ func TestGet(t *testing.T) {
 						if urlPath != path.Join(account, name) {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -209,7 +209,7 @@ func TestGet(t *testing.T) {
 						if urlPath != path.Join(account, name) {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -376,7 +376,7 @@ func TestListTemplates(t *testing.T) {
 						if prefix != templatesBasePath {
 							t.Errorf("unexpected prefix: %s", prefix)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -400,7 +400,7 @@ func TestListTemplates(t *testing.T) {
 						if prefix != templatesBasePath {
 							t.Errorf("unexpected prefix: %s", prefix)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
