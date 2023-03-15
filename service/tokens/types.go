@@ -103,7 +103,7 @@ type TokenOwner struct {
 // TokenOwnerData describes a token owner.
 type TokenOwnerData struct {
 	Type TokenOwnerType `json:"type"`
-	ID   uuid.UUID      `json:"id"`
+	ID   string         `json:"id"`
 }
 
 // TokenAttributes represents attributes of a token.
