@@ -16,6 +16,7 @@ package organizations
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"path"
@@ -25,7 +26,8 @@ import (
 )
 
 const (
-	basePath = "v1/organizations"
+	basePath       = "v1/organizations"
+	errOrgNotFound = "could not find an organization with given name"
 )
 
 // Client is an organizations client.
@@ -61,6 +63,22 @@ func (c *Client) Get(ctx context.Context, id uint) (*Organization, error) {
 		return nil, err
 	}
 	return org, nil
+}
+
+// GetOrgID returns the ID of an org given its name.
+// There is a requirement that orgs are uniquely named, so we know
+// there is at most one org with the given name.
+func (c *Client) GetOrgID(ctx context.Context, name string) (uint, error) {
+	orgs, err := c.List(ctx)
+	if err != nil {
+		return 0, err
+	}
+	for _, o := range orgs {
+		if o.Name == name {
+			return o.ID, nil
+		}
+	}
+	return 0, errors.New(errOrgNotFound)
 }
 
 // List all organizations for the authenticated user on Upbound.
