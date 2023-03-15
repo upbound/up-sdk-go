@@ -149,7 +149,7 @@ func (h *DefaultErrorHandler) Handle(res *http.Response) error {
 	// if we can read the body, try to unmarshal it into an error
 	// and if that fails, use the body as the details
 	if err == nil {
-		if err := json.Unmarshal(b, &rErr); err == nil {
+		if err := json.Unmarshal(b, &rErr); err == nil && rErr.Status != 0 {
 			return &rErr
 		}
 
