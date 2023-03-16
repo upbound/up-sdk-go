@@ -308,7 +308,7 @@ func TestList(t *testing.T) {
 						if body != nil {
 							t.Errorf("unexpected body: %v", body)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -341,7 +341,7 @@ func TestList(t *testing.T) {
 						if body != nil {
 							t.Errorf("unexpected body: %v", body)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -375,7 +375,7 @@ func TestList(t *testing.T) {
 						if body != nil {
 							t.Errorf("unexpected body: %v", body)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -412,7 +412,7 @@ func TestList(t *testing.T) {
 						if body != nil {
 							t.Errorf("unexpected body: %v", body)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
