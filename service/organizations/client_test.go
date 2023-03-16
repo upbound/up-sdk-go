@@ -165,7 +165,7 @@ func TestList(t *testing.T) {
 						if urlPath != "" {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -192,7 +192,7 @@ func TestList(t *testing.T) {
 						if urlPath != "" {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -263,7 +263,7 @@ func TestListRobots(t *testing.T) {
 						if urlPath != path.Join(strconv.FormatUint(uint64(id), 10), "robots") {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -293,7 +293,7 @@ func TestListRobots(t *testing.T) {
 						if urlPath != path.Join(strconv.FormatUint(uint64(id), 10), "robots") {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -557,7 +557,7 @@ func TestListMembers(t *testing.T) {
 						if urlPath != path.Join(strconv.FormatUint(uint64(id), 10), "members") {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -587,7 +587,7 @@ func TestListMembers(t *testing.T) {
 						if urlPath != path.Join(strconv.FormatUint(uint64(id), 10), "members") {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -658,7 +658,7 @@ func TestListInvites(t *testing.T) {
 						if urlPath != path.Join(strconv.FormatUint(uint64(id), 10), "invites") {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
@@ -688,7 +688,7 @@ func TestListInvites(t *testing.T) {
 						if urlPath != path.Join(strconv.FormatUint(uint64(id), 10), "invites") {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
-						r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, testURL.String(), nil)
+						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
 						return r, nil
 					},
 					MockDo: func(req *http.Request, _ interface{}) error {
