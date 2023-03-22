@@ -58,6 +58,7 @@ type ConfigurationCreateParameters struct {
 	Provider   Provider `json:"provider"`   // See Provider above
 	Repo       string   `json:"repo"`       // Name of the repo. Usually the same as the configuration name
 	TemplateID string   `json:"templateId"` // Name of the template we clone. There is no API for this today.
+	Private    bool     `json:"private"`    // True if the Github repo should be private
 }
 
 // ConfigurationTemplateReponse is a single configuration template
