@@ -59,8 +59,10 @@ type OrganizationCreateParameters struct {
 
 // User is a user on Upbound.
 type User struct {
-	ID   uint   `json:"id"`
-	Name string `json:"name"`
+	ID       uint   `json:"id"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
 }
 
 // Member is a member of an organization.
