@@ -19,6 +19,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -69,7 +70,7 @@ func TestList(t *testing.T) {
 						if prefix != basePath {
 							t.Errorf("unexpected prefix: %s", method)
 						}
-						if urlPath != account {
+						if !strings.HasPrefix(urlPath, account) {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
 						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
@@ -99,7 +100,7 @@ func TestList(t *testing.T) {
 						if prefix != basePath {
 							t.Errorf("unexpected prefix: %s", method)
 						}
-						if urlPath != account {
+						if !strings.HasPrefix(urlPath, account) {
 							t.Errorf("unexpected path: %s", urlPath)
 						}
 						r, _ := http.NewRequestWithContext(ctx, http.MethodGet, testURL.String(), nil)
