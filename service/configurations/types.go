@@ -49,6 +49,9 @@ type ConfigurationResponse struct {
 // ConfigurationListResponse is a list of all configurations belonging to the account.
 type ConfigurationListResponse struct {
 	Configurations []ConfigurationResponse `json:"configurations"`
+	Count          int                     `json:"count"`
+	Page           int                     `json:"page"`
+	Size           int                     `json:"size"`
 }
 
 // ConfigurationCreateParameters are the parameters for creating a control plane.

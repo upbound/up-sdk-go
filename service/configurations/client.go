@@ -39,7 +39,27 @@ func NewClient(cfg *up.Config) *Client {
 
 // List all configurations for an account on Upbound.
 func (c *Client) List(ctx context.Context, account string) (*ConfigurationListResponse, error) {
-	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, account, nil)
+	// Call listOnePage repeatedly to get all configurations.
+	configurations := &ConfigurationListResponse{}
+	page := 0
+	for {
+		configs, err := c.listOnePage(ctx, account, page)
+		if err != nil {
+			return nil, err
+		}
+		configurations.Configurations = append(configurations.Configurations, configs.Configurations...)
+		configurations.Count += configs.Count
+		if configs.Count == 0 || configs.Count < configs.Size {
+			break
+		}
+		page++
+	}
+	return configurations, nil
+}
+
+// listOnePage gets one page of configuration.
+func (c *Client) listOnePage(ctx context.Context, account string, page int) (*ConfigurationListResponse, error) {
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, fmt.Sprintf("%s?page=%d", account, page), nil)
 	if err != nil {
 		return nil, err
 	}
