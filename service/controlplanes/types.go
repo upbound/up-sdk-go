@@ -41,7 +41,7 @@ type ControlPlane struct {
 	CreatedAt     *time.Time                `json:"createdAt,omitempty"`
 	UpdatedAt     *time.Time                `json:"updatedAt,omitempty"`
 	ExpiresAt     time.Time                 `json:"expiresAt"`
-	Configuration ControlPlaneConfiguration `json:"configuration"`
+	Configuration ControlPlaneConfiguration `json:"configuration,omitempty"`
 }
 
 // PermissionGroup describes control plane permissions for the authenticated
