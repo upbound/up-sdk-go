@@ -33,15 +33,15 @@ const (
 
 // ControlPlane describes a control plane.
 type ControlPlane struct {
-	ID            uuid.UUID                 `json:"id,omitempty"`
-	Name          string                    `json:"name,omitempty"`
-	Description   string                    `json:"description,omitempty"`
-	CreatorID     uint                      `json:"creatorId,omitempty"`
-	Reserved      bool                      `json:"reserved"`
-	CreatedAt     *time.Time                `json:"createdAt,omitempty"`
-	UpdatedAt     *time.Time                `json:"updatedAt,omitempty"`
-	ExpiresAt     time.Time                 `json:"expiresAt"`
-	Configuration ControlPlaneConfiguration `json:"configuration,omitempty"`
+	ID            uuid.UUID                  `json:"id,omitempty"`
+	Name          string                     `json:"name,omitempty"`
+	Description   string                     `json:"description,omitempty"`
+	CreatorID     uint                       `json:"creatorId,omitempty"`
+	Reserved      bool                       `json:"reserved"`
+	CreatedAt     *time.Time                 `json:"createdAt,omitempty"`
+	UpdatedAt     *time.Time                 `json:"updatedAt,omitempty"`
+	ExpiresAt     time.Time                  `json:"expiresAt"`
+	Configuration *ControlPlaneConfiguration `json:"configuration,omitempty"`
 }
 
 // PermissionGroup describes control plane permissions for the authenticated
@@ -78,9 +78,9 @@ type ControlPlaneListResponse struct {
 
 // ControlPlaneCreateParameters are the parameters for creating a control plane.
 type ControlPlaneCreateParameters struct {
-	ConfigurationID uuid.UUID `json:"configurationId"`
-	Name            string    `json:"name"`
-	Description     string    `json:"description"`
+	ConfigurationID *uuid.UUID `json:"configurationId,omitempty"`
+	Name            string     `json:"name"`
+	Description     string     `json:"description"`
 }
 
 // ConfigurationStatus represents the different states of a Configuration relative to a Managed Control Plane.
