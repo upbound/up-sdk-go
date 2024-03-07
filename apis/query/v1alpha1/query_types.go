@@ -284,51 +284,6 @@ type Query struct {
 	Response *QueryResponse `json:"response,omitempty"`
 }
 
-// GetSpec returns the spec of the query.
-func (q *SpaceQuery) GetSpec() *QuerySpec {
-	return q.Spec
-}
-
-// SetSpec sets the spec of the query.
-func (q *SpaceQuery) SetSpec(spec *QuerySpec) {
-	q.Spec = spec
-}
-
-// SetResponse sets the response of the query.
-func (q *SpaceQuery) SetResponse(response *QueryResponse) {
-	q.Response = response
-}
-
-// GetSpec returns the spec of the query.
-func (q *GroupQuery) GetSpec() *QuerySpec {
-	return q.Spec
-}
-
-// SetSpec sets the spec of the query.
-func (q *GroupQuery) SetSpec(spec *QuerySpec) {
-	q.Spec = spec
-}
-
-// SetResponse sets the response of the query.
-func (q *GroupQuery) SetResponse(response *QueryResponse) {
-	q.Response = response
-}
-
-// GetSpec returns the spec of the query.
-func (q *Query) GetSpec() *QuerySpec {
-	return q.Spec
-}
-
-// SetSpec sets the spec of the query.
-func (q *Query) SetSpec(spec *QuerySpec) {
-	q.Spec = spec
-}
-
-// SetResponse sets the response of the query.
-func (q *Query) SetResponse(response *QueryResponse) {
-	q.Response = response
-}
-
 var (
 	// SpacesQueryKind is the kind of SpaceQuery.
 	SpacesQueryKind = reflect.TypeOf(SpaceQuery{}).Name()
