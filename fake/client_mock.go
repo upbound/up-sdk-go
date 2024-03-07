@@ -27,6 +27,7 @@ var _ up.Client = &MockClient{}
 type MockClient struct {
 	MockNewRequest func(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error)
 	MockDo         func(req *http.Request, obj interface{}) error
+	MockWith       func(modifiers ...up.ClientModifierFn) up.Client
 }
 
 // NewMockNewRequestFn creates a new MockNewRequest function.
@@ -51,4 +52,9 @@ func (m *MockClient) NewRequest(ctx context.Context, method, prefix, urlPath str
 // Do calls the underlying MockDo function.
 func (m *MockClient) Do(req *http.Request, obj interface{}) error {
 	return m.MockDo(req, obj)
+}
+
+// With implements up.Client.
+func (m *MockClient) With(modifiers ...up.ClientModifierFn) up.Client {
+	return m.MockWith(modifiers...)
 }
