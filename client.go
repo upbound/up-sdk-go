@@ -37,6 +37,7 @@ const (
 type Client interface {
 	NewRequest(ctx context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error)
 	Do(req *http.Request, obj interface{}) error
+	With(modifiers ...ClientModifierFn) Client
 }
 
 // A ClientModifierFn modifies an HTTP client.
@@ -129,6 +130,20 @@ func (c *HTTPClient) Do(req *http.Request, obj interface{}) error {
 // handleErrors invokes the underlying response error handler.
 func (c *HTTPClient) handleErrors(res *http.Response) error {
 	return c.ErrorHandler.Handle(res)
+}
+
+// With returns a new Client after applying given modifiers.
+func (c *HTTPClient) With(modifiers ...ClientModifierFn) Client {
+	nc := &HTTPClient{
+		BaseURL:      c.BaseURL,
+		ErrorHandler: c.ErrorHandler,
+		HTTP:         c.HTTP,
+		UserAgent:    c.UserAgent,
+	}
+	for _, m := range modifiers {
+		m(nc)
+	}
+	return nc
 }
 
 // DefaultErrorHandler is the default operations for handling errors returned by
