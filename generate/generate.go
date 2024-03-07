@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build generate
 // +build generate
 
 // NOTE(negz): See the below link for details on what is happening here.
@@ -20,8 +21,16 @@
 // Add license headers to all files.
 //go:generate ./generate.sh
 
+// Generate deepcopy methodsets and CRD manifests
+//go:generate go run -tags generate sigs.k8s.io/controller-tools/cmd/controller-gen object:headerFile=../hack/boilerplate.go.txt paths=./../apis/...
+
+// Generate crossplane-runtime methodsets (resource.Claim, etc)
+//go:generate go run -tags generate github.com/crossplane/crossplane-tools/cmd/angryjet generate-methodsets --header-file=../hack/boilerplate.go.txt ./../apis/...
+
 package generate
 
 import (
-	_ "github.com/google/addlicense" //nolint:typecheck
+	_ "github.com/crossplane/crossplane-tools/cmd/angryjet" //nolint:typecheck
+	_ "github.com/google/addlicense"                        //nolint:typecheck
+	_ "sigs.k8s.io/controller-tools/cmd/controller-gen"     //nolint:typecheck
 )
