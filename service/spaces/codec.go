@@ -21,36 +21,19 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/apimachinery/pkg/runtime/serializer/json"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-)
 
-// Package type metadata.
-const (
-	// Group is the upbound group.
-	Group = "upbound.io"
-	// Version is the upbound api version.
-	Version = "v1alpha1"
+	"github.com/upbound/up-sdk-go/apis/v1alpha1"
 )
 
 var (
-	schemeGroupVersion = schema.GroupVersion{Group: Group, Version: Version}
-	scheme             = runtime.NewScheme()
-	codecs             = serializer.NewCodecFactory(scheme)
-	parameterCodec     = runtime.NewParameterCodec(scheme)
-	jsonSerializer     = json.NewSerializer(json.DefaultMetaFactory, scheme, scheme, false)
-	codec              = codecs.CodecForVersions(jsonSerializer, jsonSerializer, schemeGroupVersion, schemeGroupVersion)
+	scheme         = runtime.NewScheme()
+	codecs         = serializer.NewCodecFactory(scheme)
+	parameterCodec = runtime.NewParameterCodec(scheme)
+	jsonSerializer = json.NewSerializer(json.DefaultMetaFactory, scheme, scheme, false)
+	codec          = codecs.CodecForVersions(jsonSerializer, jsonSerializer, v1alpha1.SchemeGroupVersion, v1alpha1.SchemeGroupVersion)
 )
-
-// AddToScheme adds the list of known types to scheme.
-func AddToScheme(scheme *runtime.Scheme) error {
-	scheme.AddKnownTypes(schemeGroupVersion,
-		&Space{},
-		&SpaceList{},
-	)
-	metav1.AddToGroupVersion(scheme, schemeGroupVersion)
-	return nil
-}
 
 func init() {
 	metav1.AddToGroupVersion(scheme, schema.GroupVersion{Version: "v1"})
-	utilruntime.Must(AddToScheme(scheme))
+	utilruntime.Must(v1alpha1.AddToScheme(scheme))
 }
