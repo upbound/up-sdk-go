@@ -21,6 +21,7 @@ import (
 	queryv1alpha1 "github.com/upbound/up-sdk-go/apis/query/v1alpha1"
 	spacesv1alpha1 "github.com/upbound/up-sdk-go/apis/spaces/v1alpha1"
 	spacesv1beta1 "github.com/upbound/up-sdk-go/apis/spaces/v1beta1"
+	"github.com/upbound/up-sdk-go/apis/v1alpha1"
 )
 
 func init() {
@@ -29,6 +30,7 @@ func init() {
 		spacesv1beta1.SchemeBuilder.AddToScheme,
 		spacesv1alpha1.SchemeBuilder.AddToScheme,
 		queryv1alpha1.SchemeBuilder.AddToScheme,
+		v1alpha1.SchemeBuilder.AddToScheme,
 	)
 }
 
