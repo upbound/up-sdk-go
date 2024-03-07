@@ -9,18 +9,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// +kubebuilder:object:generate=false
-type SharedObject interface {
-	client.Object
-	ControlPlaneSelector() func(obj client.Object) (bool, error)
-}
-
-// +kubebuilder:object:generate=false
-type Object interface {
-	client.Object
-	ControlPlaneSelector() func(obj client.Object) (bool, error)
-}
-
 // ResourceSelector defines the selector for resource matching.
 // An object is going to be matched if any of the provided label selectors
 // matches object's labels AND any of provided names are equal to the object name.

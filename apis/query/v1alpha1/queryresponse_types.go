@@ -28,6 +28,7 @@ type QueryResponse struct {
 	QueryResponseObjects `json:",inline"`
 }
 
+// QueryResponseObjects is the list of objects returned by the query.
 type QueryResponseObjects struct {
 	// cursor is cursor to the next page of results.
 	Cursor *QueryResponseCursor `json:"cursor,omitempty"`
@@ -45,6 +46,7 @@ type QueryResponseObjects struct {
 	Incomplete bool `json:"incomplete,omitempty"`
 }
 
+// QueryResponseCursor is the cursor to the next page of results.
 type QueryResponseCursor struct {
 	// cursor is the cursor to the next page of results. If empty, there are no more,
 	Next string `json:"next"`
@@ -58,6 +60,7 @@ type QueryResponseCursor struct {
 	Position int `json:"position"`
 }
 
+// QueryResponseObject is one object returned by the query.
 type QueryResponseObject struct {
 	// id indentifies the object. The id is opaque, i.e. the format is
 	// undefined. It's only valid for comparison within the response and as part
@@ -82,6 +85,8 @@ type QueryResponseObject struct {
 	Relations map[string]QueryResponseRelation `json:"relations,omitempty"`
 }
 
+// QueryResponseMutablePath is the mutable path of the object, i.e. the path to
+// the Kubernetes API where it can be mutated.
 type QueryResponseMutablePath struct {
 	// basePath is the base URL of the controlplane, i.e. the Kubernetes API
 	// endpoint.
@@ -90,6 +95,7 @@ type QueryResponseMutablePath struct {
 	metav1.GroupVersionResource `json:",inline"`
 }
 
+// QueryResponseControlPlane is the name and namespace of the object.
 type QueryResponseControlPlane struct {
 	// name is the name of the controlplane of the object.
 	Name string `json:"name,omitempty"`
@@ -97,6 +103,7 @@ type QueryResponseControlPlane struct {
 	Namespace string `json:"namespace,omitempty"`
 }
 
+// QueryResponseRelation is the list of objects related to the object.
 type QueryResponseRelation struct {
 	QueryResponseObjects `json:",inline"`
 }

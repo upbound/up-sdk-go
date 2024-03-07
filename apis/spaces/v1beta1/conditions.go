@@ -13,19 +13,34 @@ import (
 )
 
 const (
-	ConditionTypeSourceSynced xpcommonv1.ConditionType   = "SourceSynced"
-	ReasonSourceCompleted     xpcommonv1.ConditionReason = "Completed"
-	ReasonSourceInProgress    xpcommonv1.ConditionReason = "InProgress"
+	// ConditionTypeSourceSynced indicates that the git source is in sync.
+	ConditionTypeSourceSynced xpcommonv1.ConditionType = "SourceSynced"
+	// ReasonSourceCompleted indicates that the git sync has been completed.
+	ReasonSourceCompleted xpcommonv1.ConditionReason = "Completed"
+	// ReasonSourceInProgress indicates that the git sync is still in progress.
+	ReasonSourceInProgress xpcommonv1.ConditionReason = "InProgress"
 
-	ConditionTypeScheduled xpcommonv1.ConditionType   = "Scheduled"
-	ReasonScheduled        xpcommonv1.ConditionReason = "Scheduled"
-	ReasonSchedulingError  xpcommonv1.ConditionReason = "SchedulingError"
+	// ConditionTypeScheduled indicates that the control plane has been scheduled.
+	ConditionTypeScheduled xpcommonv1.ConditionType = "Scheduled"
+	// ReasonScheduled indicates that the control plane has been scheduled.
+	ReasonScheduled xpcommonv1.ConditionReason = "Scheduled"
+	// ReasonSchedulingError indicates that the control plane scheduling had an error.
+	ReasonSchedulingError xpcommonv1.ConditionReason = "SchedulingError"
+	// ReasonSchedulingFailed indicates that the control plane scheduling did not succeed
+	// for non-error reasons, e.g. capacity.
 	ReasonSchedulingFailed xpcommonv1.ConditionReason = "ScheduleFailed"
+	// ReasonDeploymentFailed indicates that the control plane deployment did not succeed.
 	ReasonDeploymentFailed xpcommonv1.ConditionReason = "DeploymentFailed"
 
-	ConditionTypeSupported xpcommonv1.ConditionType   = "Supported"
-	ReasonSupported        xpcommonv1.ConditionReason = "SupportedCrossplaneVersion"
-	ReasonUnsupported      xpcommonv1.ConditionReason = "UnsupportedCrossplaneVersion"
+	// ConditionTypeSupported indicates that the control plane is running a
+	// supported version of Crossplane.
+	ConditionTypeSupported xpcommonv1.ConditionType = "Supported"
+	// ReasonSupported indicates that the control plane is running
+	// a supported version of Crossplane.
+	ReasonSupported xpcommonv1.ConditionReason = "SupportedCrossplaneVersion"
+	// ReasonUnsupported indicates that the control plane is running a version
+	// of Crossplane that is not supported.
+	ReasonUnsupported xpcommonv1.ConditionReason = "UnsupportedCrossplaneVersion"
 )
 
 // SourceSynced returns a condition that indicates the control plane is in sync

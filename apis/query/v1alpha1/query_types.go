@@ -73,6 +73,7 @@ type QueryFilter struct {
 	SQL string `json:"sql,omitempty"`
 }
 
+// QueryFilterControlPlane specifies how to filter objects by control plane.
 type QueryFilterControlPlane struct {
 	// name is the name of the controlplane to query. If empty, all controlplanes
 	// are queried in the given scope.
@@ -106,10 +107,13 @@ type QueryOwner struct {
 	UID string `json:"uid,omitempty"`
 }
 
+// Direction specifies in which direction to order.
 type Direction string
 
 const (
-	Ascending  Direction = "Asc"
+	// Ascending specifies to order in ascending order.
+	Ascending Direction = "Asc"
+	// Descending specifies to order in descending order.
 	Descending Direction = "Desc"
 )
 
@@ -167,6 +171,7 @@ type QueryTopLevelResources struct {
 	Filter QueryTopLevelFilter `json:"filter,omitempty"`
 }
 
+// QueryNestedResources specifies how to return nested resources.
 type QueryNestedResources struct {
 	QueryResources `json:",inline"`
 
@@ -174,6 +179,7 @@ type QueryNestedResources struct {
 	Filter QueryFilter `json:"filter,omitempty"`
 }
 
+// QueryResources specifies how to return resources.
 type QueryResources struct {
 	// count specifies whether to return the number of objects. Note that
 	// computing the count is expensive and should only be done if necessary.
@@ -278,46 +284,58 @@ type Query struct {
 	Response *QueryResponse `json:"response,omitempty"`
 }
 
+// GetSpec returns the spec of the query.
 func (q *SpaceQuery) GetSpec() *QuerySpec {
 	return q.Spec
 }
 
+// SetSpec sets the spec of the query.
 func (q *SpaceQuery) SetSpec(spec *QuerySpec) {
 	q.Spec = spec
 }
 
+// SetResponse sets the response of the query.
 func (q *SpaceQuery) SetResponse(response *QueryResponse) {
 	q.Response = response
 }
 
+// GetSpec returns the spec of the query.
 func (q *GroupQuery) GetSpec() *QuerySpec {
 	return q.Spec
 }
 
+// SetSpec sets the spec of the query.
 func (q *GroupQuery) SetSpec(spec *QuerySpec) {
 	q.Spec = spec
 }
 
+// SetResponse sets the response of the query.
 func (q *GroupQuery) SetResponse(response *QueryResponse) {
 	q.Response = response
 }
 
+// GetSpec returns the spec of the query.
 func (q *Query) GetSpec() *QuerySpec {
 	return q.Spec
 }
 
+// SetSpec sets the spec of the query.
 func (q *Query) SetSpec(spec *QuerySpec) {
 	q.Spec = spec
 }
 
+// SetResponse sets the response of the query.
 func (q *Query) SetResponse(response *QueryResponse) {
 	q.Response = response
 }
 
 var (
+	// SpacesQueryKind is the kind of SpaceQuery.
 	SpacesQueryKind = reflect.TypeOf(SpaceQuery{}).Name()
-	GroupQueryKind  = reflect.TypeOf(GroupQuery{}).Name()
-	QueryKind       = reflect.TypeOf(Query{}).Name()
+	// GroupQueryKind is the kind of GroupQuery.
+	GroupQueryKind = reflect.TypeOf(GroupQuery{}).Name()
+	// QueryKind is the kind of Query.
+	QueryKind = reflect.TypeOf(Query{}).Name()
 )
 
 func init() {

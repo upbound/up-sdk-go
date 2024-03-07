@@ -8,7 +8,6 @@ import (
 
 	esv1beta1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -32,8 +31,9 @@ type SharedSecretStore struct {
 	Status SharedSecretStoreStatus `json:"status,omitempty"`
 }
 
-// +kubebuilder:object:root=true
 // SharedSecretStoreList contains a list of SharedSecretStore.
+//
+// +kubebuilder:object:root=true
 type SharedSecretStoreList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
@@ -50,6 +50,7 @@ func (s *SharedSecretStoreList) Objects() []client.Object {
 }
 
 // SharedSecretStoreSpec defines the desired state of SecretStore.
+//
 // +kubebuilder:validation:XValidation:rule="has(self.secretStoreName) == has(oldSelf.secretStoreName)",message="secretStoreName is immutable"
 type SharedSecretStoreSpec struct {
 	// SecretStoreName is the name to use when creating secret stores within a control plane.
@@ -150,10 +151,8 @@ func (c *SharedSecretStore) ControlPlaneSelector() func(obj client.Object) (bool
 }
 
 var (
-	SharedSecretStoreKind             = reflect.TypeOf(SharedSecretStore{}).Name()
-	SharedSecretStoreGroupKind        = schema.GroupKind{Group: Group, Kind: SharedSecretStoreKind}.String()
-	SharedSecretStoreKindAPIVersion   = SharedSecretStoreKind + "." + SchemeGroupVersion.String()
-	SharedSecretStoreGroupVersionKind = SchemeGroupVersion.WithKind(SharedSecretStoreKind)
+	// SharedSecretStoreKind is the kind of the SharedSecretStore.
+	SharedSecretStoreKind = reflect.TypeOf(SharedSecretStore{}).Name()
 )
 
 func init() {

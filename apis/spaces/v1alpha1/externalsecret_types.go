@@ -8,7 +8,6 @@ import (
 
 	esv1beta1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -29,8 +28,9 @@ type SharedExternalSecret struct {
 	Status SharedExternalSecretStatus `json:"status,omitempty"`
 }
 
-// +kubebuilder:object:root=true
 // SharedExternalSecretList contains a list of SharedExternalSecret.
+//
+// +kubebuilder:object:root=true
 type SharedExternalSecretList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
@@ -47,6 +47,7 @@ func (s *SharedExternalSecretList) Objects() []client.Object {
 }
 
 // SharedExternalSecretSpec defines the desired state of SharedExternalSecret.
+//
 // +kubebuilder:validation:XValidation:rule="has(self.externalSecretName) == has(oldSelf.externalSecretName)",message="externalSecretName is immutable"
 type SharedExternalSecretSpec struct {
 	// ExternalSecretName is the name to use when creating external secret within a control plane.
@@ -105,6 +106,8 @@ type SharedExternalSecretStatus struct {
 	Provisioned []SharedExternalSecretProvisioningSuccess `json:"provisioned,omitempty"`
 }
 
+// SharedExternalSecretProvisioningFailure describes a external secret provisioning
+// failure in a specific control plane.
 type SharedExternalSecretProvisioningFailure struct {
 	// ControlPlane name where the failure occurred.
 	ControlPlane string `json:"controlPlane"`
@@ -129,10 +132,8 @@ func (c *SharedExternalSecret) ControlPlaneSelector() func(obj client.Object) (b
 }
 
 var (
-	SharedPlaneExternalSecretKind        = reflect.TypeOf(SharedExternalSecret{}).Name()
-	SharedExternalSecretGroupKind        = schema.GroupKind{Group: Group, Kind: SharedPlaneExternalSecretKind}.String()
-	SharedExternalSecretKindAPIVersion   = SharedPlaneExternalSecretKind + "." + SchemeGroupVersion.String()
-	SharedExternalSecretGroupVersionKind = SchemeGroupVersion.WithKind(SharedPlaneExternalSecretKind)
+	// SharedExternalSecretKind is the kind of the SharedExternalSecret.
+	SharedExternalSecretKind = reflect.TypeOf(SharedExternalSecret{}).Name()
 )
 
 func init() {

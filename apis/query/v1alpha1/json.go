@@ -38,15 +38,16 @@ type JSON struct {
 // the OpenAPI spec of this type.
 //
 // See: https://github.com/kubernetes/kube-openapi/tree/master/pkg/generators
-func (_ JSON) OpenAPISchemaType() []string {
+func (_ JSON) OpenAPISchemaType() []string { // nolint:golint
 	// TODO: return actual types when anyOf is supported
 	return nil
 }
 
 // OpenAPISchemaFormat is used by the kube-openapi generator when constructing
 // the OpenAPI spec of this type.
-func (_ JSON) OpenAPISchemaFormat() string { return "" }
+func (_ JSON) OpenAPISchemaFormat() string { return "" } // nolint:golint
 
+// DeepCopy returns a deep copy of the JSON.
 func (j *JSON) DeepCopy() *JSON {
 	if j == nil {
 		return nil
@@ -54,6 +55,7 @@ func (j *JSON) DeepCopy() *JSON {
 	return &JSON{Object: runtime.DeepCopyJSONValue(j.Object).(map[string]interface{})}
 }
 
+// DeepCopyInto copies the receiver, writing into out.
 func (j *JSON) DeepCopyInto(target *JSON) {
 	if target == nil {
 		return
@@ -65,14 +67,17 @@ func (j *JSON) DeepCopyInto(target *JSON) {
 	target.Object = runtime.DeepCopyJSONValue(j.Object).(map[string]interface{})
 }
 
+// MarshalJSON implements json.Marshaler.
 func (j JSON) MarshalJSON() ([]byte, error) {
 	return json.Marshal(j.Object)
 }
 
+// UnmarshalJSON implements json.Marshaler.
 func (j *JSON) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &j.Object)
 }
 
+// String returns the JSON representation of the object.
 func (j *JSON) String() string {
 	bs, _ := json.Marshal(j) // no way to handle error here
 	return string(bs)
@@ -94,15 +99,16 @@ type JSONObject struct {
 // the OpenAPI spec of this type.
 //
 // See: https://github.com/kubernetes/kube-openapi/tree/master/pkg/generators
-func (_ JSONObject) OpenAPISchemaType() []string {
+func (j JSONObject) OpenAPISchemaType() []string {
 	// TODO: return actual types when anyOf is supported
 	return nil
-}
+} // nolint:golint
 
 // OpenAPISchemaFormat is used by the kube-openapi generator when constructing
 // the OpenAPI spec of this type.
-func (_ JSONObject) OpenAPISchemaFormat() string { return "" }
+func (j JSONObject) OpenAPISchemaFormat() string { return "" } // nolint:golint
 
+// DeepCopy returns a deep copy of the JSONObject.
 func (j *JSONObject) DeepCopy() *JSONObject {
 	if j == nil {
 		return nil
@@ -110,6 +116,7 @@ func (j *JSONObject) DeepCopy() *JSONObject {
 	return &JSONObject{Object: runtime.DeepCopyJSONValue(j.Object).(map[string]interface{})}
 }
 
+// DeepCopyInto copies the receiver, writing into out.
 func (j *JSONObject) DeepCopyInto(target *JSONObject) {
 	if target == nil {
 		return
@@ -121,33 +128,38 @@ func (j *JSONObject) DeepCopyInto(target *JSONObject) {
 	target.Object = runtime.DeepCopyJSONValue(j.Object).(map[string]interface{})
 }
 
+// MarshalJSON implements json.Marshaler.
 func (j JSONObject) MarshalJSON() ([]byte, error) {
 	return json.Marshal(j.Object)
 }
 
+// UnmarshalJSON implements json.Marshaler.
 func (j *JSONObject) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &j.Object)
 }
 
+// String returns the JSON representation of the object.
 func (j *JSONObject) String() string {
-	bs, _ := json.Marshal(j) // no way to handle error here
+	bs, _ := json.Marshal(j) // nolint:errcheck // no way to handle error here
 	return string(bs)
 }
 
-func (cr *JSONObject) GetCondition(ct xpv1.ConditionType) xpv1.Condition {
+// GetCondition implements the Conditioned interface.
+func (j *JSONObject) GetCondition(ct xpv1.ConditionType) xpv1.Condition {
 	conditioned := xpv1.ConditionedStatus{}
 
 	// The path is directly `status` because conditions are inline.
-	if err := fieldpath.Pave(cr.Object).GetValueInto("status", &conditioned); err != nil {
+	if err := fieldpath.Pave(j.Object).GetValueInto("status", &conditioned); err != nil {
 		return xpv1.Condition{}
 	}
 	return conditioned.GetCondition(ct)
 }
 
-func (cr *JSONObject) SetConditions(c ...xpv1.Condition) {
+// SetConditions implements the Conditioned interface.
+func (j *JSONObject) SetConditions(c ...xpv1.Condition) {
 	conditioned := xpv1.ConditionedStatus{}
 	// The path is directly `status` because conditions are inline.
-	_ = fieldpath.Pave(cr.Object).GetValueInto("status", &conditioned)
+	_ = fieldpath.Pave(j.Object).GetValueInto("status", &conditioned)
 	conditioned.SetConditions(c...)
-	_ = fieldpath.Pave(cr.Object).SetValue("status.conditions", conditioned.Conditions)
+	_ = fieldpath.Pave(j.Object).SetValue("status.conditions", conditioned.Conditions)
 }

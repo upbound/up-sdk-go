@@ -19,7 +19,6 @@ import (
 
 	velerov1 "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
@@ -35,6 +34,7 @@ const (
 	ConditionMessageAnnotationKey = "internal.spaces.upbound.io/message"
 )
 
+// GitAuthType is the type of authentication to use to access a Git repository.
 type GitAuthType string
 
 // GitAuthType constants.
@@ -131,6 +131,7 @@ type GitReference struct {
 	Commit *string `json:"commit,omitempty"`
 }
 
+// GitAuthConfig is the configuration for authentication to access a Git.
 type GitAuthConfig struct {
 	// CASecretRef is a reference to a Secret containing CA certificates to use
 	// to verify the Git server's certificate. The secret must contain the key
@@ -166,6 +167,7 @@ type GitAuthConfig struct {
 	SSH *GitSSHAuth `json:"ssh,omitempty"`
 }
 
+// GitBasicAuth is the configuration for basic authentication.
 type GitBasicAuth struct {
 	// SecretRef is a reference to a Secret containing the username and password.
 	// The secret must contain the keys "username" and "password".
@@ -174,6 +176,7 @@ type GitBasicAuth struct {
 	SecretRef xpv1.SecretReference `json:"secretRef"`
 }
 
+// GitBearerTokenAuth is the configuration for bearer token authentication.
 type GitBearerTokenAuth struct {
 	// SecretRef is a reference to a Secret containing the bearer token.
 	// The secret must contain the key "bearerToken".
@@ -182,6 +185,7 @@ type GitBearerTokenAuth struct {
 	SecretRef xpv1.SecretReference `json:"secretRef"`
 }
 
+// GitSSHAuth is the configuration for SSH authentication.
 type GitSSHAuth struct {
 	// SecretRef is a reference to a Secret containing the SSH key and known
 	// hosts list.
@@ -193,6 +197,7 @@ type GitSSHAuth struct {
 	SecretRef xpv1.SecretReference `json:"secretRef"`
 }
 
+// SourceStatus is the status of the pull and apply operations of resources.
 type SourceStatus struct {
 	// Reference is the git reference that the Control Plane Source is currently
 	// checked out to. This could be a branch, tag or commit SHA.
@@ -203,6 +208,7 @@ type SourceStatus struct {
 	Revision string `json:"revision,omitempty"`
 }
 
+// StorageLocation specifies where to store back data.
 type StorageLocation struct {
 	// Prefix defines the directory within the control plane's storage location where backups are
 	// stored or retrieved.
@@ -218,6 +224,7 @@ type StorageLocation struct {
 	AccessMode *velerov1.BackupStorageLocationAccessMode `json:"accessMode,omitempty"`
 }
 
+// Backup specifies details about the control planes backup configuration.
 type Backup struct {
 	// StorageLocation specifies details about the control planes underlying storage location
 	// where backups are stored or retrieved.
@@ -225,6 +232,7 @@ type Backup struct {
 	StorageLocation *StorageLocation `json:"storageLocation,omitempty"`
 }
 
+// CrossplaneUpgradeChannel is the channel for Crossplane upgrades.
 type CrossplaneUpgradeChannel string
 
 const (
@@ -244,6 +252,7 @@ const (
 	CrossplaneUpgradeRapid CrossplaneUpgradeChannel = "Rapid"
 )
 
+// CrossplaneAutoUpgradeSpec defines the auto upgrade policy for Crossplane.
 type CrossplaneAutoUpgradeSpec struct {
 	// Channel defines the upgrade channels for Crossplane. We support the following channels where 'Stable' is the
 	// default:
@@ -260,6 +269,7 @@ type CrossplaneAutoUpgradeSpec struct {
 	Channel *CrossplaneUpgradeChannel `json:"channel,omitempty"`
 }
 
+// CrossplaneSpec defines the configuration for Crossplane.
 type CrossplaneSpec struct {
 	// Version is the version of Universal Crossplane to install.
 	// +optional
@@ -454,10 +464,8 @@ func (mg *ControlPlane) SetWriteConnectionSecretToReference(r *xpv1.SecretRefere
 
 // ManagedControlPlane type metadata.
 var (
-	ControlPlaneKind             = reflect.TypeOf(ControlPlane{}).Name()
-	ControlPlaneGroupKind        = schema.GroupKind{Group: Group, Kind: ControlPlaneKind}.String()
-	ControlPlaneKindAPIVersion   = ControlPlaneKind + "." + SchemeGroupVersion.String()
-	ControlPlaneGroupVersionKind = SchemeGroupVersion.WithKind(ControlPlaneKind)
+	// ControlPlaneKind is the kind of the ControlPlane.
+	ControlPlaneKind = reflect.TypeOf(ControlPlane{}).Name()
 )
 
 func init() {
