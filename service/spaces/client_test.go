@@ -31,17 +31,17 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/test"
 
 	"github.com/upbound/up-sdk-go"
-	"github.com/upbound/up-sdk-go/apis/v1alpha1"
+	upboundv1alpha1 "github.com/upbound/up-sdk-go/apis/upbound/v1alpha1"
 )
 
 func TestClient_Create(t *testing.T) {
 	type args struct {
 		namespace string
-		space     *v1alpha1.Space
+		space     *upboundv1alpha1.Space
 		opts      *metav1.CreateOptions
 	}
 	type want struct {
-		space *v1alpha1.Space
+		space *upboundv1alpha1.Space
 		err   error
 	}
 	tests := map[string]struct {
@@ -77,7 +77,7 @@ func TestClient_Create(t *testing.T) {
 		"Success": {
 			reason: "returns the space",
 			handler: func(w http.ResponseWriter, r *http.Request) {
-				writeObject(t, &v1alpha1.Space{
+				writeObject(t, &upboundv1alpha1.Space{
 					ObjectMeta: metav1.ObjectMeta{
 						Name: "space-aaaa",
 					},
@@ -85,14 +85,14 @@ func TestClient_Create(t *testing.T) {
 			},
 			args: args{
 				namespace: "test-org",
-				space: &v1alpha1.Space{
+				space: &upboundv1alpha1.Space{
 					ObjectMeta: metav1.ObjectMeta{
 						GenerateName: "space-",
 					},
 				},
 			},
 			want: want{
-				space: &v1alpha1.Space{
+				space: &upboundv1alpha1.Space{
 					ObjectMeta: metav1.ObjectMeta{
 						Name: "space-aaaa",
 					},

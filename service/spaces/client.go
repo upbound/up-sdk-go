@@ -26,7 +26,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/upbound/up-sdk-go"
-	"github.com/upbound/up-sdk-go/apis/v1alpha1"
+	upboundv1alpha1 "github.com/upbound/up-sdk-go/apis/upbound/v1alpha1"
 )
 
 const (
@@ -47,7 +47,7 @@ type Client struct {
 }
 
 // Create creates a space.
-func (c *Client) Create(ctx context.Context, namespace string, space *v1alpha1.Space, opts *metav1.CreateOptions) (*v1alpha1.Space, error) {
+func (c *Client) Create(ctx context.Context, namespace string, space *upboundv1alpha1.Space, opts *metav1.CreateOptions) (*upboundv1alpha1.Space, error) {
 	var params url.Values
 	if opts != nil {
 		p, err := parameterCodec.EncodeParameters(opts, metav1.SchemeGroupVersion)
@@ -64,7 +64,7 @@ func (c *Client) Create(ctx context.Context, namespace string, space *v1alpha1.S
 	if err != nil {
 		return nil, err
 	}
-	res := &v1alpha1.Space{}
+	res := &upboundv1alpha1.Space{}
 	err = c.uc.Do(req, &res)
 	if err != nil {
 		return nil, err

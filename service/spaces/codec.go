@@ -22,7 +22,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer/json"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 
-	"github.com/upbound/up-sdk-go/apis/v1alpha1"
+	upboundv1alpha1 "github.com/upbound/up-sdk-go/apis/upbound/v1alpha1"
 )
 
 var (
@@ -30,10 +30,10 @@ var (
 	codecs         = serializer.NewCodecFactory(scheme)
 	parameterCodec = runtime.NewParameterCodec(scheme)
 	jsonSerializer = json.NewSerializer(json.DefaultMetaFactory, scheme, scheme, false)
-	codec          = codecs.CodecForVersions(jsonSerializer, jsonSerializer, v1alpha1.SchemeGroupVersion, v1alpha1.SchemeGroupVersion)
+	codec          = codecs.CodecForVersions(jsonSerializer, jsonSerializer, upboundv1alpha1.SchemeGroupVersion, upboundv1alpha1.SchemeGroupVersion)
 )
 
 func init() {
 	metav1.AddToGroupVersion(scheme, schema.GroupVersion{Version: "v1"})
-	utilruntime.Must(v1alpha1.AddToScheme(scheme))
+	utilruntime.Must(upboundv1alpha1.AddToScheme(scheme))
 }
