@@ -62,7 +62,12 @@ submodules:
 	@git submodule sync
 	@git submodule update --init --recursive
 
-.PHONY: cobertura submodules fallthrough
+# Update generated code.
+generate:
+	@echo "Generating code"
+	@go generate ./...
+
+.PHONY: cobertura submodules fallthrough generate
 
 # ====================================================================================
 # Special Targets
