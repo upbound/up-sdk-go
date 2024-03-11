@@ -18,6 +18,7 @@ import (
 	"reflect"
 
 	velerov1 "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
@@ -224,14 +225,6 @@ type StorageLocation struct {
 	AccessMode *velerov1.BackupStorageLocationAccessMode `json:"accessMode,omitempty"`
 }
 
-// Backup specifies details about the control planes backup configuration.
-type Backup struct {
-	// StorageLocation specifies details about the control planes underlying storage location
-	// where backups are stored or retrieved.
-	// +optional
-	StorageLocation *StorageLocation `json:"storageLocation,omitempty"`
-}
-
 // CrossplaneUpgradeChannel is the channel for Crossplane upgrades.
 type CrossplaneUpgradeChannel string
 
@@ -348,10 +341,38 @@ type ControlPlaneSpec struct {
 	// Crossplane defines the configuration for Crossplane.
 	Crossplane CrossplaneSpec `json:"crossplane,omitempty"`
 
-	// [[GATE:EnableControlPlaneBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
 	// Backup specifies details about the control planes backup configuration.
 	// +optional
-	Backup *Backup `json:"backup,omitempty"`
+	Backup *ControlPlaneBackupSpec `json:"backup,omitempty"`
+
+	// [[GATE:EnableSharedBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
+	// Restore specifies details about the control planes restore configuration.
+	// +optional
+	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="restore can not be changed after creation"
+	Restore *Restore `json:"restore,omitempty"`
+}
+
+// Restore specifies details about the backup to restore from.
+type Restore struct {
+	// Source of the Backup or BackupSchedule to restore from.
+	// Require "restore" permission on the referenced Backup or BackupSchedule.
+	// +kubebuilder:validation:XValidation:rule="self.apiGroup == 'spaces.upbound.io/v1alpha1' && (self.kind == 'Backup' || self.kind == 'BackupSchedule')",message="source must be a reference to a Backup or BackupSchedule (v1alpha1)"
+	Source corev1.TypedLocalObjectReference `json:"source"`
+}
+
+// ControlPlaneBackupSpec specifies details about the control planes backup configuration.
+type ControlPlaneBackupSpec struct {
+	// [[GATE:EnableControlPlaneBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
+	// StorageLocation specifies details about the control planes underlying storage location
+	// where backups are stored or retrieved.
+	// +optional
+	StorageLocation *StorageLocation `json:"storageLocation,omitempty"`
+
+	// [[GATE:EnableSharedBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
+	// SharedBackupConfigRef is a reference to a v1alpha1.SharedBackupConfig resource that will be used to configure the
+	// control plane's backup storage location.
+	// Requires "get" permission on the referenced v1alpha1.SharedBackupConfig resource.
+	SharedBackupConfigRef *corev1.LocalObjectReference `json:"sharedBackupConfigRef,omitempty"`
 }
 
 // A ControlPlaneStatus represents the observed state of a ControlPlane.
@@ -368,13 +389,13 @@ type ControlPlaneStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:storageversion
-// +kubebuilder:printcolumn:name="crossplane",type="string",JSONPath=".spec.crossplane.version"
-// +kubebuilder:printcolumn:name="synced",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
-// +kubebuilder:printcolumn:name="ready",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
-// +kubebuilder:printcolumn:name="message",type="string",JSONPath=`.metadata.annotations['internal\.spaces\.upbound\.io/message']`
-// +kubebuilder:printcolumn:name="age",type="date",JSONPath=".metadata.creationTimestamp"
+// +kubebuilder:printcolumn:name="Crossplane",type="string",JSONPath=".spec.crossplane.version"
+// +kubebuilder:printcolumn:name="Synced",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
+// +kubebuilder:printcolumn:name="Message",type="string",JSONPath=`.metadata.annotations['internal\.spaces\.upbound\.io/message']`
+// +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:scope=Namespaced,categories=mxe,shortName=ctp;ctps
+// +kubebuilder:resource:scope=Namespaced,categories=spaces,shortName=ctp;ctps
 
 // ControlPlane defines a managed Crossplane instance.
 type ControlPlane struct {
