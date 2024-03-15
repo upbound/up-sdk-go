@@ -108,16 +108,6 @@ type BackupCredentials struct {
 // LocalCommonCredentialSelectors provides common selectors for extracting
 // credentials.
 type LocalCommonCredentialSelectors struct {
-	// Fs is a reference to a filesystem location that contains credentials that
-	// must be used to connect to the provider.
-	// +optional
-	Fs *xpv1.FsSelector `json:"fs,omitempty"`
-
-	// Env is a reference to an environment variable that contains credentials
-	// that must be used to connect to the provider.
-	// +optional
-	Env *xpv1.EnvSelector `json:"env,omitempty"`
-
 	// A SecretRef is a reference to a secret key that contains the credentials
 	// that must be used to connect to the provider.
 	// +optional

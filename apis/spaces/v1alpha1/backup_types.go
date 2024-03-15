@@ -73,27 +73,6 @@ type BackupDefinition struct {
 	// +kubebuilder:default=Orphan
 	DeletionPolicy xpv1.DeletionPolicy `json:"deletionPolicy,omitempty"`
 
-	// MaxRetries is the maximum number of times the backup will be retried
-	// before failing. If not set, the backup will be retried 5 times.
-	// +kubebuilder:default=5
-	MaxRetries *int32 `json:"maxRetries,omitempty"`
-
-	// IncludedNamespaces is a slice of namespace names to include objects
-	// from. If empty, all namespaces are included.
-	// +optional
-	IncludedNamespaces []string `json:"includedNamespaces,omitempty"`
-
-	// ExcludedNamespaces contains a list of namespaces that should not be
-	// included in the backup. Used to filter the included namespaces.
-	// +kubebuilder:default={"kube-system","kube-public","kube-node-lease","local-path-storage"}
-	ExcludedNamespaces []string `json:"excludedNamespaces,omitempty"`
-
-	// IncludedExtraResources list of extra resource types, in "resource.group"
-	// format, to include in the export in addition to all Crossplane resources.
-	// By default, it includes namespaces, configmaps, secrets.
-	// +kubebuilder:default={"namespaces","configmaps","secrets"}
-	IncludedExtraResources []string `json:"includedExtraResources,omitempty"`
-
 	// ExcludedResources is a slice of resource names that are not
 	// included in the backup. Used to filter the included extra resources.
 	// +optional
