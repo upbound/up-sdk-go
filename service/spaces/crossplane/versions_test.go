@@ -45,7 +45,7 @@ func TestVersionFileValid(t *testing.T) {
 			t.Fatalf("expected non-empty CrossplaneVersions")
 		}
 		for _, cv := range v.CrossplaneVersions {
-			_, err = semver.NewVersion(cv)
+			_, err = semver.NewVersion(cv.Version)
 			if err != nil {
 				t.Fatalf("expected valid semver version for CrossplaneVersions, got %s", cv)
 			}

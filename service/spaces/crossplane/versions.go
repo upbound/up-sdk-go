@@ -29,5 +29,10 @@ type VersionMatrix struct {
 	// SpacesVersion is the version of Spaces.
 	SpacesVersion string `json:"spacesVersion" yaml:"spacesVersion"`
 	// CrossplaneVersions is a list of supported versions of Crossplane for a given Spaces version.
-	CrossplaneVersions []string `json:"crossplaneVersions" yaml:"crossplaneVersions"`
+	CrossplaneVersions []CrossplaneVersion `json:"crossplaneVersions" yaml:"crossplaneVersions"`
+}
+
+// CrossplaneVersion represents the supported version of Crossplane.
+type CrossplaneVersion struct { // nolint: golint // Dropping Crossplane prefix and calling it Version feels odd, version everywhere.
+	Version string `json:"version" yaml:"version"`
 }
