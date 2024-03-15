@@ -76,7 +76,7 @@ type SharedBackupScheduleSpec struct {
 type SharedBackupScheduleStatus struct {
 	xpv1.ResourceStatus `json:",inline"`
 
-	SelectedControlplanes []string `json:"selectedControlplanes,omitempty"`
+	SelectedControlPlanes []string `json:"selectedControlPlanes,omitempty"`
 }
 
 var (

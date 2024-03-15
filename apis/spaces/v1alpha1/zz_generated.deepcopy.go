@@ -675,8 +675,8 @@ func (in *SharedBackupScheduleSpec) DeepCopy() *SharedBackupScheduleSpec {
 func (in *SharedBackupScheduleStatus) DeepCopyInto(out *SharedBackupScheduleStatus) {
 	*out = *in
 	in.ResourceStatus.DeepCopyInto(&out.ResourceStatus)
-	if in.SelectedControlplanes != nil {
-		in, out := &in.SelectedControlplanes, &out.SelectedControlplanes
+	if in.SelectedControlPlanes != nil {
+		in, out := &in.SelectedControlPlanes, &out.SelectedControlPlanes
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
