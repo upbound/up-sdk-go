@@ -52,7 +52,7 @@ func (j *JSON) DeepCopy() *JSON {
 	if j == nil {
 		return nil
 	}
-	return &JSON{Object: runtime.DeepCopyJSONValue(j.Object).(map[string]interface{})}
+	return &JSON{Object: runtime.DeepCopyJSONValue(j.Object)}
 }
 
 // DeepCopyInto copies the receiver, writing into out.
@@ -64,7 +64,7 @@ func (j *JSON) DeepCopyInto(target *JSON) {
 		target.Object = nil // shouldn't happen
 		return
 	}
-	target.Object = runtime.DeepCopyJSONValue(j.Object).(map[string]interface{})
+	target.Object = runtime.DeepCopyJSONValue(j.Object)
 }
 
 // MarshalJSON implements json.Marshaler.

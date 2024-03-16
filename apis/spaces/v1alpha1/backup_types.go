@@ -17,10 +17,11 @@ package v1alpha1
 import (
 	"reflect"
 
-	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+
+	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
 // +kubebuilder:object:root=true
@@ -194,6 +195,7 @@ type BackupStatus struct {
 	Details BackupStatusDetails `json:"details,omitempty"`
 }
 
+// BackupStatusDetails contains additional information about a backup.
 type BackupStatusDetails struct {
 	// UploadedFileName is the name of the uploaded file.
 	UploadedFileName string `json:"uploadedFileName,omitempty"`
@@ -207,6 +209,7 @@ type BackupStatusDetails struct {
 	ControlPlane *PreciseLocalObjectReference `json:"controlPlane,omitempty"`
 }
 
+// PreciseLocalObjectReference references by name and uid.
 type PreciseLocalObjectReference struct {
 	// Name is the name of the referenced object.
 	// +optional
