@@ -41,6 +41,15 @@ const (
 	// ReasonUnsupported indicates that the control plane is running a version
 	// of Crossplane that is not supported.
 	ReasonUnsupported xpcommonv1.ConditionReason = "UnsupportedCrossplaneVersion"
+
+	// ConditionTypeRestored indicates that the control plane has been restored from backup.
+	ConditionTypeRestored xpcommonv1.ConditionType = "Restored"
+	// ReasonRestored indicates that the control plane has been restored from backup.
+	ReasonRestored xpcommonv1.ConditionReason = "Restored"
+	// ReasonRestoreFailed indicates that the control plane failed to restore from backup.
+	ReasonRestoreFailed xpcommonv1.ConditionReason = "RestoreFailed"
+	// ReasonRestorePending indicates that the control plane restore is pending.
+	ReasonRestorePending xpcommonv1.ConditionReason = "RestorePending"
 )
 
 // SourceSynced returns a condition that indicates the control plane is in sync
@@ -146,5 +155,39 @@ func UnsupportedCrossplaneVersion(msg string) xpcommonv1.Condition {
 		LastTransitionTime: metav1.Now(),
 		Reason:             ReasonUnsupported,
 		Message:            msg,
+	}
+}
+
+// Restored returns a condition that indicates that the control plane has been
+// restored from backup.
+func Restored() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypeRestored,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonRestored,
+		Message:            "Control plane has been restored from specified backup",
+	}
+}
+
+// RestoreFailed returns a condition that indicates that the control plane failed
+// to restore from backup.
+func RestoreFailed(err error) xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypeRestored,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonRestoreFailed,
+		Message:            err.Error(),
+	}
+}
+
+func RestorePending() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               xpcommonv1.TypeReady,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonRestorePending,
+		Message:            "Control plane restore is pending",
 	}
 }
