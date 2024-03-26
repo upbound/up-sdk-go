@@ -3,6 +3,7 @@ module github.com/upbound/up-sdk-go
 go 1.22.1
 
 require (
+	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/crossplane/crossplane-runtime v1.15.1
 	github.com/crossplane/crossplane-tools v0.0.0-20230925130601-628280f8bf79
 	github.com/external-secrets/external-secrets v0.9.13
@@ -12,6 +13,7 @@ require (
 	github.com/kyverno/kyverno v1.11.4
 	github.com/pkg/errors v0.9.1
 	github.com/vmware-tanzu/velero v1.13.0
+	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.29.1
 	k8s.io/apimachinery v0.29.1
 	sigs.k8s.io/controller-runtime v0.17.1
@@ -280,7 +282,6 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 	inet.af/netaddr v0.0.0-20230525184311-b8eac61e914a // indirect
 	k8s.io/apiextensions-apiserver v0.29.1 // indirect
 	k8s.io/client-go v0.29.1 // indirect
