@@ -40,7 +40,8 @@ type SharedBackup struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="shared backup spec can not be changed after creation"
+	// +kubebuilder:validation:XValidation:rule="self.controlPlaneSelector == oldSelf.controlPlaneSelector",message="shared backup ControlPlane selectors can not be changed after creation"
+	// +kubebuilder:validation:XValidation:rule="(!has(self.excludedResources) && !has(oldSelf.excludedResources)) || self.excludedResources == oldSelf.excludedResources",message="shared backup excluded resources can not be changed after creation"
 	Spec   SharedBackupSpec   `json:"spec"`
 	Status SharedBackupStatus `json:"status,omitempty"`
 }
