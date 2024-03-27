@@ -48,8 +48,9 @@ const (
 	ReasonRestoreCompleted xpcommonv1.ConditionReason = "Completed"
 	// ReasonRestoreFailed indicates that the control plane failed to restore from backup.
 	ReasonRestoreFailed xpcommonv1.ConditionReason = "Failed"
+
 	// ReasonRestorePending indicates that the control plane restore is pending.
-	ReasonRestorePending xpcommonv1.ConditionReason = "Pending"
+	ReasonRestorePending xpcommonv1.ConditionReason = "RestorePending"
 )
 
 // SourceSynced returns a condition that indicates the control plane is in sync
@@ -158,9 +159,9 @@ func UnsupportedCrossplaneVersion(msg string) xpcommonv1.Condition {
 	}
 }
 
-// Restored returns a condition that indicates that the control plane has been
+// RestoreCompleted returns a condition that indicates that the control plane has been
 // restored from backup.
-func Restored() xpcommonv1.Condition {
+func RestoreCompleted() xpcommonv1.Condition {
 	return xpcommonv1.Condition{
 		Type:               ConditionTypeRestored,
 		Status:             corev1.ConditionTrue,
@@ -182,6 +183,8 @@ func RestoreFailed(err error) xpcommonv1.Condition {
 	}
 }
 
+// RestorePending returns a condition that indicates that the control plane restore
+// is pending.
 func RestorePending() xpcommonv1.Condition {
 	return xpcommonv1.Condition{
 		Type:               xpcommonv1.TypeReady,
