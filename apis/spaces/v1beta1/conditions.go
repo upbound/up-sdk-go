@@ -44,12 +44,12 @@ const (
 
 	// ConditionTypeRestored indicates that the control plane has been restored from backup.
 	ConditionTypeRestored xpcommonv1.ConditionType = "Restored"
-	// ReasonRestored indicates that the control plane has been restored from backup.
-	ReasonRestored xpcommonv1.ConditionReason = "Restored"
+	// ReasonRestoreCompleted indicates that the control plane has been successfully restored from backup.
+	ReasonRestoreCompleted xpcommonv1.ConditionReason = "Completed"
 	// ReasonRestoreFailed indicates that the control plane failed to restore from backup.
-	ReasonRestoreFailed xpcommonv1.ConditionReason = "RestoreFailed"
+	ReasonRestoreFailed xpcommonv1.ConditionReason = "Failed"
 	// ReasonRestorePending indicates that the control plane restore is pending.
-	ReasonRestorePending xpcommonv1.ConditionReason = "RestorePending"
+	ReasonRestorePending xpcommonv1.ConditionReason = "Pending"
 )
 
 // SourceSynced returns a condition that indicates the control plane is in sync
@@ -165,7 +165,7 @@ func Restored() xpcommonv1.Condition {
 		Type:               ConditionTypeRestored,
 		Status:             corev1.ConditionTrue,
 		LastTransitionTime: metav1.Now(),
-		Reason:             ReasonRestored,
+		Reason:             ReasonRestoreCompleted,
 		Message:            "Control plane has been restored from specified backup",
 	}
 }
