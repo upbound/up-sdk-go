@@ -286,6 +286,8 @@ type SecretReference struct {
 }
 
 // A ControlPlaneSpec represents the desired state of the ControlPlane.
+// +kubebuilder:validation:XValidation:rule="!has(oldSelf.restore) || has(self.restore)",message="restore source can not be unset"
+// +kubebuilder:validation:XValidation:rule="has(oldSelf.restore) || !has(self.restore)",message="restore source can not be set after creation"
 type ControlPlaneSpec struct {
 	// [[GATE:EnableGitSource]] THIS IS AN ALPHA FIELD. Do not use it in production.
 	// Source points to a Git repository containing a ControlPlaneSource
@@ -348,7 +350,7 @@ type ControlPlaneSpec struct {
 	// [[GATE:EnableSharedBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
 	// Restore specifies details about the control planes restore configuration.
 	// +optional
-	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="restore can not be changed after creation"
+	// +kubebuilder:validation:XValidation:rule="!has(oldSelf.finishedAt) || oldSelf.finishedAt == self.finishedAt",message="finishedAt is immutable once set"
 	Restore *Restore `json:"restore,omitempty"`
 }
 
@@ -356,7 +358,8 @@ type ControlPlaneSpec struct {
 type Restore struct {
 	// Source of the Backup or BackupSchedule to restore from.
 	// Require "restore" permission on the referenced Backup or BackupSchedule.
-	// +kubebuilder:validation:XValidation:rule="self.apiGroup == 'spaces.upbound.io' && (self.kind == 'Backup' || self.kind == 'BackupSchedule')",message="source must be a reference to a Backup or BackupSchedule (v1alpha1)"
+	// +kubebuilder:validation:XValidation:rule="(!has(self.apiGroup) || self.apiGroup == 'spaces.upbound.io') && (self.kind == 'Backup' || self.kind == 'BackupSchedule')",message="source must be a reference to a Backup or BackupSchedule (v1alpha1)"
+	// +kubebuilder:validation:XValidation:rule="oldSelf == self",message="source is immutable"
 	Source corev1.TypedLocalObjectReference `json:"source"`
 
 	// FinishedAt is the time at which the control plane was restored, it's not
