@@ -343,6 +343,7 @@ type ControlPlaneSpec struct {
 	// Crossplane defines the configuration for Crossplane.
 	Crossplane CrossplaneSpec `json:"crossplane,omitempty"`
 
+	// [[GATE:EnableControlPlaneBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
 	// Backup specifies details about the control planes backup configuration.
 	// +optional
 	Backup *ControlPlaneBackupSpec `json:"backup,omitempty"`
@@ -370,17 +371,10 @@ type Restore struct {
 
 // ControlPlaneBackupSpec specifies details about the control planes backup configuration.
 type ControlPlaneBackupSpec struct {
-	// [[GATE:EnableControlPlaneBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
 	// StorageLocation specifies details about the control planes underlying storage location
 	// where backups are stored or retrieved.
 	// +optional
 	StorageLocation *StorageLocation `json:"storageLocation,omitempty"`
-
-	// [[GATE:EnableSharedBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
-	// SharedBackupConfigRef is a reference to a v1alpha1.SharedBackupConfig resource that will be used to configure the
-	// control plane's backup storage location.
-	// Requires "get" permission on the referenced v1alpha1.SharedBackupConfig resource.
-	SharedBackupConfigRef *corev1.LocalObjectReference `json:"sharedBackupConfigRef,omitempty"`
 }
 
 // A ControlPlaneStatus represents the observed state of a ControlPlane.
