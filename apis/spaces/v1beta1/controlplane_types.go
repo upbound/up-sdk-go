@@ -33,10 +33,6 @@ const (
 	// ConditionMessageAnnotationKey is the key for the message shown in the
 	// message column in kubectl.
 	ConditionMessageAnnotationKey = "internal.spaces.upbound.io/message"
-
-	// RestoredAtAnnotationKey is the key for the time.RFC3339 formatted
-	// timestamp when the control plane was restored successfully.
-	RestoredAtAnnotationKey = "internal.spaces.upbound.io/restored-at"
 )
 
 // GitAuthType is the type of authentication to use to access a Git repository.
@@ -362,6 +358,11 @@ type Restore struct {
 	// Require "restore" permission on the referenced Backup or BackupSchedule.
 	// +kubebuilder:validation:XValidation:rule="self.apiGroup == 'spaces.upbound.io' && (self.kind == 'Backup' || self.kind == 'BackupSchedule')",message="source must be a reference to a Backup or BackupSchedule (v1alpha1)"
 	Source corev1.TypedLocalObjectReference `json:"source"`
+
+	// FinishedAt is the time at which the control plane was restored, it's not
+	// meant to be set by the user, but rather by the system when the control
+	// plane is restored.
+	FinishedAt *metav1.Time `json:"finishedAt,omitempty"`
 }
 
 // ControlPlaneBackupSpec specifies details about the control planes backup configuration.
