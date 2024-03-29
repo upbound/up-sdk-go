@@ -79,6 +79,7 @@ type BackupDefinition struct {
 	// ExcludedResources is a slice of resource names that are not
 	// included in the backup. Used to filter the included extra resources.
 	// +optional
+	// +listType=set
 	ExcludedResources []string `json:"excludedResources,omitempty"`
 
 	// ConfigRef is a reference to the backup configuration.

@@ -33,6 +33,7 @@ type ResourceSelector struct {
 	// A resource is selected if its metadata.name matches any of the provided names.
 	// In case when the list is empty, resource is matched too.
 	// +optional
+	// +listType=set
 	Names []string `json:"names,omitempty"`
 }
 
