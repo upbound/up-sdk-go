@@ -84,7 +84,7 @@ type BackupDefinition struct {
 
 	// ConfigRef is a reference to the backup configuration.
 	// +kubebuilder:validation:Required
-	// +kubebuilder:validation:XValidation:rule="(!has(self.apiGroup) || self.apiGroup == 'spaces.upbound.io') && self.kind == 'SharedBackupConfigRef'",message="backup config ref must be a reference to a SharedBackupConfigRef"
+	// +kubebuilder:validation:XValidation:rule="(!has(self.apiGroup) || self.apiGroup == 'spaces.upbound.io') && self.kind == 'SharedBackupConfig'",message="backup config ref must be a reference to a SharedBackupConfig"
 	// +kubebuilder:validation:XValidation:rule="size(self.name) > 0",message="backup config ref must have a name"
 	ConfigRef corev1.TypedLocalObjectReference `json:"configRef"`
 }
@@ -198,24 +198,6 @@ type BackupStatus struct {
 
 	// Retries is the number of times the backup has been retried.
 	Retries int32 `json:"retries,omitempty"`
-
-	// Details contains any additional information about the backup.
-	// +optional
-	Details BackupStatusDetails `json:"details,omitempty"`
-}
-
-// BackupStatusDetails contains additional information about a backup.
-type BackupStatusDetails struct {
-	// UploadedFileName is the name of the uploaded file.
-	UploadedFileName string `json:"uploadedFileName,omitempty"`
-
-	// SharedBackupConfig is the SharedBackupConfig that the backup run against.
-	// +optional
-	SharedBackupConfig *PreciseLocalObjectReference `json:"sharedBackupConfig,omitempty"`
-
-	// ControlPlane is the control plane that the backup run against.
-	// +optional
-	ControlPlane *PreciseLocalObjectReference `json:"controlPlane,omitempty"`
 }
 
 // PreciseLocalObjectReference references by name and uid.
