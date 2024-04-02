@@ -76,6 +76,10 @@ type SharedBackupScheduleSpec struct {
 type SharedBackupScheduleStatus struct {
 	xpv1.ResourceStatus `json:",inline"`
 
+	// SelectedControlPlanes is the list of ControlPlanes that are selected
+	// for backup.
+	// +optional
+	// +listType=set
 	SelectedControlPlanes []string `json:"selectedControlPlanes,omitempty"`
 }
 

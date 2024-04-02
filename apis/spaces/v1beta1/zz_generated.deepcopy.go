@@ -23,7 +23,6 @@ package v1beta1
 import (
 	commonv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	velerov1 "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
-	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
@@ -62,11 +61,6 @@ func (in *ControlPlaneBackupSpec) DeepCopyInto(out *ControlPlaneBackupSpec) {
 		in, out := &in.StorageLocation, &out.StorageLocation
 		*out = new(StorageLocation)
 		(*in).DeepCopyInto(*out)
-	}
-	if in.SharedBackupConfigRef != nil {
-		in, out := &in.SharedBackupConfigRef, &out.SharedBackupConfigRef
-		*out = new(corev1.LocalObjectReference)
-		**out = **in
 	}
 }
 

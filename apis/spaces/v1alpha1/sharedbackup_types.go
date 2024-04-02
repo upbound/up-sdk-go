@@ -82,12 +82,18 @@ type SharedBackupStatus struct {
 	Phase BackupPhase `json:"phase,omitempty"`
 
 	// SelectedControlPlanes represents the names of the selected ControlPlanes.
+	// +optional
+	// +listType=set
 	SelectedControlPlanes []string `json:"selectedControlPlanes,omitempty"`
 
 	// Failed is the list of ControlPlanes for which the backup failed.
+	// +optional
+	// +listType=set
 	Failed []string `json:"failed,omitempty"`
 
 	// Completed is the list of ControlPlanes for which the backup completed successfully.
+	// +optional
+	// +listType=set
 	Completed []string `json:"completed,omitempty"`
 }
 

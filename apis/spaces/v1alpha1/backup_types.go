@@ -39,6 +39,7 @@ type Backup struct {
 
 	// +kubebuilder:validation:XValidation:rule="self.controlPlane == oldSelf.controlPlane",message="backup target controlplane can not be changed after creation"
 	// +kubebuilder:validation:XValidation:rule="(!has(self.excludedResources) && !has(oldSelf.excludedResources)) || self.excludedResources == oldSelf.excludedResources",message="backup excluded resources can not be changed after creation"
+	// +kubebuilder:validation:XValidation:rule="self.configRef == oldSelf.configRef",message="backup config ref can not be changed after creation"
 	Spec   BackupSpec   `json:"spec"`
 	Status BackupStatus `json:"status,omitempty"`
 }
@@ -78,7 +79,14 @@ type BackupDefinition struct {
 	// ExcludedResources is a slice of resource names that are not
 	// included in the backup. Used to filter the included extra resources.
 	// +optional
+	// +listType=set
 	ExcludedResources []string `json:"excludedResources,omitempty"`
+
+	// ConfigRef is a reference to the backup configuration.
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:XValidation:rule="(!has(self.apiGroup) || self.apiGroup == 'spaces.upbound.io') && self.kind == 'SharedBackupConfigRef'",message="backup config ref must be a reference to a SharedBackupConfigRef"
+	// +kubebuilder:validation:XValidation:rule="size(self.name) > 0",message="backup config ref must have a name"
+	ConfigRef corev1.TypedLocalObjectReference `json:"configRef"`
 }
 
 // BackupPhase is a string representation of the phase of a backup.

@@ -50,7 +50,8 @@ type BackupSchedule struct {
 type BackupScheduleList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []BackupSchedule `json:"items"`
+
+	Items []BackupSchedule `json:"items"`
 }
 
 // BackupScheduleDefinition defines the schedule for a Backup.
