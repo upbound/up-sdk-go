@@ -86,7 +86,26 @@ type BackupDefinition struct {
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:XValidation:rule="(!has(self.apiGroup) || self.apiGroup == 'spaces.upbound.io') && self.kind == 'SharedBackupConfig'",message="backup config ref must be a reference to a SharedBackupConfig"
 	// +kubebuilder:validation:XValidation:rule="size(self.name) > 0",message="backup config ref must have a name"
-	ConfigRef corev1.TypedLocalObjectReference `json:"configRef"`
+	ConfigRef TypedLocalObjectReference `json:"configRef"`
+}
+
+// TypedLocalObjectReference contains enough information to let you locate the
+// typed referenced object inside the same namespace.
+// +structType=atomic
+type TypedLocalObjectReference struct {
+	// APIGroup is the group for the resource being referenced.
+	// If APIGroup is not specified, the specified Kind must be in the core API group.
+	// For any other third-party types, APIGroup is required.
+	// +optional
+	APIGroup *string `json:"apiGroup,omitempty"`
+
+	// Kind is the type of resource being referenced
+	// +kubebuilder:validation:MinLength=1
+	Kind string `json:"kind,omitempty"`
+
+	// Name is the name of resource being referenced
+	// +kubebuilder:validation:MinLength=1
+	Name string `json:"name,omitempty"`
 }
 
 // BackupPhase is a string representation of the phase of a backup.
