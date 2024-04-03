@@ -21,36 +21,50 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
+// SpaceMode is the mode in which the space connects to Upbound.
 type SpaceMode string
 
 const (
+	// ModeConnected represents a space connected via connect agent.
 	ModeConnected SpaceMode = "connected"
-	ModeLegacy    SpaceMode = "legacy"
-	ModeManaged   SpaceMode = "managed"
+	// ModeLegacy represents a legacy space.
+	ModeLegacy SpaceMode = "legacy"
+	// ModeManaged represents an Upbound managed space.
+	ModeManaged SpaceMode = "managed"
 )
 
+// CloudProvider is the hosting cloud provider for the space.
 type CloudProvider string
 
 const (
-	CloudProviderGCP     CloudProvider = "gcp"
-	CloudProviderAWS     CloudProvider = "aws"
+	// CloudProviderGCP represents the space lives on GCP.
+	CloudProviderGCP CloudProvider = "gcp"
+	// CloudProviderAWS represents the space lives on AWS.
+	CloudProviderAWS CloudProvider = "aws"
+	// CloudProviderUnknown represents the space lives in an unknown provider.
 	CloudProviderUnknown CloudProvider = "unknown"
 )
 
+// Region is the region in which the space is hosted.
 type Region string
 
 const (
-	RegionUSWest1    Region = "us-west-1"
-	RegionUSEast1    Region = "us-east-1"
+	// RegionUSWest1 represents the space lives in US-West-1 of its respective provider.
+	RegionUSWest1 Region = "us-west-1"
+	// RegionUSEast1 represents the space lives in US-East-1 of its respective provider.
+	RegionUSEast1 Region = "us-east-1"
+	// RegionUSCentral1 represents the space lives in US-Central-1 of its respective provider.
 	RegionUSCentral1 Region = "us-central-1"
 )
 
+// SpaceSpec is space's spec.
 type SpaceSpec struct {
 	Mode     SpaceMode      `json:"mode"`
 	Provider *CloudProvider `json:"provider,omitempty"`
 	Region   *Region        `json:"region,omitempty"`
 }
 
+// SpaceStatus is space's status.
 type SpaceStatus struct{}
 
 // +kubebuilder:object:root=true
