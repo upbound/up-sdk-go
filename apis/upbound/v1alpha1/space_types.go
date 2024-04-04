@@ -18,9 +18,10 @@ import (
 	"reflect"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
-// SpaceMode is the space mode.
+// SpaceMode is the mode in which the space connects to Upbound.
 type SpaceMode string
 
 const (
@@ -32,9 +33,35 @@ const (
 	ModeManaged SpaceMode = "managed"
 )
 
+// CloudProvider is the hosting cloud provider for the space.
+type CloudProvider string
+
+const (
+	// CloudProviderGCP represents the space lives on GCP.
+	CloudProviderGCP CloudProvider = "gcp"
+	// CloudProviderAWS represents the space lives on AWS.
+	CloudProviderAWS CloudProvider = "aws"
+	// CloudProviderUnknown represents the space lives in an unknown provider.
+	CloudProviderUnknown CloudProvider = "unknown"
+)
+
+// Region is the region in which the space is hosted.
+type Region string
+
+const (
+	// RegionUSWest1 represents the space lives in US-West-1 of its respective provider.
+	RegionUSWest1 Region = "us-west-1"
+	// RegionUSEast1 represents the space lives in US-East-1 of its respective provider.
+	RegionUSEast1 Region = "us-east-1"
+	// RegionUSCentral1 represents the space lives in US-Central-1 of its respective provider.
+	RegionUSCentral1 Region = "us-central-1"
+)
+
 // SpaceSpec is space's spec.
 type SpaceSpec struct {
-	Mode SpaceMode `json:"mode"`
+	Mode     SpaceMode      `json:"mode"`
+	Provider *CloudProvider `json:"provider,omitempty"`
+	Region   *Region        `json:"region,omitempty"`
 }
 
 // SpaceStatus is space's status.
@@ -42,7 +69,7 @@ type SpaceStatus struct{}
 
 // +kubebuilder:object:root=true
 
-// A Space represents Upbound Space.
+// A Space is a kubernetes style representation of an Upbound Space.
 // +kubebuilder:printcolumn:name="SPACES VERSION",type="string",JSONPath=".spec.spacesConfig.version"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Namespaced,categories=claim
@@ -57,16 +84,19 @@ type Space struct {
 
 // +kubebuilder:object:root=true
 
-// SpaceList contains a list of Spaces.
+// SpaceList contains a list of Space
 type SpaceList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []Space `json:"items"`
 }
 
+// Space type metadata.
 var (
-	// SpaceKind is the kind of Space.
-	SpaceKind = reflect.TypeOf(Space{}).Name()
+	SpaceKind             = reflect.TypeOf(Space{}).Name()
+	SpaceGroupKind        = schema.GroupKind{Group: Group, Kind: SpaceKind}.String()
+	SpaceKindAPIVersion   = SpaceKind + "." + SchemeGroupVersion.String()
+	SpaceGroupVersionKind = SchemeGroupVersion.WithKind(SpaceKind)
 )
 
 func init() {

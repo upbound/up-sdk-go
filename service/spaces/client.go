@@ -72,6 +72,32 @@ func (c *Client) Create(ctx context.Context, namespace string, space *upboundv1a
 	return res, nil
 }
 
+// List lists all accessible space.
+func (c *Client) List(ctx context.Context, namespace string, opts *metav1.ListOptions) (*upboundv1alpha1.SpaceList, error) {
+	var params url.Values
+	if opts != nil {
+		p, err := parameterCodec.EncodeParameters(opts, metav1.SchemeGroupVersion)
+		if err != nil {
+			return nil, err
+		}
+		params = p
+	}
+	urlPath := path.Join(basePath, namespace, spacePath)
+	if len(params) > 0 {
+		urlPath += "?" + params.Encode()
+	}
+	req, err := c.uc.NewRequest(ctx, http.MethodGet, "", urlPath, nil)
+	if err != nil {
+		return nil, err
+	}
+	res := &upboundv1alpha1.SpaceList{}
+	err = c.uc.Do(req, &res)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 // Delete deletes a space.
 func (c *Client) Delete(ctx context.Context, namespace, name string, opts *metav1.DeleteOptions) error {
 	var params url.Values
