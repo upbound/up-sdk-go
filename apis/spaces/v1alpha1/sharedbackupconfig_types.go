@@ -18,6 +18,7 @@ import (
 	"reflect"
 
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
+	extv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -86,7 +87,7 @@ type BackupObjectStorage struct {
 	// See https://github.com/thanos-io/objstore?tab=readme-ov-file for more
 	// information on the formats for each supported cloud provider. Bucket and
 	// Provider will override the required values in the config.
-	Config map[string]string `json:"config,omitempty"`
+	Config map[string]extv1.JSON `json:"config,omitempty"`
 
 	// Credentials specifies the credentials to access the object storage.
 	// +kubebuilder:validation:Required

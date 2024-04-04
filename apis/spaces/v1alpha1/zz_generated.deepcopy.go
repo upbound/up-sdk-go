@@ -22,6 +22,7 @@ package v1alpha1
 
 import (
 	"github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
@@ -132,9 +133,9 @@ func (in *BackupObjectStorage) DeepCopyInto(out *BackupObjectStorage) {
 	*out = *in
 	if in.Config != nil {
 		in, out := &in.Config, &out.Config
-		*out = make(map[string]string, len(*in))
+		*out = make(map[string]apiextensionsv1.JSON, len(*in))
 		for key, val := range *in {
-			(*out)[key] = val
+			(*out)[key] = *val.DeepCopy()
 		}
 	}
 	in.Credentials.DeepCopyInto(&out.Credentials)
