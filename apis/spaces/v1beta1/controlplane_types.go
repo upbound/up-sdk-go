@@ -20,6 +20,8 @@ import (
 	velerov1 "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+	commonv1alpha1 "github.com/upbound/up-sdk-go/apis/common/v1alpha1"
+
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
@@ -360,7 +362,7 @@ type Restore struct {
 	// Require "restore" permission on the referenced Backup or BackupSchedule.
 	// +kubebuilder:validation:XValidation:rule="(!has(self.apiGroup) || self.apiGroup == 'spaces.upbound.io') && (self.kind == 'Backup' || self.kind == 'BackupSchedule')",message="source must be a reference to a Backup or BackupSchedule (v1alpha1)"
 	// +kubebuilder:validation:XValidation:rule="oldSelf == self",message="source is immutable"
-	Source TypedLocalObjectReference `json:"source"`
+	Source commonv1alpha1.TypedLocalObjectReference `json:"source"`
 
 	// FinishedAt is the time at which the control plane was restored, it's not
 	// meant to be set by the user, but rather by the system when the control
@@ -386,25 +388,6 @@ type ControlPlaneStatus struct {
 	// [[GATE:EnableGitSource]] SourceStatus is the status of the pull and apply operations of resources
 	// from the Source.
 	SourceStatus *SourceStatus `json:"source,omitempty"`
-}
-
-// TypedLocalObjectReference contains enough information to let you locate the
-// typed referenced object inside the same namespace.
-// +structType=atomic
-type TypedLocalObjectReference struct {
-	// APIGroup is the group for the resource being referenced.
-	// If APIGroup is not specified, the specified Kind must be in the core API group.
-	// For any other third-party types, APIGroup is required.
-	// +optional
-	APIGroup *string `json:"apiGroup,omitempty"`
-
-	// Kind is the type of resource being referenced
-	// +kubebuilder:validation:MinLength=1
-	Kind string `json:"kind,omitempty"`
-
-	// Name is the name of resource being referenced
-	// +kubebuilder:validation:MinLength=1
-	Name string `json:"name,omitempty"`
 }
 
 // +kubebuilder:object:root=true

@@ -18,6 +18,8 @@ import (
 	"reflect"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	commonv1alpha1 "github.com/upbound/up-sdk-go/apis/common/v1alpha1"
 )
 
 // A QuerySpec specifies what to query.
@@ -234,7 +236,7 @@ type QueryObjects struct {
 	//
 	// +kubebuilder:validation:Schemaless
 	// +kubebuilder:pruning:PreserveUnknownFields
-	Object *JSON `json:"object,omitempty"`
+	Object *commonv1alpha1.JSON `json:"object,omitempty"`
 
 	// relations specifies which relations to query and what to return.
 	// Relation names are predefined strings relative to the release of
