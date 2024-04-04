@@ -21,7 +21,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
-	commonv1alpha1 "github.com/upbound/up-sdk-go/apis/common/v1alpha1"
+	"github.com/upbound/up-sdk-go/apis/common"
 
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
@@ -88,7 +88,7 @@ type BackupDefinition struct {
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:XValidation:rule="(!has(self.apiGroup) || self.apiGroup == 'spaces.upbound.io') && self.kind == 'SharedBackupConfig'",message="backup config ref must be a reference to a SharedBackupConfig"
 	// +kubebuilder:validation:XValidation:rule="size(self.name) > 0",message="backup config ref must have a name"
-	ConfigRef commonv1alpha1.TypedLocalObjectReference `json:"configRef"`
+	ConfigRef common.TypedLocalObjectReference `json:"configRef"`
 }
 
 // BackupPhase is a string representation of the phase of a backup.

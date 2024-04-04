@@ -17,7 +17,7 @@ package v1alpha1
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	commonv1alpha1 "github.com/upbound/up-sdk-go/apis/common/v1alpha1"
+	"github.com/upbound/up-sdk-go/apis/common"
 )
 
 // A QueryResponse is returned by the query server as response to a Query.
@@ -78,7 +78,7 @@ type QueryResponseObject struct {
 	ControlPlane *QueryResponseControlPlane `json:"controlPlane,omitempty"`
 
 	// object is the sparse representation of the object.
-	Object *commonv1alpha1.JSONObject `json:"object,omitempty"`
+	Object *common.JSONObject `json:"object,omitempty"`
 
 	// errors is the list of errors that occurred while processing the object.
 	Errors []string `json:"$errors,omitempty"`

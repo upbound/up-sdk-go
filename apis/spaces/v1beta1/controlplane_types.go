@@ -20,7 +20,7 @@ import (
 	velerov1 "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	commonv1alpha1 "github.com/upbound/up-sdk-go/apis/common/v1alpha1"
+	"github.com/upbound/up-sdk-go/apis/common"
 
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
@@ -362,7 +362,7 @@ type Restore struct {
 	// Require "restore" permission on the referenced Backup or BackupSchedule.
 	// +kubebuilder:validation:XValidation:rule="(!has(self.apiGroup) || self.apiGroup == 'spaces.upbound.io') && (self.kind == 'Backup' || self.kind == 'BackupSchedule')",message="source must be a reference to a Backup or BackupSchedule (v1alpha1)"
 	// +kubebuilder:validation:XValidation:rule="oldSelf == self",message="source is immutable"
-	Source commonv1alpha1.TypedLocalObjectReference `json:"source"`
+	Source common.TypedLocalObjectReference `json:"source"`
 
 	// FinishedAt is the time at which the control plane was restored, it's not
 	// meant to be set by the user, but rather by the system when the control
