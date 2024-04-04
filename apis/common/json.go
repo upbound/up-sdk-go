@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package v1alpha1
+package common
 
 import (
 	"k8s.io/apimachinery/pkg/runtime"
