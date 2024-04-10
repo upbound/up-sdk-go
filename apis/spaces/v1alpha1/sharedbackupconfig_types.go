@@ -51,7 +51,7 @@ type SharedBackupConfigList struct {
 }
 
 // A SharedBackupConfigSpec represents the configuration to backup or restore
-// ControlPlanes using Velero.
+// ControlPlanes.
 type SharedBackupConfigSpec struct {
 	// ObjectStorage specifies the object storage configuration for the given provider.
 	// +kubebuilder:validation:Required
