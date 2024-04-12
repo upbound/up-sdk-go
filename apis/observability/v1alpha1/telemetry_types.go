@@ -20,20 +20,19 @@ import (
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/upbound/up-sdk-go/apis/common"
 	spacesv1alpha1 "github.com/upbound/up-sdk-go/apis/spaces/v1alpha1"
 )
 
 // SharedTelemetryConfigKey is the label key used to identify Controlplanes that are
 // managed by a SharedTelemetryConfig.
-const SharedTelemetryConfigKey = "spaces.upbound.io/sharedbackup"
+const SharedTelemetryConfigKey = "spaces.upbound.io/sharedtelemetryconfig"
 
 // +kubebuilder:object:root=true
 // +kubebuilder:storageversion
 // +kubebuilder:subresource:status
-// +kubebuilder:printcolumn:name="Selected",type="string",JSONPath=`.metadata.annotations.sharedbackup\.internal\.spaces\.upbound\.io/selected`
-// +kubebuilder:printcolumn:name="Failed",type="string",JSONPath=`.metadata.annotations.sharedbackup\.internal\.spaces\.upbound\.io/failed`
-// +kubebuilder:printcolumn:name="Provisioned",type="string",JSONPath=`.metadata.annotations.sharedbackup\.internal\.spaces\.upbound\.io/provisioned`
+// +kubebuilder:printcolumn:name="Selected",type="string",JSONPath=`.metadata.annotations.sharedtelemetryconfig\.internal\.spaces\.upbound\.io/selected`
+// +kubebuilder:printcolumn:name="Failed",type="string",JSONPath=`.metadata.annotations.sharedtelemetryconfig\.internal\.spaces\.upbound\.io/failed`
+// +kubebuilder:printcolumn:name="Provisioned",type="string",JSONPath=`.metadata.annotations.sharedtelemetryconfig\.internal\.spaces\.upbound\.io/provisioned`
 // +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase"
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:resource:scope=Namespaced,categories=observability,shortName=stc
@@ -44,6 +43,8 @@ type SharedTelemetryConfig struct {
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
 	// TODO(lsviben): Add validation that checks if pipeline values are present in the exporters field.
+	// +kubebuilder:validation:XValidation:rule="!has(self.pipeline) || !has(self.pipeline.metrics) || self.pipeline.metrics.all(x, self.exporters.exists(p, p == x))",message="spec.pipeline.metrics values must be present in spec.exporters"
+	// +kubebuilder:validation:XValidation:rule="!has(self.pipeline) || !has(self.pipeline.traces) || self.pipeline.traces.all(x, self.exporters.exists(p, p == x))",message="spec.pipeline.traces values must be present in spec.exporters"
 	Spec   SharedTelemetryConfigSpec   `json:"spec"`
 	Status SharedTelemetryConfigStatus `json:"status,omitempty"`
 }
@@ -69,12 +70,14 @@ type SharedTelemetryConfigSpec struct {
 	// OpenTelemetry collector's exporters. Use the OpenTelemetry Collector
 	// documentation to configure the exporters.
 	// Currently only supported exporters are push based exporters.
+	// +kubebuilder:validation:MaxProperties=20
 	// +kubebuilder:pruning:PreserveUnknownFields
-	Exporters common.JSONObject `json:"exporters"`
+	Exporters map[string]Export `json:"exporters"`
 
 	// Pipeline define the telemetry exporter pipelines to configure on the
 	// selected ControlPlanes.
-	Pipeline Pipeline `json:"pipeline"`
+	// +optional
+	Pipeline *Pipeline `json:"pipeline,omitempty"`
 }
 
 // Pipeline defines the telemetry exporter pipelines to configure on the
@@ -83,13 +86,15 @@ type Pipeline struct {
 	// Metrics defines the metrics exporter pipelines to configure on the
 	// selected ControlPlanes. The value has to be present in the
 	// spec.exporters field.
+	// +kubebuilder:validation:MaxItems=20
 	// +optional
-	Metrics []string `json:"metrics"`
+	Metrics []string `json:"metrics,omitempty"`
 	// Traces defines the traces exporter pipelines to configure on the
 	// selected ControlPlanes. The value has to be present in the
 	// spec.exporters field.
+	// +kubebuilder:validation:MaxItems=20
 	// +optional
-	Traces []string `json:"traces"`
+	Traces []string `json:"traces,omitempty"`
 }
 
 // SharedTelemetryConfigStatus represents the observed state of a SharedTelemetryConfig.
