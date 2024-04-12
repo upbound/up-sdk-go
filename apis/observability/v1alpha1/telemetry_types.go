@@ -42,7 +42,6 @@ type SharedTelemetryConfig struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	// TODO(lsviben): Add validation that checks if pipeline values are present in the exporters field.
 	// +kubebuilder:validation:XValidation:rule="!has(self.pipeline) || !has(self.pipeline.metrics) || self.pipeline.metrics.all(x, self.exporters.exists(p, p == x))",message="spec.pipeline.metrics values must be present in spec.exporters"
 	// +kubebuilder:validation:XValidation:rule="!has(self.pipeline) || !has(self.pipeline.traces) || self.pipeline.traces.all(x, self.exporters.exists(p, p == x))",message="spec.pipeline.traces values must be present in spec.exporters"
 	Spec   SharedTelemetryConfigSpec   `json:"spec"`
