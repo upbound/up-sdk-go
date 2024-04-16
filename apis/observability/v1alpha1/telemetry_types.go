@@ -23,9 +23,9 @@ import (
 	spacesv1alpha1 "github.com/upbound/up-sdk-go/apis/spaces/v1alpha1"
 )
 
-// SharedTelemetryConfigKey is the label key used to identify Controlplanes that are
-// managed by a SharedTelemetryConfig.
-const SharedTelemetryConfigKey = "spaces.upbound.io/sharedtelemetryconfig"
+// SharedTelemetryConfigAnnotation is the annotation used to mark a controlplane
+// or OpenTelemetryCollector as managed by a SharedTelemetryConfig.
+const SharedTelemetryConfigAnnotation = "spaces.upbound.io/sharedtelemetryconfig"
 
 // +kubebuilder:object:root=true
 // +kubebuilder:storageversion
@@ -69,29 +69,29 @@ type SharedTelemetryConfigSpec struct {
 	// OpenTelemetry collector's exporters. Use the OpenTelemetry Collector
 	// documentation to configure the exporters.
 	// Currently only supported exporters are push based exporters.
-	// +kubebuilder:validation:MaxProperties=20
+	// +kubebuilder:validation:MaxProperties=10
 	// +kubebuilder:pruning:PreserveUnknownFields
 	Exporters map[string]Export `json:"exporters"`
 
-	// Pipeline define the telemetry exporter pipelines to configure on the
-	// selected ControlPlanes.
+	// ExportPipeline defines the telemetry exporter pipeline to configure on
+	// the selected ControlPlanes.
 	// +optional
-	Pipeline *Pipeline `json:"pipeline,omitempty"`
+	ExportPipeline *Pipeline `json:"exportPipeline,omitempty"`
 }
 
-// Pipeline defines the telemetry exporter pipelines to configure on the
+// Pipeline defines the telemetry exporter pipeline to configure on the
 // selected ControlPlanes.
 type Pipeline struct {
-	// Metrics defines the metrics exporter pipelines to configure on the
+	// Metrics defines the metrics exporter pipeline to configure on the
 	// selected ControlPlanes. The value has to be present in the
 	// spec.exporters field.
-	// +kubebuilder:validation:MaxItems=20
+	// +kubebuilder:validation:MaxItems=10
 	// +optional
 	Metrics []string `json:"metrics,omitempty"`
-	// Traces defines the traces exporter pipelines to configure on the
+	// Traces defines the traces exporter pipeline to configure on the
 	// selected ControlPlanes. The value has to be present in the
 	// spec.exporters field.
-	// +kubebuilder:validation:MaxItems=20
+	// +kubebuilder:validation:MaxItems=10
 	// +optional
 	Traces []string `json:"traces,omitempty"`
 }

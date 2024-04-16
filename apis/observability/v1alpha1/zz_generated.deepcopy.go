@@ -154,8 +154,8 @@ func (in *SharedTelemetryConfigSpec) DeepCopyInto(out *SharedTelemetryConfigSpec
 			(*out)[key] = *val.DeepCopy()
 		}
 	}
-	if in.Pipeline != nil {
-		in, out := &in.Pipeline, &out.Pipeline
+	if in.ExportPipeline != nil {
+		in, out := &in.ExportPipeline, &out.ExportPipeline
 		*out = new(Pipeline)
 		(*in).DeepCopyInto(*out)
 	}
