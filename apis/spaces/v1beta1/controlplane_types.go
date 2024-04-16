@@ -20,9 +20,9 @@ import (
 	velerov1 "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/upbound/up-sdk-go/apis/common"
-
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
+
+	"github.com/upbound/up-sdk-go/apis/common"
 )
 
 const (
@@ -34,6 +34,14 @@ const (
 	// ConditionMessageAnnotationKey is the key for the message shown in the
 	// message column in kubectl.
 	ConditionMessageAnnotationKey = "internal.spaces.upbound.io/message"
+
+	// ControlPlaneGroupLabelKey is the key used to identify namespaces as groups. The
+	// value will be "true".
+	ControlPlaneGroupLabelKey = "spaces.upbound.io/group"
+	// ControlPlaneGroupProtectionKey is the key used to prevent deletion of groups
+	// via the Spaces API. Deletion will not be protected if the underlying namespace
+	// is deleted.
+	ControlPlaneGroupProtectionKey = "spaces.upbound.io/group-deletion-protection"
 )
 
 // GitAuthType is the type of authentication to use to access a Git repository.
