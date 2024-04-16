@@ -84,6 +84,12 @@ type BackupObjectStorage struct {
 	// +kubebuilder:validation:MinLength=1
 	Bucket string `json:"bucket"`
 
+	// Prefix is the prefix to use for all backups using this
+	// SharedBackupConfig, e.g. "prod/cluster1", resulting in backups for
+	// controlplane "ctp1" in namespace "ns1" being stored in
+	// "prod/cluster1/ns1/ctp1".
+	Prefix string `json:"prefix,omitempty"`
+
 	// Config is a free-form map of configuration options for the object storage provider.
 	// See https://github.com/thanos-io/objstore?tab=readme-ov-file for more
 	// information on the formats for each supported cloud provider. Bucket and
