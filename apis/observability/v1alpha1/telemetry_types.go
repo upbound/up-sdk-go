@@ -42,8 +42,8 @@ type SharedTelemetryConfig struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	// +kubebuilder:validation:XValidation:rule="!has(self.pipeline) || !has(self.pipeline.metrics) || self.pipeline.metrics.all(x, self.exporters.exists(p, p == x))",message="spec.pipeline.metrics values must be present in spec.exporters"
-	// +kubebuilder:validation:XValidation:rule="!has(self.pipeline) || !has(self.pipeline.traces) || self.pipeline.traces.all(x, self.exporters.exists(p, p == x))",message="spec.pipeline.traces values must be present in spec.exporters"
+	// +kubebuilder:validation:XValidation:rule="!has(self.exportPipeline) || !has(self.exportPipeline.metrics) || self.exportPipeline.metrics.all(x, self.exporters.exists(p, p == x))",message="spec.exportPipeline.metrics values must be present in spec.exporters"
+	// +kubebuilder:validation:XValidation:rule="!has(self.exportPipeline) || !has(self.exportPipeline.traces) || self.exportPipeline.traces.all(x, self.exporters.exists(p, p == x))",message="spec.exportPipeline.traces values must be present in spec.exporters"
 	Spec   SharedTelemetryConfigSpec   `json:"spec"`
 	Status SharedTelemetryConfigStatus `json:"status,omitempty"`
 }
