@@ -18,6 +18,7 @@ import (
 	"reflect"
 
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	spacesv1alpha1 "github.com/upbound/up-sdk-go/apis/spaces/v1alpha1"
@@ -113,55 +114,55 @@ type SharedTelemetryConfigStatus struct {
 
 	// List of successfully provisioned targets.
 	// +optional
-	// +listType=map
-	// +listMapKey=controlPlane
-	Provisioned []SharedTelemetryConfigProvisioningSuccess `json:"provisioned,omitempty"`
+	// +listType=set
+	Provisioned []string `json:"provisioned,omitempty"`
 }
 
 // SharedTelemetryConfigProvisioningFailure defines configuration provisioning failure.
 type SharedTelemetryConfigProvisioningFailure struct {
+	xpv1.ResourceStatus `json:",inline"`
+
 	// ControlPlane name where the failure occurred.
 	ControlPlane string `json:"controlPlane"`
-
-	// List of conditions.
-	// +optional
-	Conditions []TelemetryConfigStatusConditionType `json:"conditions,omitempty"`
 }
 
 const (
-	// TelemetryConfigReady is the Ready condition for a controlplane
-	// TelemetryConfig.
-	TelemetryConfigReady TelemetryConfigStatusConditionType = "Ready"
-
-	// ReasonSelectorConflict indicates that the controplane was selected by
-	// multiple SharedTelemetryConfigs.
-	ReasonSelectorConflict = "SelectorConflict"
-	// ReasonInvalidConfig indicates that the telemetry configuration is
-	// invalid.
-	ReasonInvalidConfig = "InvalidTelemetryConfig"
-	// ReasonConfigurationValid indicates that the telemetry configuration is
-	// valid.
-	ReasonConfigurationValid = "Valid"
+	// ConditionTypeFailed indicates that the controlplane telemetry
+	// provisioning has failed.
+	ConditionTypeFailed xpv1.ConditionType = "Failed"
 )
 
-// TelemetryConfigStatusConditionType is a controlplane TelemetryConfig
-// condition type.
-type TelemetryConfigStatusConditionType string
+const (
+	// ReasonSelectorConflict indicates that the controplane was selected by
+	// multiple SharedTelemetryConfigs.
+	ReasonSelectorConflict xpv1.ConditionReason = "SelectorConflict"
+	// ReasonInvalidConfig indicates that the telemetry configuration is
+	// invalid.
+	ReasonInvalidConfig xpv1.ConditionReason = "InvalidTelemetryConfig"
+)
 
-// TelemetryConfigStatusCondition is a controlplane TelemetryConfig condition.
-type TelemetryConfigStatusCondition struct {
-	// Type of the condition.
-	Type TelemetryConfigStatusConditionType `json:"type"`
-
-	// +optional
-	Message string `json:"message,omitempty"`
+// SelectorConflict returns a condition that indicates the controlplane is
+// selected by multiple SharedTelemetryConfigs.
+func SelectorConflict(msg string) xpv1.Condition {
+	return xpv1.Condition{
+		Type:               ConditionTypeFailed,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonSelectorConflict,
+		Message:            msg,
+	}
 }
 
-// SharedTelemetryConfigProvisioningSuccess defines telemetry configuration
-// provisioning success.
-type SharedTelemetryConfigProvisioningSuccess struct {
-	// ControlPlane name where the telemetry got successfully configured.
-	ControlPlane string `json:"controlPlane"`
+// InvalidConfig returns a condition that indicates the controlplane
+// OpenTelemetry configuration is invalid.
+func InvalidConfig(msg string) xpv1.Condition {
+	return xpv1.Condition{
+		Type:               ConditionTypeFailed,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonInvalidConfig,
+		Message:            msg,
+	}
 }
 
 var (
