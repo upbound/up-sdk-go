@@ -20,6 +20,7 @@ import (
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	spacesv1alpha1 "github.com/upbound/up-sdk-go/apis/spaces/v1alpha1"
 )
@@ -34,7 +35,6 @@ const SharedTelemetryConfigAnnotation = "spaces.upbound.io/sharedtelemetryconfig
 // +kubebuilder:printcolumn:name="Selected",type="string",JSONPath=`.metadata.annotations.sharedtelemetryconfig\.internal\.spaces\.upbound\.io/selected`
 // +kubebuilder:printcolumn:name="Failed",type="string",JSONPath=`.metadata.annotations.sharedtelemetryconfig\.internal\.spaces\.upbound\.io/failed`
 // +kubebuilder:printcolumn:name="Provisioned",type="string",JSONPath=`.metadata.annotations.sharedtelemetryconfig\.internal\.spaces\.upbound\.io/provisioned`
-// +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase"
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:resource:scope=Namespaced,categories=observability,shortName=stc
 
@@ -56,6 +56,15 @@ type SharedTelemetryConfigList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []SharedTelemetryConfig `json:"items"`
+}
+
+// Objects return the list of items.
+func (s *SharedTelemetryConfigList) Objects() []client.Object {
+	var objs = make([]client.Object, len(s.Items))
+	for i := range s.Items {
+		objs[i] = &s.Items[i]
+	}
+	return objs
 }
 
 // SharedTelemetryConfigSpec defines a telemetry configuration over a set of ControlPlanes.
