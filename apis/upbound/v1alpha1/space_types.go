@@ -21,6 +21,22 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
+const (
+	// SpaceModeLabelKey is the key used to identify the connection mode to
+	// Upbound. The value should be of type `SpaceMode`.
+	SpaceModeLabelKey = "spaces.upbound.io/mode"
+
+	// SpaceRegionLabelKey is the key used to identify the cloud region for the
+	// space. The region comes from the Upbound list of regions, independent
+	// from any cloud provider region list. The value should always match the
+	// `spec.region` field.
+	SpaceRegionLabelKey = "spaces.upbound.io/region"
+
+	// SpaceProviderLabelKey is the key used to identify the cloud provider for
+	// the space. The value should always match the `spec.provider` field.
+	SpaceProviderLabelKey = "spaces.upbound.io/provider"
+)
+
 // SpaceMode is the mode in which the space connects to Upbound.
 type SpaceMode string
 
@@ -57,20 +73,47 @@ const (
 	RegionUSCentral1 Region = "us-central-1"
 )
 
+// ConnectionStatus represents the ability for clients to be able to connect to
+// the space.
+type ConnectionStatus string
+
+const (
+	// ConnectionStatusConnected represents the space is reachable.
+	ConnectionStatusConnected ConnectionStatus = "connected"
+	// ConnectionStatusUnreachable represents the space cannot currently be
+	// reached.
+	ConnectionStatusUnreachable ConnectionStatus = "unreachable"
+	// ConnectionStatusUnknown represents the space is not known.
+	ConnectionStatusUnknown ConnectionStatus = "unknown"
+)
+
+// ConnectionDetails is the collection of statuses and timestamps surrounding
+// the connection to the space.
+type ConnectionDetails struct {
+	// +kubebuilder:default="unknown"
+	// The current status of the connection to the space
+	Status ConnectionStatus `json:"status,omitempty"`
+}
+
 // SpaceSpec is space's spec.
 type SpaceSpec struct {
-	Mode     SpaceMode      `json:"mode"`
 	Provider *CloudProvider `json:"provider,omitempty"`
 	Region   *Region        `json:"region,omitempty"`
 }
 
 // SpaceStatus is space's status.
-type SpaceStatus struct{}
+type SpaceStatus struct {
+	// +optional
+	// The FQDN endpoint for the Space Cluster used for Ingress
+	FQDN string `json:"fqdn,omitempty"`
+	// The statuses and timestamps surrounding the connection to the space
+	ConnectionDetails ConnectionDetails `json:"connection,omitempty"`
+}
 
 // +kubebuilder:object:root=true
 
 // A Space is a kubernetes style representation of an Upbound Space.
-// +kubebuilder:printcolumn:name="SPACES VERSION",type="string",JSONPath=".spec.spacesConfig.version"
+// +kubebuilder:printcolumn:name="STATUS",type="string",JSONPath=".status.connection.status"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Namespaced,categories=claim
 type Space struct {
