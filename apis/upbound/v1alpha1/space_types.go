@@ -21,6 +21,22 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
+const (
+	// SpaceModeLabelKey is the key used to identify the connection mode to
+	// Upbound. The value should be of type `SpaceMode`.
+	SpaceModeLabelKey = "spaces.upbound.io/mode"
+
+	// SpaceRegionLabelKey is the key used to identify the cloud region for the
+	// space. The region comes from the Upbound list of regions, independent
+	// from any cloud provider region list. The value should always match the
+	// `spec.region` field.
+	SpaceRegionLabelKey = "spaces.upbound.io/region"
+
+	// SpaceProviderLabelKey is the key used to identify the cloud provider for
+	// the space. The value should always match the `spec.provider` field.
+	SpaceProviderLabelKey = "spaces.upbound.io/provider"
+)
+
 // SpaceMode is the mode in which the space connects to Upbound.
 type SpaceMode string
 
@@ -59,7 +75,6 @@ const (
 
 // SpaceSpec is space's spec.
 type SpaceSpec struct {
-	Mode     SpaceMode      `json:"mode"`
 	Provider *CloudProvider `json:"provider,omitempty"`
 	Region   *Region        `json:"region,omitempty"`
 }
