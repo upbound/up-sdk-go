@@ -80,15 +80,20 @@ type ConnectionStatus string
 const (
 	// ConnectionStatusConnected represents the space is reachable.
 	ConnectionStatusConnected ConnectionStatus = "connected"
-	// ConnectionStatusDisconnected represents the space has been purposefully
-	// disconnected.
-	ConnectionStatusDisconnected ConnectionStatus = "disconnected"
 	// ConnectionStatusUnreachable represents the space cannot currently be
 	// reached.
 	ConnectionStatusUnreachable ConnectionStatus = "unreachable"
 	// ConnectionStatusUnknown represents the space is not known.
 	ConnectionStatusUnknown ConnectionStatus = "unknown"
 )
+
+// ConnectionDetails is the collection of statuses and timestamps surrounding
+// the connection to the space.
+type ConnectionDetails struct {
+	// +kubebuilder:default="unknown"
+	// The current status of the connection to the space
+	Status ConnectionStatus `json:"status,omitempty"`
+}
 
 // SpaceSpec is space's spec.
 type SpaceSpec struct {
@@ -101,15 +106,14 @@ type SpaceStatus struct {
 	// +optional
 	// The FQDN endpoint for the Space Cluster used for Ingress
 	FQDN string `json:"fqdn,omitempty"`
-	// +kubebuilder:default="unknown"
-	// The current status of the connection to the space
-	ConnectionStatus ConnectionStatus `json:"connectionStatus,omitempty"`
+	// The statuses and timestamps surrounding the connection to the space
+	ConnectionDetails ConnectionDetails `json:"connection,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
 // A Space is a kubernetes style representation of an Upbound Space.
-// +kubebuilder:printcolumn:name="STATUS",type="string",JSONPath=".status.connectionStatus"
+// +kubebuilder:printcolumn:name="STATUS",type="string",JSONPath=".status.connection.status"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Namespaced,categories=claim
 type Space struct {
