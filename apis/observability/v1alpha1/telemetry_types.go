@@ -80,12 +80,13 @@ type SharedTelemetryConfigSpec struct {
 	// documentation to configure the exporters.
 	// Currently only supported exporters are push based exporters.
 	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Required
 	Exporters common.JSONObject `json:"exporters"`
 
 	// ExportPipeline defines the telemetry exporter pipeline to configure on
 	// the selected ControlPlanes.
-	// +optional
-	ExportPipeline *Pipeline `json:"exportPipeline,omitempty"`
+	// +kubebuilder:validation:Required
+	ExportPipeline Pipeline `json:"exportPipeline,omitempty"`
 }
 
 // Pipeline defines the telemetry exporter pipeline to configure on the
