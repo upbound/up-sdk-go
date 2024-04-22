@@ -17,6 +17,8 @@ package v1alpha1
 import (
 	"reflect"
 
+	"github.com/upbound/up-sdk-go/apis/common"
+
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -43,8 +45,6 @@ type SharedTelemetryConfig struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	// +kubebuilder:validation:XValidation:rule="!has(self.exportPipeline) || !has(self.exportPipeline.metrics) || self.exportPipeline.metrics.all(x, self.exporters.exists(p, p == x))",message="spec.exportPipeline.metrics values must be present in spec.exporters"
-	// +kubebuilder:validation:XValidation:rule="!has(self.exportPipeline) || !has(self.exportPipeline.traces) || self.exportPipeline.traces.all(x, self.exporters.exists(p, p == x))",message="spec.exportPipeline.traces values must be present in spec.exporters"
 	Spec   SharedTelemetryConfigSpec   `json:"spec"`
 	Status SharedTelemetryConfigStatus `json:"status,omitempty"`
 }
@@ -79,9 +79,8 @@ type SharedTelemetryConfigSpec struct {
 	// OpenTelemetry collector's exporters. Use the OpenTelemetry Collector
 	// documentation to configure the exporters.
 	// Currently only supported exporters are push based exporters.
-	// +kubebuilder:validation:MaxProperties=10
 	// +kubebuilder:pruning:PreserveUnknownFields
-	Exporters map[string]Export `json:"exporters"`
+	Exporters common.JSONObject `json:"exporters"`
 
 	// ExportPipeline defines the telemetry exporter pipeline to configure on
 	// the selected ControlPlanes.
