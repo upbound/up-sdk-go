@@ -313,7 +313,7 @@ type ControlPlaneSpec struct {
 	// each other.
 	//
 	// If omitted, it is defaulted to the namespace of the ControlPlane.
-	//
+	// Deprecated: Use Hub or Upbound identities instead.
 	// +optional
 	WriteConnectionSecretToReference *SecretReference `json:"writeConnectionSecretToRef,omitempty"`
 	// PublishConnectionDetailsTo specifies the connection secret config which
@@ -322,6 +322,7 @@ type ControlPlaneSpec struct {
 	// Connection details frequently include the endpoint, username,
 	// and password required to connect to the managed resource.
 	//
+	// Deprecated: Use Hub or Upbound identities instead.
 	// +optional
 	PublishConnectionDetailsTo *xpv1.PublishConnectionDetailsTo `json:"publishConnectionDetailsTo,omitempty"`
 	// THIS IS AN ALPHA FIELD. Do not use it in production. It is not honored
