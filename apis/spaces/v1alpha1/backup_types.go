@@ -85,6 +85,10 @@ type BackupDefinition struct {
 	ExcludedResources []string `json:"excludedResources,omitempty"`
 
 	// ConfigRef is a reference to the backup configuration.
+	// ApiGroup is optional and defaults to "spaces.upbound.io".
+	// Kind is required, and the only supported value is "SharedBackupConfig" at
+	// the moment.
+	// Name is required.
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:XValidation:rule="(!has(self.apiGroup) || self.apiGroup == 'spaces.upbound.io') && self.kind == 'SharedBackupConfig'",message="backup config ref must be a reference to a SharedBackupConfig"
 	// +kubebuilder:validation:XValidation:rule="size(self.name) > 0",message="backup config ref must have a name"

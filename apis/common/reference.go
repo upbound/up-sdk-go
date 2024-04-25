@@ -22,16 +22,14 @@ package common
 // +kubebuilder:object:generate=true
 type TypedLocalObjectReference struct {
 	// APIGroup is the group for the resource being referenced.
-	// If APIGroup is not specified, the specified Kind must be in the core API group.
-	// For any other third-party types, APIGroup is required.
 	// +optional
 	APIGroup *string `json:"apiGroup,omitempty"`
 
-	// Kind is the type of resource being referenced
+	// Kind is the type of resource being referenced.
 	// +kubebuilder:validation:MinLength=1
 	Kind string `json:"kind,omitempty"`
 
-	// Name is the name of resource being referenced
+	// Name is the name of resource being referenced.
 	// +kubebuilder:validation:MinLength=1
 	Name string `json:"name,omitempty"`
 }
