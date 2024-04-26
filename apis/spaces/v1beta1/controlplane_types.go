@@ -368,6 +368,10 @@ type ControlPlaneSpec struct {
 type Restore struct {
 	// Source of the Backup or BackupSchedule to restore from.
 	// Require "restore" permission on the referenced Backup or BackupSchedule.
+	// ApiGroup is optional and defaults to "spaces.upbound.io".
+	// Kind is required, and the only supported kinds are Backup and
+	// BackupSchedule at the moment.
+	// Name is required.
 	// +kubebuilder:validation:XValidation:rule="(!has(self.apiGroup) || self.apiGroup == 'spaces.upbound.io') && (self.kind == 'Backup' || self.kind == 'BackupSchedule')",message="source must be a reference to a Backup or BackupSchedule (v1alpha1)"
 	// +kubebuilder:validation:XValidation:rule="oldSelf == self",message="source is immutable"
 	Source common.TypedLocalObjectReference `json:"source"`
