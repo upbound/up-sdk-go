@@ -12,28 +12,53 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package v1alpha1
+package auth
 
 const (
-	// Audience scopes
-	AudienceSpacesAPI           = "upbound:spaces:api"
-	AudienceSpacesControlPlanes = "upbound:spaces:controlplanes"
-
-	// The required prefix for an upbound organization scope
+	// ScopeOrganizationsPrefix is the required prefix for an upbound
+	// organization scope.
 	ScopeOrganizationsPrefix = "upbound:org:"
 
+	// ContentTypeFormURLEncoded is the form URL content type accepted by the
+	// auth service.
 	ContentTypeFormURLEncoded = "application/x-www-form-urlencoded"
 
-	APIGroupAuth        = "tokenexchange.upbound.io"
-	APIGroupAuthVersion = "v1alpha1"
+	// APIGroupAuth is the resource group for auth requests.
+	APIGroupAuth = "tokenexchange.upbound.io"
 
-	// Form data keys
-	ParamGrantType          = "grant_type"
-	ParamAudience           = "audience"
-	ParamScope              = "scope"
-	ParamRequestedTokenType = "requested_token_type"
-	ParamSubjectToken       = "subject_token"
-	ParamSubjectTokenType   = "subject_token_type"
+	// APIGroupAuthVersion is the resource version for auth requests.
+	APIGroupAuthVersion = "v1alpha1"
+)
+
+const (
+	// AudienceSpacesAPI is the scope for accessing a space itself.
+	AudienceSpacesAPI = "upbound:spaces:api"
+
+	// AudienceSpacesControlPlanes is the scope for accessing control planes
+	// within the space.
+	AudienceSpacesControlPlanes = "upbound:spaces:controlplanes"
+)
+
+const (
+	// ParamGrantType specifies which type of authorization type is being
+	// granted.
+	ParamGrantType = "grant_type"
+
+	// ParamAudience specifies which (possibly multiple) audiences should be
+	// granted in an exchange.
+	ParamAudience = "audience"
+
+	// ParamScope specifies the scope of the grant for the given token, such as
+	// an organization.
+	ParamScope = "scope"
+
+	// ParamSubjectToken is the subject up for exchange, such as a session
+	// token.
+	ParamSubjectToken = "subject_token"
+
+	// ParamSubjectTokenType is the type of the subject being used for the
+	// exchange.
+	ParamSubjectTokenType = "subject_token_type"
 )
 
 const (

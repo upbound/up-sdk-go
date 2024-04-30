@@ -23,11 +23,10 @@ import (
 	"strings"
 
 	"github.com/upbound/up-sdk-go"
-	"github.com/upbound/up-sdk-go/apis/auth/v1alpha1"
 )
 
 var (
-	basePath = fmt.Sprintf("/apis/%s/%s", v1alpha1.APIGroupAuth, v1alpha1.APIGroupAuthVersion)
+	basePath = fmt.Sprintf("/apis/%s/%s", APIGroupAuth, APIGroupAuthVersion)
 )
 
 // Client is a tokenexchange client.
@@ -42,14 +41,15 @@ func NewClient(cfg *up.Config) *Client {
 	}
 }
 
-// GetOrgScopedToken a token on Upbound.
-func (c *Client) GetOrgScopedToken(ctx context.Context, org, token string) (*v1alpha1.TokenExchangeResponse, error) { // nolint:interfacer
+// GetOrgScopedToken returns a token scoped to a specific organization on
+// Upbound, which can be used with spaces and control planes.
+func (c *Client) GetOrgScopedToken(ctx context.Context, org, token string) (*TokenExchangeResponse, error) { // nolint:interfacer
 	body := url.Values{
-		v1alpha1.ParamAudience:         []string{v1alpha1.AudienceSpacesAPI, v1alpha1.AudienceSpacesControlPlanes},
-		v1alpha1.ParamGrantType:        []string{v1alpha1.GrantTypeTokenExchange},
-		v1alpha1.ParamSubjectTokenType: []string{v1alpha1.TokenTypeIDToken},
-		v1alpha1.ParamSubjectToken:     []string{token},
-		v1alpha1.ParamScope:            []string{fmt.Sprintf("%s%s", v1alpha1.ScopeOrganizationsPrefix, org)},
+		ParamAudience:         []string{AudienceSpacesAPI, AudienceSpacesControlPlanes},
+		ParamGrantType:        []string{GrantTypeTokenExchange},
+		ParamSubjectTokenType: []string{TokenTypeIDToken},
+		ParamSubjectToken:     []string{token},
+		ParamScope:            []string{fmt.Sprintf("%s%s", ScopeOrganizationsPrefix, org)},
 	}
 
 	req, err := c.Client.NewRequest(ctx, http.MethodPost, basePath, "orgscopedtokens", nil)
@@ -64,10 +64,10 @@ func (c *Client) GetOrgScopedToken(ctx context.Context, org, token string) (*v1a
 	req.GetBody = func() (io.ReadCloser, error) {
 		return io.NopCloser(reader), nil
 	}
-	req.Header.Set("Content-Type", v1alpha1.ContentTypeFormURLEncoded)
+	req.Header.Set("Content-Type", ContentTypeFormURLEncoded)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 
-	t := &v1alpha1.TokenExchangeResponse{}
+	t := &TokenExchangeResponse{}
 	err = c.Client.Do(req, &t)
 	if err != nil {
 		return nil, err

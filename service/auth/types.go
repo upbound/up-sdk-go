@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package v1alpha1
+package auth
 
 const (
-	// The default base URL for all auth calls
+	// DefaultBaseURL is default URL for all auth calls
 	DefaultBaseURL = "https://auth.upbound.io/"
 )
