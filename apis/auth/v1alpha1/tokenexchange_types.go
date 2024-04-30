@@ -21,9 +21,11 @@ import (
 )
 
 const (
+	// Audience scopes
 	AudienceSpacesAPI           = "upbound:spaces:api"
 	AudienceSpacesControlPlanes = "upbound:spaces:controlplanes"
 
+	// The required prefix for an upbound organization scope
 	ScopeOrganizationsPrefix = "upbound:org:"
 
 	ContentTypeFormURLEncoded = "application/x-www-form-urlencoded"
@@ -33,6 +35,7 @@ const (
 
 	organizationNameRegexString = "^(([a-zA-Z0-9]+-?)*[a-zA-Z0-9])$"
 
+	// Form data keys
 	ParamGrantType          = "grant_type"
 	ParamAudience           = "audience"
 	ParamScope              = "scope"
@@ -43,31 +46,42 @@ const (
 
 var organizationNameRegex = regexp.MustCompile(organizationNameRegexString)
 
+// Scope defines a token exchange permission scope
 type Scope interface {
 	Scope() string
 	Type() ScopeType
 }
 
+// ScopeParser defines an interface for parsing scopes from strings
 type ScopeParser interface {
 	ParseScope(scopeStr string) (Scope, bool)
 }
 
+// ScopeType defines all allowed scopes
 type ScopeType string
 
+// ScopeTypeOrganization is an organization-wide scope
 const ScopeTypeOrganization ScopeType = "organization"
 
 // Organization describes a name (not numeric ID) of an Upbound organization.
 // The name is guaranteed to be unique across other orgs and users, as org and user names are stored in the same "namespaces" table in Upbound API.
 type Organization string
 
-func (o Organization) Scope() string   { return ScopeOrganizationsPrefix + string(o) }
+// Scope implements Scope
+func (o Organization) Scope() string { return ScopeOrganizationsPrefix + string(o) }
+
+// Type implements Type
 func (o Organization) Type() ScopeType { return ScopeTypeOrganization }
+
+// OrganizationName returns the name of the organization
 func (o Organization) OrganizationName() string {
 	return string(o)
 }
 
+// OrgParser parses organization-wide scopes
 type OrgParser struct{}
 
+// ParseScope implements ParseScope
 func (OrgParser) ParseScope(str string) (Scope, bool) {
 	// Validate that the organization name is between 2-100 characters, plus the prefix length
 	if len(str) < 2+len(ScopeOrganizationsPrefix) || len(str) > 100+len(ScopeOrganizationsPrefix) {
@@ -90,6 +104,7 @@ func (OrgParser) ParseScope(str string) (Scope, bool) {
 	return Organization(orgName), true
 }
 
+// OrganizationScope returns an organization-wide scope
 // TODO: Where validate orgName according to prefix, also make that a different type?
 func OrganizationScope(orgName string) Organization {
 	return Organization(orgName)
@@ -105,6 +120,8 @@ const (
 	TokenTypeIDToken = "urn:ietf:params:oauth:token-type:id_token"
 )
 
+// TokenExchangeResponse defines the response from the server when completing a
+// successful token exchange request
 type TokenExchangeResponse struct {
 	AccessToken     string `json:"access_token"`
 	IssuedTokenType string `json:"issued_token_type"`
@@ -112,9 +129,11 @@ type TokenExchangeResponse struct {
 	ExpiresIn       int    `json:"expires_in"`
 }
 
+// OAuth2ErrorType is an expected OAuth error
 type OAuth2ErrorType string
 
 const (
+	// Valid OAuth2 error response types
 	OAuth2ErrorTypeInvalidRequest       = "invalid_request"
 	OAuth2ErrorTypeInvalidScope         = "invalid_scope"
 	OAuth2ErrorTypeUnsupportedGrantType = "unsupported_grant_type"
@@ -122,6 +141,7 @@ const (
 	OAuth2ErrorTypeInvalidTarget        = "invalid_target"
 )
 
+// NewOAuth2Error creates a new OAuth2 error
 func NewOAuth2Error(errType OAuth2ErrorType) *OAuth2Error {
 	return &OAuth2Error{Type: errType}
 }
@@ -142,10 +162,12 @@ type OAuth2Error struct {
 	Description string `json:"error_description"`
 }
 
+// Error implements error.Error
 func (e *OAuth2Error) Error() string {
 	return fmt.Sprintf("type: %s, description: %s", e.Type, e.Description)
 }
 
+// WithDescription adds a description to the OAuth2 error
 func (e *OAuth2Error) WithDescription(desc string) *OAuth2Error {
 	e.Description = desc
 	return e

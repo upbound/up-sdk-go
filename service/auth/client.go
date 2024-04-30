@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tokenexchange
+package auth
 
 import (
 	"context"
@@ -27,7 +27,7 @@ import (
 )
 
 var (
-	basePath = fmt.Sprintf("/apis/%s/%s/orgscopedtokens", v1alpha1.APIGroupAuth, v1alpha1.APIGroupAuthVersion)
+	basePath = fmt.Sprintf("/apis/%s/%s", v1alpha1.APIGroupAuth, v1alpha1.APIGroupAuthVersion)
 )
 
 // Client is a tokenexchange client.
@@ -42,8 +42,8 @@ func NewClient(cfg *up.Config) *Client {
 	}
 }
 
-// Get a token on Upbound.
-func (c *Client) Get(ctx context.Context, org, token string) (*v1alpha1.TokenExchangeResponse, error) { // nolint:interfacer
+// GetOrgScopedToken a token on Upbound.
+func (c *Client) GetOrgScopedToken(ctx context.Context, org, token string) (*v1alpha1.TokenExchangeResponse, error) { // nolint:interfacer
 	body := url.Values{
 		v1alpha1.ParamAudience:         []string{v1alpha1.AudienceSpacesAPI, v1alpha1.AudienceSpacesControlPlanes},
 		v1alpha1.ParamGrantType:        []string{v1alpha1.GrantTypeTokenExchange},
@@ -52,7 +52,7 @@ func (c *Client) Get(ctx context.Context, org, token string) (*v1alpha1.TokenExc
 		v1alpha1.ParamScope:            []string{fmt.Sprintf("%s%s", v1alpha1.ScopeOrganizationsPrefix, org)},
 	}
 
-	req, err := c.Client.NewRequest(ctx, http.MethodPost, basePath, "", nil)
+	req, err := c.Client.NewRequest(ctx, http.MethodPost, basePath, "orgscopedtokens", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (c *Client) Get(ctx context.Context, org, token string) (*v1alpha1.TokenExc
 	req.GetBody = func() (io.ReadCloser, error) {
 		return io.NopCloser(reader), nil
 	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Content-Type", v1alpha1.ContentTypeFormURLEncoded)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 
 	t := &v1alpha1.TokenExchangeResponse{}

@@ -15,5 +15,6 @@
 package v1alpha1
 
 const (
+	// The default base URL for all auth calls
 	DefaultBaseURL = "https://auth.upbound.io/"
 )
