@@ -30,7 +30,6 @@ const SharedBackupScheduleLabelKey = "spaces.upbound.io/sharedbackupschedule"
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Schedule",type="string",JSONPath=".spec.schedule"
 // +kubebuilder:printcolumn:name="Suspended",type="boolean",JSONPath=".spec.suspend"
-// +kubebuilder:printcolumn:name="Last schedule",type="date",JSONPath=".status.lastBackupTime"
 // +kubebuilder:printcolumn:name="Provisioned",type="string",JSONPath=`.metadata.annotations.sharedbackupschedule\.internal\.spaces\.upbound\.io/provisioned-total`
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:resource:scope=Namespaced,categories=spaces
