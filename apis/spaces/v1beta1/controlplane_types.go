@@ -353,7 +353,7 @@ type ControlPlaneSpec struct {
 	// Crossplane defines the configuration for Crossplane.
 	Crossplane CrossplaneSpec `json:"crossplane,omitempty"`
 
-	// [[GATE:EnableControlPlaneBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
+	// [[GATE:EnableSharedBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
 	// Backup specifies details about the control planes backup configuration.
 	// +optional
 	Backup *ControlPlaneBackupSpec `json:"backup,omitempty"`
