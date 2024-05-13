@@ -297,6 +297,7 @@ type SecretReference struct {
 // A ControlPlaneSpec represents the desired state of the ControlPlane.
 // +kubebuilder:validation:XValidation:rule="!has(oldSelf.restore) || has(self.restore)",message="[[GATE:EnableSharedBackup]] restore source can not be unset"
 // +kubebuilder:validation:XValidation:rule="has(oldSelf.restore) || !has(self.restore)",message="[[GATE:EnableSharedBackup]] restore source can not be set after creation"
+// +kubebuilder:validation:XValidation:rule="!has(self.crossplane.autoUpgrade) || self.crossplane.autoUpgrade.channel != \"None\" || self.crossplane.version != \"\"",message="\"version\" cannot be empty when upgrade channel is \"None\""
 type ControlPlaneSpec struct {
 	// [[GATE:EnableGitSource]] THIS IS AN ALPHA FIELD. Do not use it in production.
 	// Source points to a Git repository containing a ControlPlaneSource
