@@ -106,6 +106,11 @@ type SpaceStatus struct {
 	// +optional
 	// The FQDN endpoint for the Space Cluster used for Ingress
 	FQDN string `json:"fqdn,omitempty"`
+	// +optional
+	// The URL for contacting the Space API. This value should be used to get
+	// the ingress host and CA data, then the ingress should be used for all
+	// future communication.
+	APIURL string `json:"apiURL,omitempty"`
 	// The statuses and timestamps surrounding the connection to the space
 	ConnectionDetails ConnectionDetails `json:"connection,omitempty"`
 }
