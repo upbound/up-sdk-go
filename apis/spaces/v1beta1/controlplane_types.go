@@ -17,7 +17,6 @@ package v1beta1
 import (
 	"reflect"
 
-	velerov1 "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
@@ -218,22 +217,6 @@ type SourceStatus struct {
 	Revision string `json:"revision,omitempty"`
 }
 
-// StorageLocation specifies where to store back data.
-type StorageLocation struct {
-	// Prefix defines the directory within the control plane's storage location where backups are
-	// stored or retrieved.
-	// +optional
-	// +kubebuilder:validation:MinLength=1
-	Prefix *string `json:"prefix,omitempty"`
-
-	// AccessMode specifies the access mode of the control plane's backup storage location.
-	// Set to ReadOnly when using restoring an existing control plane to another, so
-	// that two control planes aren't backing up to the same location.
-	// +optional
-	// +kubebuilder:default=ReadWrite
-	AccessMode *velerov1.BackupStorageLocationAccessMode `json:"accessMode,omitempty"`
-}
-
 // CrossplaneUpgradeChannel is the channel for Crossplane upgrades.
 type CrossplaneUpgradeChannel string
 
@@ -354,11 +337,6 @@ type ControlPlaneSpec struct {
 	// Crossplane defines the configuration for Crossplane.
 	Crossplane CrossplaneSpec `json:"crossplane,omitempty"`
 
-	// [[GATE:EnableControlPlaneBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
-	// Backup specifies details about the control planes backup configuration.
-	// +optional
-	Backup *ControlPlaneBackupSpec `json:"backup,omitempty"`
-
 	// [[GATE:EnableSharedBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
 	// Restore specifies details about the control planes restore configuration.
 	// +optional
@@ -382,14 +360,6 @@ type Restore struct {
 	// meant to be set by the user, but rather by the system when the control
 	// plane is restored.
 	FinishedAt *metav1.Time `json:"finishedAt,omitempty"`
-}
-
-// ControlPlaneBackupSpec specifies details about the control planes backup configuration.
-type ControlPlaneBackupSpec struct {
-	// StorageLocation specifies details about the control planes underlying storage location
-	// where backups are stored or retrieved.
-	// +optional
-	StorageLocation *StorageLocation `json:"storageLocation,omitempty"`
 }
 
 // A ControlPlaneStatus represents the observed state of a ControlPlane.
