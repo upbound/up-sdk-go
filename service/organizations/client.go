@@ -111,6 +111,22 @@ func (c *Client) ListRobots(ctx context.Context, id uint) ([]Robot, error) {
 	return rs, nil
 }
 
+// ListTeams list all teams the user can access in the organization on
+// Upbound.
+// TODO(haarchri): move this to teams client when API is updated.
+func (c *Client) ListTeams(ctx context.Context, id uint) ([]Team, error) {
+	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, path.Join(strconv.FormatUint(uint64(id), 10), "teams"), nil)
+	if err != nil {
+		return nil, err
+	}
+	rs := []Team{}
+	err = c.Client.Do(req, &rs)
+	if err != nil {
+		return nil, err
+	}
+	return rs, nil
+}
+
 // Delete an organization on Upbound.
 func (c *Client) Delete(ctx context.Context, id uint) error {
 	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, strconv.FormatUint(uint64(id), 10), nil)
