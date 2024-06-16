@@ -26,8 +26,9 @@ import (
 )
 
 const (
-	basePath   = "v2/robots"
-	tokensPath = "tokens"
+	basePath          = "v2/robots"
+	tokensPath        = "tokens"
+	teamsRelationPath = "relationships/teams"
 )
 
 // Client is an robots client.
@@ -91,6 +92,28 @@ func (c *Client) ListTokens(ctx context.Context, id uuid.UUID) (*tokens.TokensRe
 // Delete an robot on Upbound.
 func (c *Client) Delete(ctx context.Context, id uuid.UUID) error { // nolint:interfacer
 	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, id.String(), nil)
+	if err != nil {
+		return err
+	}
+	return c.Client.Do(req, nil)
+}
+
+// CreateTeamMembership create a robot team membership on Upbound.
+func (c *Client) CreateTeamMembership(ctx context.Context, id uuid.UUID, params *RobotTeamMembershipResourceIdentifier) error {
+	req, err := c.Client.NewRequest(ctx, http.MethodPost, basePath, path.Join(id.String(), teamsRelationPath), &RobotTeamMembershipRelationshipList{
+		Data: []RobotTeamMembershipResourceIdentifier{*params},
+	})
+	if err != nil {
+		return err
+	}
+	return c.Client.Do(req, nil)
+}
+
+// DeleteTeamMembership delete a robot team membership on Upbound.
+func (c *Client) DeleteTeamMembership(ctx context.Context, id uuid.UUID, params *RobotTeamMembershipResourceIdentifier) error {
+	req, err := c.Client.NewRequest(ctx, http.MethodDelete, basePath, path.Join(id.String(), teamsRelationPath), &RobotTeamMembershipRelationshipList{
+		Data: []RobotTeamMembershipResourceIdentifier{*params},
+	})
 	if err != nil {
 		return err
 	}
