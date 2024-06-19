@@ -23,7 +23,8 @@ type RobotOwnerType string
 
 // Robots can be owned by an organization.
 const (
-	RobotOwnerOrganization RobotOwnerType = "organization"
+	RobotOwnerOrganization      RobotOwnerType = "organization"
+	RobotTeamMembershipTypeTeam string         = "teams"
 )
 
 // bodyType is the type of request in the data body.
@@ -86,4 +87,15 @@ type RobotResponse struct {
 type RobotAttributes struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
+}
+
+// RobotTeamMembershipResourceIdentifier are the attributes of a robot team membership.
+type RobotTeamMembershipResourceIdentifier struct {
+	Type string `json:"type"`
+	ID   string `json:"id"`
+}
+
+// RobotTeamMembershipRelationshipList represents RobotTeamMembershipResourceIdentifier relationships.
+type RobotTeamMembershipRelationshipList struct {
+	Data []RobotTeamMembershipResourceIdentifier `json:"data"`
 }

@@ -15,7 +15,9 @@
 package teams
 
 import (
-	"github.com/upbound/up-sdk-go/service/common"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 // TeamCreateParameters are the parameters for creating a team.
@@ -24,14 +26,14 @@ type TeamCreateParameters struct {
 	OrganizationID uint   `json:"organizationId"`
 }
 
-// TeamsResponse is the response returned from team operations.
-type TeamsResponse struct { //nolint:golint
-	DataSet []common.DataSet `json:"data"`
-}
-
 // TeamResponse is the response returned from team operations.
 type TeamResponse struct {
-	common.DataSet `json:"data"`
+	ID             uuid.UUID  `json:"id"`
+	OrganizationID uint       `json:"organizationId"`
+	AccountID      uint       `json:"accountId"`
+	Name           string     `json:"name"`
+	CreatorID      uint       `json:"creatorId"`
+	CreatedAt      *time.Time `json:"createdAt,omitempty"`
 }
 
 // TeamAttributes are the attributes of a team.
