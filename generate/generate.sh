@@ -16,5 +16,5 @@
 echo $GO_SUBDIRS
 
 cd ..
-go run -tags generate github.com/google/addlicense -v -c 'Upbound Inc' -ignore service/spaces/crossplane/supported_versions.yaml *.go $(echo ${GO_SUBDIRS} | xargs)
+go run -tags generate github.com/google/addlicense -v -c 'Upbound Inc' *.go $(echo ${GO_SUBDIRS} | xargs)
 cd generate
