@@ -34,23 +34,34 @@ type QueryTopLevelFilter struct {
 	// controlplanes are queried in the given scope.
 	ControlPlane QueryFilterControlPlane `json:"controlPlane,omitempty"`
 
-	QueryFilter `json:",inline"`
+	// objects specifies what to filter. Objects returned will match all
+	// criteria in at least one of the filters.
+	Objects []QueryFilter `json:"objects,inline"`
+}
+
+func (tlf *QueryTopLevelFilter) ObjectIDs() []any {
+	ids := make([]any, 0, len(tlf.Objects))
+	for _, f := range tlf.Objects {
+		if len(f.ID) > 0 {
+			ids = append(ids, f.ID)
+		}
+	}
+	return ids
 }
 
 // QueryFilter specifies what to filter. Objects returned will match all
-// criteria specified in the filter. If multiple values are specified for a
-// particular criteria, objects matching any one of them will be returned.
+// criteria specified in the filter.
 type QueryFilter struct {
-	// ids are the object IDs to query.
-	IDs []string `json:"ids,omitempty"`
+	// id is the object ID to query.
+	ID string `json:"id,omitempty"`
 	// created_at queries for objects with a range of creation times.
 	CreatedAt QueryCreatedAt `json:"created_at,omitempty"`
-	// namespaces are the namespaces WITHIN a controlplane to query.
-	Namespaces []string `json:"namespaces,omitempty"`
-	// names are the names of objects to query.
-	Names []string `json:"names,omitempty"`
-	// kinds are the GroupKinds of objects to query.
-	Kinds []QueryGroupKind `json:"kinds,omitempty"`
+	// namespace is the namespace WITHIN a controlplane to query.
+	Namespace string `json:"namespace,omitempty"`
+	// name is the name of objects to query.
+	Name string `json:"name,omitempty"`
+	// kind is the GroupKinds of objects to query.
+	Kind QueryGroupKind `json:"kind,omitempty"`
 	// labels are the labels of objects to query.
 	Labels map[string]string `json:"labels,omitempty"`
 	// categories is a list of categories to query.
@@ -184,8 +195,8 @@ type QueryTopLevelResources struct {
 type QueryNestedResources struct {
 	QueryResources `json:",inline"`
 
-	// filter specifies how to filter the returned objects.
-	Filter QueryFilter `json:"filter,omitempty"`
+	// filters specifies how to filter the returned objects.
+	Filters []QueryFilter `json:"filter,omitempty"`
 }
 
 // QueryResources specifies how to return resources.
