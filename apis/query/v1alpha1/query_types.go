@@ -34,45 +34,50 @@ type QueryTopLevelFilter struct {
 	// controlplanes are queried in the given scope.
 	ControlPlane QueryFilterControlPlane `json:"controlPlane,omitempty"`
 
-	//	# ids: ["id1","id2"] # to get objects explicitly by id.
-	IDs []string `json:"ids,omitempty"`
-
 	QueryFilter `json:",inline"`
 }
 
-// A QueryFilter specifies what to filter.
+// QueryFilter specifies what to filter. Objects returned will match all
+// criteria specified in the filter. If multiple values are specified for a
+// particular criteria, objects matching any one of them will be returned.
 type QueryFilter struct {
-	// namespace is the namespace WITHIN a controlplane to query. If empty,
-	// all namespaces are queried in the given scope.
-	Namespace string `json:"namespace,omitempty"`
-	// name is the name of the object to query. If empty, all objects are queried
-	// in the given scope.
-	Name string `json:"name,omitempty"`
-	// group is the API group to query. If empty, all groups are queried in the
-	// given scope.
-	Group string `json:"group,omitempty"`
-	// kind is the API kind to query. If empty, all kinds are queried in the
-	// given scope. The kind is case-insensitive. The kind also matches plural
-	// resources.
-	Kind string `json:"kind,omitempty"`
-	// categories is a list of categories to query. If empty, all categories are
-	// queried in the given scope.
+	// ids are the object IDs to query.
+	IDs []string `json:"ids,omitempty"`
+	// created_at queries for objects with a range of creation times.
+	CreatedAt QueryCreatedAt `json:"created_at,omitempty"`
+	// namespaces are the namespaces WITHIN a controlplane to query.
+	Namespaces []string `json:"namespaces,omitempty"`
+	// names are the names of objects to query.
+	Names []string `json:"names,omitempty"`
+	// kinds are the GroupKinds of objects to query.
+	Kinds []QueryGroupKind `json:"kinds,omitempty"`
+	// labels are the labels of objects to query.
+	Labels map[string]string `json:"labels,omitempty"`
+	// categories is a list of categories to query.
 	// Examples: all, managed, composite, claim
 	Categories []string `json:"categories,omitempty"`
-	// conditions is a list of conditions to query. If empty, all conditions are
-	// queried in the given scope.
+	// conditions is a list of conditions to query.
 	Conditions []QueryCondition `json:"conditions,omitempty"`
-	// owners is a list of owners to query. An object matches if it has at least
-	// one owner in the list.
+	// owners is a list of owners to query.
 	Owners []QueryOwner `json:"owners,omitempty"`
-	// sql is a SQL query to query. If empty, all objects are queried in the
-	// given scope.
-	//
-	// The current object can be referenced by the alias "o".
-	//
-	// WARNING: The where clause is highly dependent on the database
-	// schema and might change at any time. The schema is not documented.
-	SQL string `json:"sql,omitempty"`
+	// jsonpath is a JSONPath filter expression that will be applied to objects
+	// as a filter. It must return a boolean; no objects will be matched if it
+	// returns any other type. jsonpath should be used as a last resort; using
+	// the other filter fields will generally be more efficient.
+	JSONPath string `json:"jsonpath,omitempty"`
+}
+
+type QueryCreatedAt struct {
+	After  metav1.Time `json:"after,omitempty"`
+	Before metav1.Time `json:"before,omitempty"`
+}
+
+type QueryGroupKind struct {
+	// group is the API group to query. If empty all groups will be queried.
+	Group string `json:"group,omitempty"`
+	// kind is kind to query. Kinds are case-insensitive and also match plural
+	// resources. If empty all kinds will be queried.
+	Kind string `json:"kind,omitempty"`
 }
 
 // QueryFilterControlPlane specifies how to filter objects by control plane.
@@ -80,9 +85,9 @@ type QueryFilterControlPlane struct {
 	// name is the name of the controlplane to query. If empty, all controlplanes
 	// are queried in the given scope.
 	Name string `json:"name,omitempty"`
-	// namespace is the namespace of the controlplane to query. If empty, all
-	// namespaces are queried in the given scope.
-	Namespace string `json:"namespace,omitempty"`
+	// group is the group of the controlplane to query. If empty, all groups are
+	// queried in the given scope.
+	Group string `json:"group,omitempty"`
 }
 
 // A QueryCondition specifies how to query a condition.
@@ -101,10 +106,12 @@ type QueryCondition struct {
 
 // A QueryOwner specifies how to query by owner.
 type QueryOwner struct {
-	// name is the name of the owner to match.
-	Group string `json:"group,omitempty"`
+	// apiVersion is the apiVersion of the owner to match.
+	APIVersion string `json:"apiVersion,omitempty"`
 	// kind is the kind of the owner to match.
 	Kind string `json:"kind,omitempty"`
+	// name is the name of the owner to match.
+	Name string `json:"name,omitempty"`
 	// uid is the uid of the owner to match.
 	UID string `json:"uid,omitempty"`
 }
