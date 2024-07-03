@@ -13,24 +13,19 @@ import (
 )
 
 const (
+	// ConditionTypeHealthy indicates that the control plane is healthy.
+	ConditionTypeHealthy xpcommonv1.ConditionType = "Healthy"
+	// ReasonHealthy indicates that the control plane is healthy.
+	ReasonHealthy xpcommonv1.ConditionReason = "HealthyControlPlane"
+	// ReasonUnhealthy indicates that the control plane is unhealthy.
+	ReasonUnhealthy xpcommonv1.ConditionReason = "UnhealthyControlPlane"
+
 	// ConditionTypeSourceSynced indicates that the git source is in sync.
 	ConditionTypeSourceSynced xpcommonv1.ConditionType = "SourceSynced"
 	// ReasonSourceCompleted indicates that the git sync has been completed.
 	ReasonSourceCompleted xpcommonv1.ConditionReason = "Completed"
 	// ReasonSourceInProgress indicates that the git sync is still in progress.
 	ReasonSourceInProgress xpcommonv1.ConditionReason = "InProgress"
-
-	// ConditionTypeScheduled indicates that the control plane has been scheduled.
-	ConditionTypeScheduled xpcommonv1.ConditionType = "Scheduled"
-	// ReasonScheduled indicates that the control plane has been scheduled.
-	ReasonScheduled xpcommonv1.ConditionReason = "Scheduled"
-	// ReasonSchedulingError indicates that the control plane scheduling had an error.
-	ReasonSchedulingError xpcommonv1.ConditionReason = "SchedulingError"
-	// ReasonSchedulingFailed indicates that the control plane scheduling did not succeed
-	// for non-error reasons, e.g. capacity.
-	ReasonSchedulingFailed xpcommonv1.ConditionReason = "ScheduleFailed"
-	// ReasonDeploymentFailed indicates that the control plane deployment did not succeed.
-	ReasonDeploymentFailed xpcommonv1.ConditionReason = "DeploymentFailed"
 
 	// ConditionTypeSupported indicates that the control plane is running a
 	// supported version of Crossplane.
@@ -52,6 +47,25 @@ const (
 	// ReasonRestorePending indicates that the control plane restore is pending.
 	ReasonRestorePending xpcommonv1.ConditionReason = "RestorePending"
 )
+
+func Healthy() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypeHealthy,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonHealthy,
+	}
+}
+
+func Unhealthy(err error) xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypeHealthy,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonUnhealthy,
+		Message:            err.Error(),
+	}
+}
 
 // SourceSynced returns a condition that indicates the control plane is in sync
 // with the source.
@@ -85,53 +99,6 @@ func SourceError(err error) xpcommonv1.Condition {
 		Status:             corev1.ConditionFalse,
 		LastTransitionTime: metav1.Now(),
 		Reason:             ReasonSourceInProgress,
-		Message:            err.Error(),
-	}
-}
-
-// Scheduled returns a condition that indicates that scheduling of the
-// control plane has succeeded.
-func Scheduled() xpcommonv1.Condition {
-	return xpcommonv1.Condition{
-		Type:               ConditionTypeScheduled,
-		Status:             corev1.ConditionTrue,
-		LastTransitionTime: metav1.Now(),
-		Reason:             ReasonScheduled,
-	}
-}
-
-// SchedulingError returns a condition that indicates that scheduling of the
-// control plane had an error.
-func SchedulingError(err error) xpcommonv1.Condition {
-	return xpcommonv1.Condition{
-		Type:               ConditionTypeScheduled,
-		Status:             corev1.ConditionFalse,
-		LastTransitionTime: metav1.Now(),
-		Reason:             ReasonSchedulingError,
-		Message:            err.Error(),
-	}
-}
-
-// SchedulingFailed returns a condition that indicates that scheduling of the
-// control plane did not succeed.
-func SchedulingFailed(reason string) xpcommonv1.Condition {
-	return xpcommonv1.Condition{
-		Type:               ConditionTypeScheduled,
-		Status:             corev1.ConditionFalse,
-		LastTransitionTime: metav1.Now(),
-		Reason:             ReasonSchedulingFailed,
-		Message:            reason,
-	}
-}
-
-// DeploymentFailed returns a condition that indicates that deployment of the
-// control plane to a host cluster did not succeed.
-func DeploymentFailed(err error) xpcommonv1.Condition {
-	return xpcommonv1.Condition{
-		Type:               ConditionTypeScheduled,
-		Status:             corev1.ConditionFalse,
-		LastTransitionTime: metav1.Now(),
-		Reason:             ReasonDeploymentFailed,
 		Message:            err.Error(),
 	}
 }
