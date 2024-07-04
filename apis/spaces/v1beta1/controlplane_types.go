@@ -365,7 +365,8 @@ type Restore struct {
 // A ControlPlaneStatus represents the observed state of a ControlPlane.
 type ControlPlaneStatus struct {
 	xpv1.ResourceStatus `json:",inline"`
-
+	// Message is a human-readable message indicating details about why the
+	// ControlPlane is in this condition.
 	Message        string `json:"message,omitempty"`
 	ControlPlaneID string `json:"controlPlaneID,omitempty"`
 	HostClusterID  string `json:"hostClusterID,omitempty"`

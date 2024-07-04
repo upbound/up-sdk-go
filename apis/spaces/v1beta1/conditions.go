@@ -20,6 +20,13 @@ const (
 	// ReasonUnhealthy indicates that the control plane is unhealthy.
 	ReasonUnhealthy xpcommonv1.ConditionReason = "UnhealthyControlPlane"
 
+	// ConditionTypeControlPlaneProvisioned indicates that the control plane is provisioned.
+	ConditionTypeControlPlaneProvisioned xpcommonv1.ConditionType = "ControlPlaneProvisioned"
+	// ReasonProvisioned indicates that the control plane is provisioned.
+	ReasonProvisioned xpcommonv1.ConditionReason = "Provisioned"
+	// ReasonProvisioningError indicates that the control plane provisioning has failed.
+	ReasonProvisioningError xpcommonv1.ConditionReason = "ProvisioningError"
+
 	// ConditionTypeSourceSynced indicates that the git source is in sync.
 	ConditionTypeSourceSynced xpcommonv1.ConditionType = "SourceSynced"
 	// ReasonSourceCompleted indicates that the git sync has been completed.
@@ -48,6 +55,7 @@ const (
 	ReasonRestorePending xpcommonv1.ConditionReason = "RestorePending"
 )
 
+// Healthy returns a condition that indicates the control plane is healthy.
 func Healthy() xpcommonv1.Condition {
 	return xpcommonv1.Condition{
 		Type:               ConditionTypeHealthy,
@@ -57,12 +65,46 @@ func Healthy() xpcommonv1.Condition {
 	}
 }
 
-func Unhealthy(err error) xpcommonv1.Condition {
+// Unhealthy returns a condition that indicates the control plane is unhealthy.
+func Unhealthy() xpcommonv1.Condition {
 	return xpcommonv1.Condition{
 		Type:               ConditionTypeHealthy,
 		Status:             corev1.ConditionFalse,
 		LastTransitionTime: metav1.Now(),
 		Reason:             ReasonUnhealthy,
+	}
+}
+
+// ControlPlaneProvisioned returns a condition that indicates the control plane
+// has been provisioned.
+func ControlPlaneProvisioned() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypeControlPlaneProvisioned,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonProvisioned,
+	}
+}
+
+// ControlPlaneProvisionInProgress returns a condition that indicates the control
+// plane is still being provisioned.
+func ControlPlaneProvisionInProgress() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypeControlPlaneProvisioned,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonProvisioned,
+	}
+}
+
+// ControlPlaneProvisioningError returns a condition that indicates the control
+// plane provisioning has failed.
+func ControlPlaneProvisioningError(err error) xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypeControlPlaneProvisioned,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonProvisioningError,
 		Message:            err.Error(),
 	}
 }
