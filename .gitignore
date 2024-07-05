@@ -6,3 +6,8 @@
 cover.out
 /vendor
 /.vendor-new
+
+# IDE
+.vscode
+.idea/
+.history
