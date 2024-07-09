@@ -365,7 +365,9 @@ type Restore struct {
 // A ControlPlaneStatus represents the observed state of a ControlPlane.
 type ControlPlaneStatus struct {
 	xpv1.ResourceStatus `json:",inline"`
-
+	// Message is a human-readable message indicating details about why the
+	// ControlPlane is in this condition.
+	Message        string `json:"message,omitempty"`
 	ControlPlaneID string `json:"controlPlaneID,omitempty"`
 	HostClusterID  string `json:"hostClusterID,omitempty"`
 
@@ -377,9 +379,9 @@ type ControlPlaneStatus struct {
 // +kubebuilder:object:root=true
 // +kubebuilder:storageversion
 // +kubebuilder:printcolumn:name="Crossplane",type="string",JSONPath=".spec.crossplane.version"
-// +kubebuilder:printcolumn:name="Synced",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
 // +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
-// +kubebuilder:printcolumn:name="Message",type="string",JSONPath=`.metadata.annotations['internal\.spaces\.upbound\.io/message']`
+// +kubebuilder:printcolumn:name="Healthy",type="string",JSONPath=".status.conditions[?(@.type=='Healthy')].status"
+// +kubebuilder:printcolumn:name="Message",type="string",JSONPath=`.status.message`
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Namespaced,categories=spaces,shortName=ctp;ctps
