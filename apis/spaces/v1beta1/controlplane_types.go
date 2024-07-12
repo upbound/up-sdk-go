@@ -82,141 +82,6 @@ const (
 	TierLimitsAnnotation = "internal.spaces.upbound.io/tier-limits"
 )
 
-// SourceSpec is the specification about the source of the Control Plane.
-type SourceSpec struct {
-	// Git is the configuration for a Git repository to pull the Control Plane
-	// Source from.
-	//
-	// +kubebuilder:validation:Required
-	Git GitSourceConfig `json:"git"`
-}
-
-// GitSourceConfig is the configuration for a Git repository to pull the
-// Control Plane Source from.
-type GitSourceConfig struct {
-	// URL is the URL of the Git repository to pull the Control Plane Source.
-	// +kubebuilder:validation:Required
-	// +kubebuilder:validation:MinLength=1
-	URL string `json:"url"`
-
-	// Ref is the git reference to checkout, which can be a branch, tag, or
-	// commit SHA. Default is the main branch.
-	//
-	// +kubebuilder:default={"branch":"main"}
-	Ref *GitReference `json:"ref,omitempty"`
-
-	// Path is the path within the Git repository to pull the Control Plane
-	// Source from. The folder it points to must contain a valid ControlPlaneSource
-	// manifest. Default is the root of the repository.
-	//
-	// +kubebuilder:default="/"
-	// +kubebuilder:validation:MinLength=1
-	Path string `json:"path"`
-
-	// PullInterval is the interval at which the Git repository should be
-	// polled for changes. The format is 1h2m3s. Default is 90s. Minimum is 15s.
-	//
-	// +kubebuilder:default="90s"
-	PullInterval *metav1.Duration `json:"pullInterval"`
-
-	// Auth is the authentication configuration to access the Git repository.
-	// Default is no authentication.
-	// +kubebuilder:default={"type":"None"}
-	Auth GitAuthConfig `json:"auth"`
-}
-
-// GitReference is a reference to a git branch, tag or commit SHA.
-type GitReference struct {
-	// TODO(muvaf): Add validation to check that exactly one of these fields
-	// is set.
-
-	// Branch is the git branch to check out.
-	Branch *string `json:"branch,omitempty"`
-
-	// Tag is the git tag to check out.
-	Tag *string `json:"tag,omitempty"`
-
-	// Commit is the git commit SHA to check out.
-	Commit *string `json:"commit,omitempty"`
-}
-
-// GitAuthConfig is the configuration for authentication to access a Git.
-type GitAuthConfig struct {
-	// CASecretRef is a reference to a Secret containing CA certificates to use
-	// to verify the Git server's certificate. The secret must contain the key
-	// "ca.crt" where the content is a CA certificate. The type of the secret
-	// can be "Opaque" or "kubernetes.io/tls".
-	//
-	// +kubebuilder:validation:Optional
-	CASecretRef *xpv1.SecretReference `json:"caSecretRef,omitempty"`
-
-	// Type of the authentication to use. Options are: None, Basic
-	// (username/password), BearerToken, SSH. Default is None. The corresponding
-	// fields must be set for the chosen authentication type.
-	//
-	// If you are looking to use OAuth tokens with popular servers (e.g.
-	// GitHub, Bitbucket, GitLab) you should use BasicAuth instead of
-	// BearerToken. These servers use basic HTTP authentication, with the OAuth
-	// token as user or password.
-	// Check the documentation of your git server for details.
-	//
-	// +kubebuilder:default="None"
-	// +kubebuilder:validation:Enum=None;Basic;BearerToken;SSH
-	Type GitAuthType `json:"type"`
-
-	// Basic is the configuration for basic authentication, i.e. username and
-	// password.
-	Basic *GitBasicAuth `json:"basic,omitempty"`
-
-	// BearerToken is the configuration for bearer token authentication.
-	BearerToken *GitBearerTokenAuth `json:"bearerToken,omitempty"`
-
-	// SSH is the configuration for SSH authentication. Note that the URL must
-	// use the SSH protocol (e.g. ssh://github.com/org/repo.git).
-	SSH *GitSSHAuth `json:"ssh,omitempty"`
-}
-
-// GitBasicAuth is the configuration for basic authentication.
-type GitBasicAuth struct {
-	// SecretRef is a reference to a Secret containing the username and password.
-	// The secret must contain the keys "username" and "password".
-	//
-	// +kubebuilder:validation:Required
-	SecretRef xpv1.SecretReference `json:"secretRef"`
-}
-
-// GitBearerTokenAuth is the configuration for bearer token authentication.
-type GitBearerTokenAuth struct {
-	// SecretRef is a reference to a Secret containing the bearer token.
-	// The secret must contain the key "bearerToken".
-	//
-	// +kubebuilder:validation:Required
-	SecretRef xpv1.SecretReference `json:"secretRef"`
-}
-
-// GitSSHAuth is the configuration for SSH authentication.
-type GitSSHAuth struct {
-	// SecretRef is a reference to a Secret containing the SSH key and known
-	// hosts list.
-	// The secret must contain the key "identity" where the content is a private
-	// SSH key. Optionally, it can contain the key "knownHosts" where the content
-	// is a known hosts file.
-	//
-	// +kubebuilder:validation:Required
-	SecretRef xpv1.SecretReference `json:"secretRef"`
-}
-
-// SourceStatus is the status of the pull and apply operations of resources.
-type SourceStatus struct {
-	// Reference is the git reference that the Control Plane Source is currently
-	// checked out to. This could be a branch, tag or commit SHA.
-	Reference string `json:"reference,omitempty"`
-
-	// Revision is always the commit SHA that the Control Plane Source is
-	// currently checked out to.
-	Revision string `json:"revision,omitempty"`
-}
-
 // CrossplaneUpgradeChannel is the channel for Crossplane upgrades.
 type CrossplaneUpgradeChannel string
 
@@ -282,11 +147,6 @@ type SecretReference struct {
 // +kubebuilder:validation:XValidation:rule="has(oldSelf.restore) || !has(self.restore)",message="[[GATE:EnableSharedBackup]] restore source can not be set after creation"
 // +kubebuilder:validation:XValidation:rule="!has(self.crossplane.autoUpgrade) || self.crossplane.autoUpgrade.channel != \"None\" || self.crossplane.version != \"\"",message="\"version\" cannot be empty when upgrade channel is \"None\""
 type ControlPlaneSpec struct {
-	// [[GATE:EnableGitSource]] THIS IS AN ALPHA FIELD. Do not use it in production.
-	// Source points to a Git repository containing a ControlPlaneSource
-	// manifest with the desired state of the ControlPlane's configuration.
-	Source *SourceSpec `json:"source,omitempty"`
-
 	// WriteConnectionSecretToReference specifies the namespace and name of a
 	// Secret to which any connection details for this managed resource should
 	// be written. Connection details frequently include the endpoint, username,
@@ -370,10 +230,6 @@ type ControlPlaneStatus struct {
 	Message        string `json:"message,omitempty"`
 	ControlPlaneID string `json:"controlPlaneID,omitempty"`
 	HostClusterID  string `json:"hostClusterID,omitempty"`
-
-	// [[GATE:EnableGitSource]] SourceStatus is the status of the pull and apply operations of resources
-	// from the Source.
-	SourceStatus *SourceStatus `json:"source,omitempty"`
 }
 
 // +kubebuilder:object:root=true
