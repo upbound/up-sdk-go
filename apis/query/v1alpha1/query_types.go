@@ -25,13 +25,21 @@ import (
 // A QuerySpec specifies what to query.
 type QuerySpec struct {
 	QueryTopLevelResources `json:",inline"`
+
+	// freshness specifies resource versions per control plane to wait for before
+	// returning results. It's helpful to ensure consistency for read-after-write.
+	// +optional
+	// +listType=map
+	// +listMapKey=group
+	// +listMapKey=controlPlane
+	Freshness []Freshness `json:"freshness,omitempty"`
 }
 
 // A QueryTopLevelFilter specifies how to filter top level objects. In contrast
-// to QueryFilter, it also specifies which controlplane to query.
+// to QueryFilter, it also specifies which control plane to query.
 type QueryTopLevelFilter struct {
-	// controlPlane specifies which controlplanes to query. If empty, all
-	// controlplanes are queried in the given scope.
+	// controlPlane specifies which control planes to query. If empty, all
+	// control planes are queried in the given scope.
 	ControlPlane QueryFilterControlPlane `json:"controlPlane,omitempty"`
 
 	//	# ids: ["id1","id2"] # to get objects explicitly by id.
@@ -40,9 +48,36 @@ type QueryTopLevelFilter struct {
 	QueryFilter `json:",inline"`
 }
 
+// Freshness specifies a resource version per control plane to wait for before
+// returning results. It's helpful to ensure consistency for read-after-write.
+type Freshness struct {
+	// group is the group of the control plane to check for freshness of
+	// the data. In case of GroupQuery or Query, the group is defaulted and
+	// must match the group of the request.
+	// +required
+	Group string `json:"group"`
+
+	// controlPlane is the name of the control plane to check for freshness of the data.
+	// In case of Query, the name is defaulted and must match the control plane
+	// name of the request.
+	// +required
+	ControlPlane string `json:"controlPlane"`
+
+	// resourceVersion is the resource version of the specified control plane
+	// to wait for before executing the query. Normal request timeouts apply.
+	// The resourceVersion is a large integer, returned by previous queries or
+	// by requests against the control plane Kubernetes API.
+	//
+	// Note that resource versions between control planes are not correlated.
+	// +required
+	// +kubebuilder:validation:MinLength=1
+	// +kubebuilder:validation:Pattern=`^[0-9]+$`
+	ResourceVersion string `json:"resourceVersion"`
+}
+
 // A QueryFilter specifies what to filter.
 type QueryFilter struct {
-	// namespace is the namespace WITHIN a controlplane to query. If empty,
+	// namespace is the namespace WITHIN a control plane to query. If empty,
 	// all namespaces are queried in the given scope.
 	Namespace string `json:"namespace,omitempty"`
 	// name is the name of the object to query. If empty, all objects are queried
@@ -77,10 +112,10 @@ type QueryFilter struct {
 
 // QueryFilterControlPlane specifies how to filter objects by control plane.
 type QueryFilterControlPlane struct {
-	// name is the name of the controlplane to query. If empty, all controlplanes
+	// name is the name of the control plane to query. If empty, all control planes
 	// are queried in the given scope.
 	Name string `json:"name,omitempty"`
-	// namespace is the namespace of the controlplane to query. If empty, all
+	// namespace is the namespace of the control plane to query. If empty, all
 	// namespaces are queried in the given scope.
 	Namespace string `json:"namespace,omitempty"`
 }
@@ -146,7 +181,7 @@ type QueryOrder struct {
 	// +kubebuilder:validation:Enum=Asc;Desc
 	Group Direction `json:"group,omitempty"`
 
-	// controlPlane specifies how to order by controlplane.
+	// controlPlane specifies how to order by control plane.
 	ControlPlane Direction `json:"cluster"`
 }
 
@@ -221,10 +256,10 @@ type QueryObjects struct {
 	ID bool `json:"id,omitempty"`
 
 	// mutablePath specifies whether to return the mutable path of the object,
-	// i.e. the path to the object in the controlplane Kubernetes API.
+	// i.e. the path to the object in the control plane Kubernetes API.
 	MutablePath bool `json:"mutablePath,omitempty"`
 
-	// controlPlane specifies that the controlplane name and namespace of the
+	// controlPlane specifies that the control plane name and namespace of the
 	// object should be returned.
 	ControlPlane bool `json:"controlPlane,omitempty"`
 
@@ -278,7 +313,7 @@ type QueryRelation struct {
 	QueryNestedResources `json:",inline"`
 }
 
-// SpaceQuery represents a query against all controlplanes.
+// SpaceQuery represents a query against all control planes.
 //
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type SpaceQuery struct {
@@ -289,7 +324,7 @@ type SpaceQuery struct {
 	Response *QueryResponse `json:"response,omitempty"`
 }
 
-// GroupQuery represents a query against a group of controlplanes.
+// GroupQuery represents a query against a group of control planes.
 //
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type GroupQuery struct {
@@ -300,7 +335,7 @@ type GroupQuery struct {
 	Response *QueryResponse `json:"response,omitempty"`
 }
 
-// Query represents a query against one controlplane, the one with the same
+// Query represents a query against one control plane, the one with the same
 // name and namespace as the query.
 //
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
