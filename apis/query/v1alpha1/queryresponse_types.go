@@ -36,7 +36,15 @@ type QueryResponseObjects struct {
 	Cursor *QueryResponseCursor `json:"cursor,omitempty"`
 
 	// objects is the list of objects returned by the query.
+	//
+	// Objects is mutual exclusive with Tables.
 	Objects []QueryResponseObject `json:"objects,omitempty"`
+
+	// tables is the list of tables returned by the query. Objects are grouped
+	// as specified in the query. Hence, potentially multiple tables are returned.
+	//
+	// Objects is mutual exclusive with Tables.
+	Tables []QueryResponseTable `json:"tables,omitempty"`
 
 	// count is the total number of objects that match the query.
 	Count *int `json:"count,omitempty"`
@@ -46,6 +54,16 @@ type QueryResponseObjects struct {
 	// objects have been skipped through non-zero spec.page.first, this value
 	// is always true.
 	Incomplete bool `json:"incomplete,omitempty"`
+}
+
+// QueryResponseTable is a table representation of a set of API resources.
+type QueryResponseTable struct {
+	// groupVersionKind is the group, version, and kind of the objects in the table.
+	GroupVersionKind metav1.GroupVersionKind `json:"groupVersionKind"`
+	// columns is the list of columns in the table.
+	Columns []metav1.TableColumnDefinition `json:"columns"`
+	// rows is the list of rows in the table.
+	Rows []metav1.TableRow `json:"rows"`
 }
 
 // QueryResponseCursor is the cursor to the next page of results.

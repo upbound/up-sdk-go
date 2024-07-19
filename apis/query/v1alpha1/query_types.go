@@ -238,6 +238,9 @@ type QueryObjects struct {
 	// +kubebuilder:pruning:PreserveUnknownFields
 	Object *common.JSON `json:"object,omitempty"`
 
+	// table specifies whether to return the object in a table format.
+	Table *QueryTable `json:"table,omitempty"`
+
 	// relations specifies which relations to query and what to return.
 	// Relation names are predefined strings relative to the release of
 	// Spaces.
@@ -245,6 +248,29 @@ type QueryObjects struct {
 	// Examples: owners, descendants, resources, events, or their transitive
 	// equivalents owners+, descendants+, resources+.
 	Relations map[string]QueryRelation `json:"relations,omitempty"`
+}
+
+// QueryGrouping specifies how to group the returned objects into multiple
+// tables.
+type QueryGrouping string
+
+const (
+	// ByGVKsAndColumns specifies to group by GVKs and column definitions. I.e.
+	// rows of different GVKs or with different column definitions are grouped
+	// into different tables.
+	ByGVKsAndColumns QueryGrouping = "ByGVKsAndColumn"
+)
+
+// QueryTable specifies how to return objects in a table or multiple tables
+// (in case of grouping).
+type QueryTable struct {
+	// grouping specifies how to group the returned objects into multiple
+	// tables where every table can have different sets of columns.
+	Grouping QueryGrouping `json:"grouping,omitempty"`
+
+	// noHeaders specifies whether to return the headers of the table in the
+	// first row.
+	NoHeaders bool `json:"noHeaders,omitempty"`
 }
 
 // A QueryRelation specifies how to return objects in a relation.
