@@ -72,6 +72,20 @@ const (
 	PropagateNone PropagationMode = "None"
 )
 
+// DeletionPolicy controls what happens when an InControlPlaneOverride
+// object is deleted. We either attempt to roll back the changes on the
+// target object hierarchy, or we keep them.
+type DeletionPolicy string
+
+const (
+	// DeletionRollBack attempts to roll back the changes on the target object
+	// hierarchy when the InControlPlaneOverride object is being deleted.
+	DeletionRollBack DeletionPolicy = "RollBack"
+	// DeletionKeep keeps the changes on the target object
+	// hierarchy when the InControlPlaneOverride object is being deleted.
+	DeletionKeep DeletionPolicy = "Keep"
+)
+
 // Metadata represents the Kube object metadata.
 type Metadata struct {
 	// Annotations represents the Kube object annotations.
@@ -117,7 +131,12 @@ type InControlPlaneOverrideSpec struct {
 	// +kubebuilder:validation:Enum=None;Ascending;Descending
 	// +kubebuilder:default=None
 	PropagationMode PropagationMode `json:"propagationMode"`
-	Patch           Patch           `json:"patch"`
+
+	// +kubebuilder:validation:Enum=RollBack;Keep
+	// +kubebuilder:default=RollBack
+	DeletionPolicy DeletionPolicy `json:"deletionPolicy"`
+
+	Patch Patch `json:"patch"`
 }
 
 // PatchState denotes the result of the patch operation on the associated
