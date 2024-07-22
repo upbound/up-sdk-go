@@ -17,6 +17,7 @@ package v1alpha1
 import (
 	"reflect"
 
+	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	esv1beta1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -102,7 +103,7 @@ type SharedSecretStoreSpec struct {
 
 // SharedSecretStoreStatus defines the observed state of the SecretStore.
 type SharedSecretStoreStatus struct {
-
+	xpv1.ResourceStatus `json:",inline"`
 	// We needed to introduce a common field to workaround
 	// https://github.com/kubernetes/kubernetes/issues/117447
 	// otherwise the initial idea was that each controller
