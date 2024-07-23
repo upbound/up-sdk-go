@@ -104,6 +104,12 @@ type Pipeline struct {
 	// +kubebuilder:validation:MaxItems=10
 	// +optional
 	Traces []string `json:"traces,omitempty"`
+	// Logs defines the logs exporter pipeline to configure on the
+	// selected ControlPlanes. The value has to be present in the
+	// spec.exporters field.
+	// +kubebuilder:validation:MaxItems=10
+	// +optional
+	Logs []string `json:"logs,omitempty"`
 }
 
 // SharedTelemetryConfigStatus represents the observed state of a SharedTelemetryConfig.
