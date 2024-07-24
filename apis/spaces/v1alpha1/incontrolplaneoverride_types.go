@@ -57,37 +57,39 @@ type InControlPlaneOverrideList struct {
 	Items           []InControlPlaneOverride `json:"items"`
 }
 
-// PropagationMode denotes the traversal direction on an object's hierarchy.
-type PropagationMode string
+// PatchPropagationMode denotes the traversal direction on
+// an object's hierarchy.
+type PatchPropagationMode string
 
 const (
-	// PropagateAscend denotes traversal on a target object hierarchy following
-	// the metadata.ownerReferences.
-	PropagateAscend PropagationMode = "Ascending"
-	// PropagateDescend denotes traversal on a target object hierarchy
+	// PatchPropagateAscend denotes traversal on a target object hierarchy
+	// following the metadata.ownerReferences.
+	PatchPropagateAscend PatchPropagationMode = "Ascending"
+	// PatchPropagateDescend denotes traversal on a target object hierarchy
 	// following the spec.resourceRef & spec.resourceRefs reference fields.
-	PropagateDescend PropagationMode = "Descending"
-	// PropagateNone denotes that no traversal will be done and only the target
-	// object will be visited.
-	PropagateNone PropagationMode = "None"
+	PatchPropagateDescend PatchPropagationMode = "Descending"
+	// PatchPropagateNone denotes that no traversal will be done and
+	// only the target object will be visited.
+	PatchPropagateNone PatchPropagationMode = "None"
 )
 
-// DeletionPolicy controls what happens when an InControlPlaneOverride
+// PatchDeletionPolicy controls what happens when an InControlPlaneOverride
 // object is deleted. We either attempt to roll back the changes on the
 // target object hierarchy, or we keep them.
-type DeletionPolicy string
+type PatchDeletionPolicy string
 
 const (
-	// DeletionRollBack attempts to roll back the changes on the target object
+	// PatchDeletionRollBack attempts to roll back the changes on
+	// the target object hierarchy when the InControlPlaneOverride object is
+	// being deleted.
+	PatchDeletionRollBack PatchDeletionPolicy = "RollBack"
+	// PatchDeletionKeep keeps the changes on the target object
 	// hierarchy when the InControlPlaneOverride object is being deleted.
-	DeletionRollBack DeletionPolicy = "RollBack"
-	// DeletionKeep keeps the changes on the target object
-	// hierarchy when the InControlPlaneOverride object is being deleted.
-	DeletionKeep DeletionPolicy = "Keep"
+	PatchDeletionKeep PatchDeletionPolicy = "Keep"
 )
 
-// Metadata represents the Kube object metadata.
-type Metadata struct {
+// MetadataPatch represents the Kube object metadata.
+type MetadataPatch struct {
 	// Annotations represents the Kube object annotations.
 	// Only the following annotations are allowed to be patched:
 	// - crossplane.io/paused
@@ -103,7 +105,7 @@ type Metadata struct {
 // +kubebuilder:validation:MinProperties=1
 type Patch struct {
 	// +optional
-	Metadata *Metadata `json:"metadata,omitempty"`
+	Metadata *MetadataPatch `json:"metadata,omitempty"`
 }
 
 // InControlPlaneOverrideSpec defines a configuration override
@@ -119,11 +121,11 @@ type InControlPlaneOverrideSpec struct {
 
 	// +kubebuilder:validation:Enum=None;Ascending;Descending
 	// +kubebuilder:default=None
-	PropagationMode PropagationMode `json:"propagationMode"`
+	PropagationMode PatchPropagationMode `json:"propagationMode"`
 
 	// +kubebuilder:validation:Enum=RollBack;Keep
 	// +kubebuilder:default=RollBack
-	DeletionPolicy DeletionPolicy `json:"deletionPolicy"`
+	DeletionPolicy PatchDeletionPolicy `json:"deletionPolicy"`
 
 	Patch Patch `json:"patch"`
 }
@@ -159,9 +161,9 @@ const (
 	PatchStateReasonSchemaMismatch PatchStateReason = "SchemaMismatch"
 )
 
-// ObjectReference represents the state of an applied patch to an object
+// PatchedObjectStatus represents the state of an applied patch to an object
 // in the target hierarchy.
-type ObjectReference struct {
+type PatchedObjectStatus struct {
 	corev1.TypedObjectReference `json:",inline"`
 
 	// Metadata UID of the patch target object.
@@ -179,8 +181,8 @@ type ObjectReference struct {
 	Message *string `json:"message,omitempty"`
 }
 
-// String returns a string representation of the ObjectReference.
-func (r *ObjectReference) String() string {
+// String returns a string representation of the PatchedObjectStatus.
+func (r *PatchedObjectStatus) String() string {
 	if r == nil {
 		return "nil"
 	}
@@ -193,7 +195,7 @@ func (r *ObjectReference) String() string {
 
 // NotFound returns true if the patch operation has failed because the target
 // object was not found.
-func (r *ObjectReference) NotFound() bool {
+func (r *PatchedObjectStatus) NotFound() bool {
 	return r.Status == PatchStateError && ptr.Deref(r.Reason, "") == PatchStateReason(metav1.StatusReasonNotFound)
 }
 
@@ -203,13 +205,13 @@ type InControlPlaneOverrideStatus struct {
 	xpv1.ResourceStatus `json:",inline"`
 
 	// +optional
-	ObjectRefs []ObjectReference `json:"objectRefs,omitempty"`
+	ObjectRefs []PatchedObjectStatus `json:"objectRefs,omitempty"`
 }
 
-// PatchSuccess returns an ObjectReference to the patch target object
+// PatchSuccess returns an PatchedObjectStatus to the patch target object
 // indicating the patch has successfully been applied to the object.
-func PatchSuccess(u *unstructured.Unstructured) ObjectReference {
-	return ObjectReference{
+func PatchSuccess(u *unstructured.Unstructured) PatchedObjectStatus {
+	return PatchedObjectStatus{
 		TypedObjectReference: corev1.TypedObjectReference{
 			APIGroup:  ptr.To(u.GetAPIVersion()),
 			Kind:      u.GetKind(),
@@ -221,9 +223,9 @@ func PatchSuccess(u *unstructured.Unstructured) ObjectReference {
 	}
 }
 
-// PatchFailure returns an ObjectReference to the patch target object together
+// PatchFailure returns an PatchedObjectStatus to the patch target object together
 // with a detail message explaining the transient error encountered.
-func PatchFailure(t corev1.TypedObjectReference, uid *types.UID, err error) ObjectReference {
+func PatchFailure(t corev1.TypedObjectReference, uid *types.UID, err error) PatchedObjectStatus {
 	var reason *PatchStateReason
 	sErr := &kerrors.StatusError{}
 	ps := PatchStateError
@@ -245,7 +247,7 @@ func PatchFailure(t corev1.TypedObjectReference, uid *types.UID, err error) Obje
 		}
 	}
 
-	return ObjectReference{
+	return PatchedObjectStatus{
 		TypedObjectReference: t,
 		UID:                  uid,
 		Status:               ps,
