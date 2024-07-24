@@ -60,6 +60,9 @@ const (
 	AuthSecretKeySSHKnownHosts = "knownHosts"
 
 	CASecretKeyCAFile = "ca.crt"
+
+	PauseControlNone          = "None"
+	PauseControlAllCrossplane = "AllCrossplane"
 )
 
 const (
@@ -202,6 +205,11 @@ type ControlPlaneSpec struct {
 	// +optional
 	// +kubebuilder:validation:XValidation:rule="!has(oldSelf.finishedAt) || oldSelf.finishedAt == self.finishedAt",message="finishedAt is immutable once set"
 	Restore *Restore `json:"restore,omitempty"`
+
+	// ReconciliationPolicy specifies the reconciliation policies on the
+	// crossplane and the workloads that work on the ControlPlane
+	// +optional
+	ReconciliationPolicy *ReconciliationPolicy `json:"reconciliationPolicy,omitempty"`
 }
 
 // Restore specifies details about the backup to restore from.
@@ -220,6 +228,19 @@ type Restore struct {
 	// meant to be set by the user, but rather by the system when the control
 	// plane is restored.
 	FinishedAt *metav1.Time `json:"finishedAt,omitempty"`
+}
+
+// ReconciliationPolicy represents the reconciliation policies.
+type ReconciliationPolicy struct {
+	// PausedControllers controls whether the ControlPlane is paused or not.
+	// It has two valid values.
+	// AllCrossplane: Pauses/Scales Down all crossplane and provider workloads
+	// in the ControlPlane
+	// None: Restarts/Scales Up all crossplane and provider workloads in the
+	// ControlPlane
+	// +kubebuilder:validation:Enum=None;AllCrossplane
+	// +kubebuilder:default=None
+	PausedControllers string `json:"pausedControllers,omitempty"`
 }
 
 // A ControlPlaneStatus represents the observed state of a ControlPlane.

@@ -53,6 +53,17 @@ const (
 
 	// ReasonRestorePending indicates that the control plane restore is pending.
 	ReasonRestorePending xpcommonv1.ConditionReason = "RestorePending"
+
+	// ConditionTypePaused indicates that the control plane has been paused.
+	ConditionTypePaused xpcommonv1.ConditionType = "Paused"
+	// ReasonPauseInProgress indicates that the control plane is being paused.
+	ReasonPauseInProgress xpcommonv1.ConditionReason = "InProgress"
+	// ReasonPauseCompleted indicates that the control plane has been paused.
+	ReasonPauseCompleted xpcommonv1.ConditionReason = "Completed"
+	// ReasonPauseRestartInProgress indicates that the control plane is being restarted.
+	ReasonPauseRestartInProgress xpcommonv1.ConditionReason = "RestartInProgress"
+	// ReasonPauseRestarted indicates that the control plane has been restarted.
+	ReasonPauseRestarted xpcommonv1.ConditionReason = "Restarted"
 )
 
 // Healthy returns a condition that indicates the control plane is healthy.
@@ -201,5 +212,53 @@ func RestorePending() xpcommonv1.Condition {
 		LastTransitionTime: metav1.Now(),
 		Reason:             ReasonRestorePending,
 		Message:            "Control plane restore is pending",
+	}
+}
+
+// PauseInProgress returns a condition that indicates that the control plane
+// is being paused.
+func PauseInProgress() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypePaused,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonPauseInProgress,
+		Message:            "Control plane is being paused",
+	}
+}
+
+// PauseCompleted returns a condition that indicates that the control plane
+// has been paused.
+func PauseCompleted() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypePaused,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonPauseCompleted,
+		Message:            "Control plane has been paused",
+	}
+}
+
+// PauseRestartInProgress returns a condition that indicates that the control
+// plane is being restarted.
+func PauseRestartInProgress() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypePaused,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonPauseRestartInProgress,
+		Message:            "Control plane is being restarted",
+	}
+}
+
+// PauseRestarted returns a condition that indicates that the control
+// plane has been restarted.
+func PauseRestarted() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypePaused,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonPauseRestarted,
+		Message:            "Control plane has been restarted",
 	}
 }
