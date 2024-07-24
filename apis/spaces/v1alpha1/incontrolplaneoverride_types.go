@@ -98,23 +98,12 @@ type Metadata struct {
 	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
-// Spec represents the spec of a Kube object.
-type Spec struct {
-	// ManagementPolicies denotes the management policies of a Crossplane
-	// managed resource.
-	// +optional
-	ManagementPolicies xpv1.ManagementPolicies `json:"managementPolicies,omitempty"`
-}
-
 // Patch represents a configuration patch which is serialized into JSON to
 // obtain the fully specified intent to be used with server side apply.
 // +kubebuilder:validation:MinProperties=1
 type Patch struct {
 	// +optional
 	Metadata *Metadata `json:"metadata,omitempty"`
-
-	// +optional
-	Spec *Spec `json:"spec,omitempty"`
 }
 
 // InControlPlaneOverrideSpec defines a configuration override
