@@ -29,8 +29,9 @@ NPROCS ?= 1
 # By default we reduce the parallelism to half the number of CPU cores.
 GO_TEST_PARALLEL := $(shell echo $$(( $(NPROCS) / 2 )))
 
-GO_SUBDIRS += errors service fake generate
+GO_SUBDIRS += errors service fake generate apis
 GO111MODULE = on
+GOLANGCILINT_VERSION := 1.56.0
 -include build/makelib/golang.mk
 
 # generate/generate.sh needs to know what subdirs to generate files for.

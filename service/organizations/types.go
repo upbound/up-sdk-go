@@ -40,6 +40,13 @@ type Robot struct {
 	CreatedAt   time.Time   `json:"createdAt"`
 }
 
+// Team is a team on Upbound.
+type Team struct {
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"createdAt"`
+}
+
 // OrganizationPermissionGroup is the type of permission a user has in the
 // organization.
 type OrganizationPermissionGroup string
