@@ -15,26 +15,20 @@
 package v1alpha1
 
 import (
-	"regexp"
 	"strings"
 
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
-	"github.com/crossplane/crossplane-runtime/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
-	kerrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/utils/ptr"
-)
-
-var (
-	regexFieldNotDeclared = regexp.MustCompile(`failed to create typed patch object.+field not declared in schema`)
 )
 
 // +kubebuilder:object:root=true
 // +kubebuilder:storageversion
 // +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:resource:scope=Namespaced,categories=spaces
 
 // InControlPlaneOverride represents resource configuration overrides in
@@ -57,20 +51,20 @@ type InControlPlaneOverrideList struct {
 	Items           []InControlPlaneOverride `json:"items"`
 }
 
-// PatchPropagationMode denotes the traversal direction on
+// PatchPropagationPolicy denotes the traversal direction on
 // an object's hierarchy.
-type PatchPropagationMode string
+type PatchPropagationPolicy string
 
 const (
-	// PatchPropagateAscend denotes traversal on a target object hierarchy
+	// PatchPropagateAscending denotes traversal on a target object hierarchy
 	// following the metadata.ownerReferences.
-	PatchPropagateAscend PatchPropagationMode = "Ascending"
-	// PatchPropagateDescend denotes traversal on a target object hierarchy
+	PatchPropagateAscending PatchPropagationPolicy = "Ascending"
+	// PatchPropagateDescending denotes traversal on a target object hierarchy
 	// following the spec.resourceRef & spec.resourceRefs reference fields.
-	PatchPropagateDescend PatchPropagationMode = "Descending"
+	PatchPropagateDescending PatchPropagationPolicy = "Descending"
 	// PatchPropagateNone denotes that no traversal will be done and
 	// only the target object will be visited.
-	PatchPropagateNone PatchPropagationMode = "None"
+	PatchPropagateNone PatchPropagationPolicy = "None"
 )
 
 // PatchDeletionPolicy controls what happens when an InControlPlaneOverride
@@ -100,10 +94,10 @@ type MetadataPatch struct {
 	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
-// Patch represents a configuration patch which is serialized into JSON to
+// Override represents a configuration patch which is serialized into JSON to
 // obtain the fully specified intent to be used with server side apply.
 // +kubebuilder:validation:MinProperties=1
-type Patch struct {
+type Override struct {
 	// +optional
 	Metadata *MetadataPatch `json:"metadata,omitempty"`
 }
@@ -117,17 +111,17 @@ type InControlPlaneOverrideSpec struct {
 	// +kubebuilder:validation:MinLength=1
 	ControlPlaneName string `json:"controlPlaneName"`
 
-	Target corev1.TypedObjectReference `json:"target"`
+	TargetRef corev1.TypedObjectReference `json:"targetRef"`
 
 	// +kubebuilder:validation:Enum=None;Ascending;Descending
 	// +kubebuilder:default=None
-	PropagationMode PatchPropagationMode `json:"propagationMode"`
+	PropagationPolicy PatchPropagationPolicy `json:"propagationPolicy"`
 
 	// +kubebuilder:validation:Enum=RollBack;Keep
 	// +kubebuilder:default=RollBack
 	DeletionPolicy PatchDeletionPolicy `json:"deletionPolicy"`
 
-	Patch Patch `json:"patch"`
+	Override Override `json:"override"`
 }
 
 // PatchState denotes the result of the patch operation on the associated
@@ -193,12 +187,6 @@ func (r *PatchedObjectStatus) String() string {
 		"Message: '", ptr.Deref(r.Message, ""), "'"}, "")
 }
 
-// NotFound returns true if the patch operation has failed because the target
-// object was not found.
-func (r *PatchedObjectStatus) NotFound() bool {
-	return r.Status == PatchStateError && ptr.Deref(r.Reason, "") == PatchStateReason(metav1.StatusReasonNotFound)
-}
-
 // InControlPlaneOverrideStatus defines the status of an InControlPlaneOverride
 // object.
 type InControlPlaneOverrideStatus struct {
@@ -206,54 +194,6 @@ type InControlPlaneOverrideStatus struct {
 
 	// +optional
 	ObjectRefs []PatchedObjectStatus `json:"objectRefs,omitempty"`
-}
-
-// PatchSuccess returns an PatchedObjectStatus to the patch target object
-// indicating the patch has successfully been applied to the object.
-func PatchSuccess(u *unstructured.Unstructured) PatchedObjectStatus {
-	return PatchedObjectStatus{
-		TypedObjectReference: corev1.TypedObjectReference{
-			APIGroup:  ptr.To(u.GetAPIVersion()),
-			Kind:      u.GetKind(),
-			Name:      u.GetName(),
-			Namespace: ptr.To(u.GetNamespace()),
-		},
-		UID:    ptr.To(u.GetUID()),
-		Status: PatchStateSuccess,
-	}
-}
-
-// PatchFailure returns an PatchedObjectStatus to the patch target object together
-// with a detail message explaining the transient error encountered.
-func PatchFailure(t corev1.TypedObjectReference, uid *types.UID, err error) PatchedObjectStatus {
-	var reason *PatchStateReason
-	sErr := &kerrors.StatusError{}
-	ps := PatchStateError
-	if errors.As(err, &sErr) {
-		reason = ptr.To(PatchStateReason(sErr.Status().Reason))
-		switch {
-		case kerrors.IsInternalError(err) && regexFieldNotDeclared.MatchString(sErr.Status().Message):
-			ps = PatchStateSkipped
-			reason = ptr.To(PatchStateReasonSchemaMismatch)
-
-		case sErr.Status().Details != nil:
-			for _, c := range sErr.Status().Details.Causes {
-				if c.Type == metav1.CauseTypeFieldManagerConflict {
-					ps = PatchStateSkipped
-					reason = ptr.To(PatchStateReasonConflict)
-					break
-				}
-			}
-		}
-	}
-
-	return PatchedObjectStatus{
-		TypedObjectReference: t,
-		UID:                  uid,
-		Status:               ps,
-		Reason:               reason,
-		Message:              ptr.To(err.Error()),
-	}
 }
 
 // Deleted returns a condition that indicates the target object hierarchy
