@@ -109,6 +109,7 @@ type InControlPlaneOverrideSpec struct {
 	// ControlPlaneName is the name of the target ControlPlane where
 	// the resource configuration overrides will be applied.
 	// +kubebuilder:validation:MinLength=1
+	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="controlPlaneName is immutable"
 	ControlPlaneName string `json:"controlPlaneName"`
 
 	TargetRef corev1.TypedObjectReference `json:"targetRef"`
