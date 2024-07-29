@@ -42,10 +42,21 @@ type QueryTopLevelFilter struct {
 	// control planes are queried in the given scope.
 	ControlPlane QueryFilterControlPlane `json:"controlPlane,omitempty"`
 
-	//	# ids: ["id1","id2"] # to get objects explicitly by id.
-	IDs []string `json:"ids,omitempty"`
+	// objects specifies what to filter. Objects in the query response will
+	// match all criteria in at least one of the specified filters.
+	Objects []QueryFilter `json:"objects"`
+}
 
-	QueryFilter `json:",inline"`
+// ObjectIDs returns a flat list of object IDs specified in any of the top-level
+// filter's object filters.
+func (tlf *QueryTopLevelFilter) ObjectIDs() []string {
+	ids := make([]string, 0, len(tlf.Objects))
+	for _, f := range tlf.Objects {
+		if len(f.ID) > 0 {
+			ids = append(ids, f.ID)
+		}
+	}
+	return ids
 }
 
 // Freshness specifies a resource version per control plane to wait for before
@@ -75,49 +86,58 @@ type Freshness struct {
 	ResourceVersion string `json:"resourceVersion"`
 }
 
-// A QueryFilter specifies what to filter.
+// QueryFilter specifies what to filter. Objects in the query response will
+// match all criteria specified in the filter.
 type QueryFilter struct {
-	// namespace is the namespace WITHIN a control plane to query. If empty,
-	// all namespaces are queried in the given scope.
+	// id is the object ID to query.
+	ID string `json:"id,omitempty"`
+	// creationTimestamp queries for objects with a range of creation times.
+	CreationTimestamp QueryCreationTimestamp `json:"creationTimestamp,omitempty"`
+	// namespace is the namespace WITHIN a control plane to query.
 	Namespace string `json:"namespace,omitempty"`
-	// name is the name of the object to query. If empty, all objects are queried
-	// in the given scope.
+	// name is the name of objects to query.
 	Name string `json:"name,omitempty"`
-	// group is the API group to query. If empty, all groups are queried in the
-	// given scope.
-	Group string `json:"group,omitempty"`
-	// kind is the API kind to query. If empty, all kinds are queried in the
-	// given scope. The kind is case-insensitive. The kind also matches plural
-	// resources.
-	Kind string `json:"kind,omitempty"`
-	// categories is a list of categories to query. If empty, all categories are
-	// queried in the given scope.
+	// groupKind is the GroupKinds of objects to query.
+	GroupKind QueryGroupKind `json:"groupKind,omitempty"`
+	// labels are the labels of objects to query.
+	Labels map[string]string `json:"labels,omitempty"`
+	// categories is a list of categories to query.
 	// Examples: all, managed, composite, claim
 	Categories []string `json:"categories,omitempty"`
-	// conditions is a list of conditions to query. If empty, all conditions are
-	// queried in the given scope.
+	// conditions is a list of conditions to query.
 	Conditions []QueryCondition `json:"conditions,omitempty"`
-	// owners is a list of owners to query. An object matches if it has at least
-	// one owner in the list.
+	// owners is a list of owners to query.
 	Owners []QueryOwner `json:"owners,omitempty"`
-	// sql is a SQL query to query. If empty, all objects are queried in the
-	// given scope.
-	//
-	// The current object can be referenced by the alias "o".
-	//
-	// WARNING: The where clause is highly dependent on the database
-	// schema and might change at any time. The schema is not documented.
-	SQL string `json:"sql,omitempty"`
+	// jsonpath is a JSONPath filter expression that will be applied to objects
+	// as a filter. It must return a boolean; no objects will be matched if it
+	// returns any other type. jsonpath should be used as a last resort; using
+	// the other filter fields will generally be more efficient.
+	JSONPath string `json:"jsonpath,omitempty"`
 }
 
-// QueryFilterControlPlane specifies how to filter objects by control plane.
+// QueryCreationTimestamp specifies how to query by object creation time.
+type QueryCreationTimestamp struct {
+	After  metav1.Time `json:"after,omitempty"`
+	Before metav1.Time `json:"before,omitempty"`
+}
+
+// QueryGroupKind specifies how to query for GroupKinds.
+type QueryGroupKind struct {
+	// apiGroup is the API group to query. If empty all groups will be queried.
+	APIGroup string `json:"apiGroup,omitempty"`
+	// kind is kind to query. Kinds are case-insensitive and also match plural
+	// resources. If empty all kinds will be queried.
+	Kind string `json:"kind,omitempty"`
+}
+
+// QueryFilterControlPlane specifies which control planes to query for objects.
 type QueryFilterControlPlane struct {
 	// name is the name of the control plane to query. If empty, all control planes
 	// are queried in the given scope.
 	Name string `json:"name,omitempty"`
-	// namespace is the namespace of the control plane to query. If empty, all
-	// namespaces are queried in the given scope.
-	Namespace string `json:"namespace,omitempty"`
+	// group is the group of the control plane to query. If empty, all groups
+	// are queried in the given scope.
+	Group string `json:"group,omitempty"`
 }
 
 // A QueryCondition specifies how to query a condition.
@@ -129,9 +149,9 @@ type QueryCondition struct {
 	Type string `json:"type"`
 	// status is the status of condition to query. This is either True, False
 	// or Unknown.
-	//
-	// +kubebuilder:validation:Required
-	Status string `json:"status"`
+	Status string `json:"status,omitempty"`
+	// reason queries based on the reason field of the condition.
+	Reason string `json:"reason,omitempty"`
 }
 
 // A QueryOwner specifies how to query by owner.
@@ -140,6 +160,8 @@ type QueryOwner struct {
 	APIGroup string `json:"apiGroup,omitempty"`
 	// kind is the kind of the owner to match.
 	Kind string `json:"kind,omitempty"`
+	// name is the name of the owner to match.
+	Name string `json:"name,omitempty"`
 	// uid is the uid of the owner to match.
 	UID string `json:"uid,omitempty"`
 }
@@ -217,8 +239,8 @@ type QueryTopLevelResources struct {
 type QueryNestedResources struct {
 	QueryResources `json:",inline"`
 
-	// filter specifies how to filter the returned objects.
-	Filter QueryFilter `json:"filter,omitempty"`
+	// filters specifies how to filter the returned objects.
+	Filters []QueryFilter `json:"filter,omitempty"`
 }
 
 // QueryResources specifies how to return resources.
