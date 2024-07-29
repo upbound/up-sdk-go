@@ -53,6 +53,18 @@ const (
 
 	// ReasonRestorePending indicates that the control plane restore is pending.
 	ReasonRestorePending xpcommonv1.ConditionReason = "RestorePending"
+
+	// ConditionTypeRunning indicates whether the workloads on the Control Plane
+	// are running or not.
+	ConditionTypeRunning xpcommonv1.ConditionType = "CrossplaneRunning"
+	// ReasonPausing indicates that the crossplane and provider workloads are being paused.
+	ReasonPausing xpcommonv1.ConditionReason = "Pausing"
+	// ReasonPaused indicates that the crossplane and provider workloads have been paused.
+	ReasonPaused xpcommonv1.ConditionReason = "Paused"
+	// ReasonStarting indicates that the crossplane and provider workloads are being started.
+	ReasonStarting xpcommonv1.ConditionReason = "Starting"
+	// ReasonStarted indicates that the crossplane and provider workloads have been started.
+	ReasonStarted xpcommonv1.ConditionReason = "Started"
 )
 
 // Healthy returns a condition that indicates the control plane is healthy.
@@ -201,5 +213,52 @@ func RestorePending() xpcommonv1.Condition {
 		LastTransitionTime: metav1.Now(),
 		Reason:             ReasonRestorePending,
 		Message:            "Control plane restore is pending",
+	}
+}
+
+// PauseInProgress returns a condition that indicates that the crossplane and
+// provider workloads are being paused.
+func PauseInProgress() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypeRunning,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonPausing,
+		Message:            "The crossplane and provider workloads are being paused",
+	}
+}
+
+// PauseCompleted returns a condition that indicates that the crossplane and
+// provider workloads have been paused.
+func PauseCompleted() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypeRunning,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonPaused,
+		Message:            "The crossplane and provider workloads have been paused",
+	}
+}
+
+// StartInProgress returns a condition that indicates that the crossplane and
+// provider workloads are being restarted.
+func StartInProgress() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypeRunning,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonStarting,
+		Message:            "The crossplane and provider workloads are being started",
+	}
+}
+
+// StartCompleted returns a condition that indicates that the crossplane and
+// provider workloads have been restarted.
+func StartCompleted() xpcommonv1.Condition {
+	return xpcommonv1.Condition{
+		Type:               ConditionTypeRunning,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonStarted,
 	}
 }

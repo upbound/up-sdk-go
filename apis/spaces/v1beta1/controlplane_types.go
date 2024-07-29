@@ -102,6 +102,19 @@ const (
 	CrossplaneUpgradeRapid CrossplaneUpgradeChannel = "Rapid"
 )
 
+// CrossplaneState is the running state for the crossplane and provider workloads.
+type CrossplaneState string
+
+const (
+	// CrossplaneStateRunning switches the crossplane and provider workloads to
+	// the running state by scaling up them.
+	CrossplaneStateRunning CrossplaneState = "Running"
+
+	// CrossplaneStatePaused switches the crossplane and provider workloads to
+	// the paused state by scaling down them.
+	CrossplaneStatePaused CrossplaneState = "Paused"
+)
+
 // CrossplaneAutoUpgradeSpec defines the auto upgrade policy for Crossplane.
 type CrossplaneAutoUpgradeSpec struct {
 	// Channel defines the upgrade channels for Crossplane. We support the following channels where 'Stable' is the
@@ -129,6 +142,15 @@ type CrossplaneSpec struct {
 	// +optional
 	// +kubebuilder:default={"channel":"Stable"}
 	AutoUpgradeSpec *CrossplaneAutoUpgradeSpec `json:"autoUpgrade,omitempty"`
+
+	// State defines the state for crossplane and provider workloads. We support
+	// the following states where 'Running' is the default:
+	// - Running: Starts/Scales up all crossplane and provider workloads in the ControlPlane
+	// - Paused: Pauses/Scales down all crossplane and provider workloads in the ControlPlane
+	// +optional
+	// +kubebuilder:validation:Enum=Running;Paused
+	// +kubebuilder:default=Running
+	State *CrossplaneState `json:"state,omitempty"`
 }
 
 // A SecretReference is a reference to a secret in an arbitrary namespace.
