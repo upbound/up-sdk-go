@@ -15,6 +15,7 @@
 package v1alpha1
 
 import (
+	"reflect"
 	"strings"
 
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
@@ -89,17 +90,47 @@ type MetadataPatch struct {
 	// - crossplane.io/paused
 	// - spaces.upbound.io/force-reconcile-at
 	// +kubebuilder:validation:XValidation:rule="self.all(k, k == 'crossplane.io/paused' || k == 'spaces.upbound.io/force-reconcile-at')",message="Only the crossplane.io/paused and spaces.upbound.io/force-reconcile-at annotations are allowed"
-	// +kubebuilder:validation:MinProperties=1
-	// +kubebuilder:validation:MaxProperties=2
 	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
 // Override represents a configuration patch which is serialized into JSON to
 // obtain the fully specified intent to be used with server side apply.
-// +kubebuilder:validation:MinProperties=1
 type Override struct {
+	// Metadata specifies the patch metadata.
 	// +optional
 	Metadata *MetadataPatch `json:"metadata,omitempty"`
+}
+
+// ObjectReference represents a optionally namespaces Kubernetes API object
+// reference.
+type ObjectReference struct {
+	// APIVersion of the referenced object.
+	// +kubebuilder:validation:MinLength=1
+	APIVersion string `json:"apiVersion"`
+
+	// Kind of the referenced object.
+	// +kubebuilder:validation:MinLength=1
+	Kind string `json:"kind"`
+
+	// Name of the referenced object.
+	// +kubebuilder:validation:MinLength=1
+	Name string `json:"name"`
+
+	// Namespace of the referenced object.
+	// +optional
+	Namespace *string `json:"namespace,omitempty"`
+}
+
+func (r *ObjectReference) String() string {
+	if r == nil {
+		return "nil"
+	}
+	return strings.Join([]string{
+		"APIVersion: ", r.APIVersion, ", ",
+		"Kind: ", r.Kind, ", ",
+		"Name: ", r.Name, ", ",
+		"Namespace: '", ptr.Deref(r.Namespace, ""), "'",
+	}, "")
 }
 
 // InControlPlaneOverrideSpec defines a configuration override
@@ -112,16 +143,32 @@ type InControlPlaneOverrideSpec struct {
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="controlPlaneName is immutable"
 	ControlPlaneName string `json:"controlPlaneName"`
 
-	TargetRef corev1.TypedObjectReference `json:"targetRef"`
+	// TargetRef is the object reference to a Kubernetes API object where the
+	// configuration override will start. The controller will traverse the
+	// target object's hierarchy depending on the PropagationPolicy. If
+	// PropagationPolicy is None, then only the target object will be updated.
+	TargetRef ObjectReference `json:"targetRef"`
 
+	// PropagationPolicy specifies whether the configuration override will be
+	// applied only to the object referenced in TargetRef (None), after an
+	// ascending or descending hierarchy traversal will be done starting with
+	// the target object.
 	// +kubebuilder:validation:Enum=None;Ascending;Descending
 	// +kubebuilder:default=None
+	// +optional
 	PropagationPolicy PatchPropagationPolicy `json:"propagationPolicy"`
 
+	// DeletionPolicy specifies whether when the InControlPlaneOverride object
+	// is deleted, the configuration override should be kept (Keep) or
+	// rolled back (RollBack).
 	// +kubebuilder:validation:Enum=RollBack;Keep
 	// +kubebuilder:default=RollBack
+	// +optional
 	DeletionPolicy PatchDeletionPolicy `json:"deletionPolicy"`
 
+	// Override denotes the configuration override to be applied on the target
+	// object hierarchy. The fully specified intent is obtained by serializing
+	// the Override.
 	Override Override `json:"override"`
 }
 
@@ -159,15 +206,19 @@ const (
 // PatchedObjectStatus represents the state of an applied patch to an object
 // in the target hierarchy.
 type PatchedObjectStatus struct {
-	corev1.TypedObjectReference `json:",inline"`
+	// ObjectReference is the Kubernetes object reference to the object
+	// which has been updated.
+	ObjectReference `json:",inline"`
 
 	// Metadata UID of the patch target object.
 	// +optional
 	UID *types.UID `json:"uid,omitempty"`
 
+	// Status of the configuration override.
 	// +kubebuilder:validation:Enum=Success;Skipped;Error
 	Status PatchState `json:"status"`
 
+	// Reason is the reason for the target objects override Status.
 	// +optional
 	Reason *PatchStateReason `json:"reason,omitempty"`
 
@@ -181,7 +232,7 @@ func (r *PatchedObjectStatus) String() string {
 	if r == nil {
 		return "nil"
 	}
-	return strings.Join([]string{r.TypedObjectReference.String(), ", ",
+	return strings.Join([]string{r.ObjectReference.String(), ", ",
 		"UID: '", string(ptr.Deref(r.UID, "")), "', ",
 		"Status: ", string(r.Status), ", ",
 		"Reason: '", string(ptr.Deref(r.Reason, "")), "', ",
@@ -219,6 +270,11 @@ func Traversed() xpv1.Condition {
 		Reason:             "Traversed",
 	}
 }
+
+var (
+	// InControlPlaneOverrideKind is the kind of the InControlPlaneOverride.
+	InControlPlaneOverrideKind = reflect.TypeOf(InControlPlaneOverride{}).Name()
+)
 
 func init() {
 	SchemeBuilder.Register(&InControlPlaneOverride{}, &InControlPlaneOverrideList{})
