@@ -56,7 +56,7 @@ const (
 
 	// ConditionTypeRunning indicates whether the workloads on the Control Plane
 	// are running or not.
-	ConditionTypeRunning xpcommonv1.ConditionType = "Running"
+	ConditionTypeRunning xpcommonv1.ConditionType = "CrossplaneRunning"
 	// ReasonPausing indicates that the crossplane and provider workloads are being paused.
 	ReasonPausing xpcommonv1.ConditionReason = "Pausing"
 	// ReasonPaused indicates that the crossplane and provider workloads have been paused.
@@ -260,6 +260,5 @@ func StartCompleted() xpcommonv1.Condition {
 		Status:             corev1.ConditionTrue,
 		LastTransitionTime: metav1.Now(),
 		Reason:             ReasonStarted,
-		Message:            "The crossplane and provider workloads have been started",
 	}
 }
