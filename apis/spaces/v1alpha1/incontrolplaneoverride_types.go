@@ -248,10 +248,10 @@ type InControlPlaneOverrideStatus struct {
 	ObjectRefs []PatchedObjectStatus `json:"objectRefs,omitempty"`
 }
 
-// Deleted returns a condition that indicates the target object hierarchy
+// ReadyDeleted returns a condition that indicates the target object hierarchy
 // has successfully been cleaned up, and the InControlPlaneOverride object is
 // ready for garbage collection.
-func Deleted() xpv1.Condition {
+func ReadyDeleted() xpv1.Condition {
 	return xpv1.Condition{
 		Type:               xpv1.TypeReady,
 		Status:             corev1.ConditionFalse,
@@ -260,9 +260,9 @@ func Deleted() xpv1.Condition {
 	}
 }
 
-// Traversed returns a condition that indicates the target object hierarchy has
-// successfully been traversed.
-func Traversed() xpv1.Condition {
+// ReadyTraversed returns a condition that indicates
+// the target object hierarchy has successfully been traversed.
+func ReadyTraversed() xpv1.Condition {
 	return xpv1.Condition{
 		Type:               xpv1.TypeReady,
 		Status:             corev1.ConditionTrue,
