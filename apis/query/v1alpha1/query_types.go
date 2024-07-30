@@ -302,10 +302,6 @@ type QueryTable struct {
 	// grouping specifies how to group the returned objects into multiple
 	// tables where every table can have different sets of columns.
 	Grouping QueryGrouping `json:"grouping,omitempty"`
-
-	// noHeaders specifies whether to return the headers of the table in the
-	// first row.
-	NoHeaders bool `json:"noHeaders,omitempty"`
 }
 
 // A QueryRelation specifies how to return objects in a relation.
