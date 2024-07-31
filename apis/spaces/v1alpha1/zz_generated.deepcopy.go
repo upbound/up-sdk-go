@@ -494,11 +494,6 @@ func (in *PatchedObjectStatus) DeepCopyInto(out *PatchedObjectStatus) {
 		*out = new(types.UID)
 		**out = **in
 	}
-	if in.Reason != nil {
-		in, out := &in.Reason, &out.Reason
-		*out = new(PatchStateReason)
-		**out = **in
-	}
 	if in.Message != nil {
 		in, out := &in.Message, &out.Message
 		*out = new(string)

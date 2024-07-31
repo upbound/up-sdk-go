@@ -177,9 +177,6 @@ type InControlPlaneOverrideSpec struct {
 type PatchState string
 
 const (
-	// PatchStateSuccess denotes that the target object has successfully been
-	// patched.
-	PatchStateSuccess PatchState = "Success"
 	// PatchStateSkipped denotes that the target object was skipped.
 	// The reason for the skip is specified in the `reason` field.
 	PatchStateSkipped PatchState = "Skipped"
@@ -219,8 +216,7 @@ type PatchedObjectStatus struct {
 	Status PatchState `json:"status"`
 
 	// Reason is the reason for the target objects override Status.
-	// +optional
-	Reason *PatchStateReason `json:"reason,omitempty"`
+	Reason PatchStateReason `json:"reason"`
 
 	// Message holds an optional detail message detailing the observed state.
 	// +optional
@@ -235,7 +231,7 @@ func (r *PatchedObjectStatus) String() string {
 	return strings.Join([]string{r.ObjectReference.String(), ", ",
 		"UID: '", string(ptr.Deref(r.UID, "")), "', ",
 		"Status: ", string(r.Status), ", ",
-		"Reason: '", string(ptr.Deref(r.Reason, "")), "', ",
+		"Reason: ", string(r.Reason), ", ",
 		"Message: '", ptr.Deref(r.Message, ""), "'"}, "")
 }
 
@@ -260,12 +256,12 @@ func ReadyDeleted() xpv1.Condition {
 	}
 }
 
-// ReadyTraversed returns a condition that indicates
-// the target object hierarchy has successfully been traversed.
-func ReadyTraversed() xpv1.Condition {
+// ReadyTraversed returns a condition that indicates whether
+// the target object hierarchy has successfully been traversed or not.
+func ReadyTraversed(s corev1.ConditionStatus) xpv1.Condition {
 	return xpv1.Condition{
 		Type:               xpv1.TypeReady,
-		Status:             corev1.ConditionTrue,
+		Status:             s,
 		LastTransitionTime: metav1.Now(),
 		Reason:             "Traversed",
 	}
