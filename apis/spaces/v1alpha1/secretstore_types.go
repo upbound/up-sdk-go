@@ -15,8 +15,10 @@
 package v1alpha1
 
 import (
-	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	"reflect"
+
+	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
+	corev1 "k8s.io/api/core/v1"
 
 	esv1beta1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -105,16 +107,62 @@ const (
 	// ConditionSecretRefReady indicates the status of any referenced secrets
 	// for API objects that reference a secret.
 	ConditionSecretRefReady = xpv1.ConditionType("SecretRefsReady")
+)
 
+const (
 	// ReasonSecretRefMissing is added to object if the referenced secret(s) do not exist
 	ReasonSecretRefMissing = xpv1.ConditionReason("ReferencedSecretNotFound")
 	// ReasonSecretRefMissingKey is added when the object if the secret(s) exists, but the key data is missing
 	ReasonSecretRefMissingKey = xpv1.ConditionReason("ReferencedSecretKeyNotFound")
 	// ReasonSecretRefReady is added when the referenced secret(s) and data are found
 	ReasonSecretRefReady = xpv1.ConditionReason("ReferencedSecretsReady")
-	// ReasonSecretRefNone is added  when object not reference a secret
+	// ReasonSecretRefNone is added when object does not reference a secret
 	ReasonSecretRefNone = xpv1.ConditionReason("NoReferencedSecrets")
 )
+
+// SecretRefsReadyMissing returns a condition indicating that the referenced
+// secret(s) do not exist.
+func SecretRefsReadyMissing() xpv1.Condition {
+	return xpv1.Condition{
+		Type:               ConditionSecretRefReady,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonSecretRefMissing,
+	}
+}
+
+// SecretRefsReadyMissingKey returns a condition indicating that the referenced
+// secret(s) exist, but the key data is missing.
+func SecretRefsReadyMissingKey() xpv1.Condition {
+	return xpv1.Condition{
+		Type:               ConditionSecretRefReady,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonSecretRefMissingKey,
+	}
+}
+
+// SecretRefsReadyReady returns a condition indicating that the referenced
+// secret(s) and data are found.
+func SecretRefsReadyReady() xpv1.Condition {
+	return xpv1.Condition{
+		Type:               ConditionSecretRefReady,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonSecretRefReady,
+	}
+}
+
+// SecretRefsReadyNone returns a condition indicating that the referenced
+// object is not a secret.
+func SecretRefsReadyNone() xpv1.Condition {
+	return xpv1.Condition{
+		Type:               ConditionSecretRefReady,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonSecretRefNone,
+	}
+}
 
 // SharedSecretStoreStatus defines the observed state of the SecretStore.
 type SharedSecretStoreStatus struct {
