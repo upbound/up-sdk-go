@@ -136,8 +136,8 @@ type QueryCondition struct {
 
 // A QueryOwner specifies how to query by owner.
 type QueryOwner struct {
-	// name is the name of the owner to match.
-	Group string `json:"group,omitempty"`
+	// APIGroup is the name of the owner to match.
+	APIGroup string `json:"APIGroup,omitempty"`
 	// kind is the kind of the owner to match.
 	Kind string `json:"kind,omitempty"`
 	// uid is the uid of the owner to match.
@@ -171,17 +171,22 @@ type QueryOrder struct {
 	// +kubebuilder:validation:Enum=Asc;Desc
 	Namespace Direction `json:"namespace,omitempty"`
 
+	// APIGroup specifies how to order by API group.
+	//
+	// +kubebuilder:validation:Enum=Asc;Desc
+	APIGroup Direction `json:"group,omitempty"`
+
 	// kind specifies how to order by kind.
 	//
 	// +kubebuilder:validation:Enum=Asc;Desc
 	Kind Direction `json:"kind,omitempty"`
 
-	// group specifies how to order by group.
+	// group specifies how to order by control plane group.
 	//
 	// +kubebuilder:validation:Enum=Asc;Desc
 	Group Direction `json:"group,omitempty"`
 
-	// controlPlane specifies how to order by control plane.
+	// controlPlane specifies how to order by control plane name.
 	ControlPlane Direction `json:"cluster"`
 }
 
