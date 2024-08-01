@@ -174,7 +174,7 @@ type QueryOrder struct {
 	// APIGroup specifies how to order by API group.
 	//
 	// +kubebuilder:validation:Enum=Asc;Desc
-	APIGroup Direction `json:"group,omitempty"`
+	APIGroup Direction `json:"APIGroup,omitempty"`
 
 	// kind specifies how to order by kind.
 	//
