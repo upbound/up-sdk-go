@@ -20,6 +20,7 @@ import (
 
 	policyv1alpha1 "github.com/upbound/up-sdk-go/apis/policy/v1alpha1"
 	queryv1alpha1 "github.com/upbound/up-sdk-go/apis/query/v1alpha1"
+	queryv1alpha2 "github.com/upbound/up-sdk-go/apis/query/v1alpha2"
 	spacesv1alpha1 "github.com/upbound/up-sdk-go/apis/spaces/v1alpha1"
 	spacesv1beta1 "github.com/upbound/up-sdk-go/apis/spaces/v1beta1"
 	upboundv1alpha1 "github.com/upbound/up-sdk-go/apis/upbound/v1alpha1"
@@ -30,6 +31,7 @@ func init() {
 	AddToSchemes = append(AddToSchemes,
 		spacesv1beta1.SchemeBuilder.AddToScheme,
 		spacesv1alpha1.SchemeBuilder.AddToScheme,
+		queryv1alpha2.SchemeBuilder.AddToScheme,
 		queryv1alpha1.SchemeBuilder.AddToScheme,
 		upboundv1alpha1.SchemeBuilder.AddToScheme,
 		policyv1alpha1.SchemeBuilder.AddToScheme,
