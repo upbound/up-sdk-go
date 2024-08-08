@@ -106,8 +106,6 @@ type QueryFilter struct {
 	Categories []string `json:"categories,omitempty"`
 	// conditions is a list of conditions to query.
 	Conditions []QueryCondition `json:"conditions,omitempty"`
-	// owners is a list of owners to query.
-	Owners []QueryOwner `json:"owners,omitempty"`
 	// jsonpath is a JSONPath filter expression that will be applied to objects
 	// as a filter. It must return a boolean; no objects will be matched if it
 	// returns any other type. jsonpath should be used as a last resort; using
@@ -152,18 +150,6 @@ type QueryCondition struct {
 	Status string `json:"status,omitempty"`
 	// reason queries based on the reason field of the condition.
 	Reason string `json:"reason,omitempty"`
-}
-
-// A QueryOwner specifies how to query by owner.
-type QueryOwner struct {
-	// APIGroup is the name of the owner to match.
-	APIGroup string `json:"apiGroup,omitempty"`
-	// kind is the kind of the owner to match.
-	Kind string `json:"kind,omitempty"`
-	// name is the name of the owner to match.
-	Name string `json:"name,omitempty"`
-	// uid is the uid of the owner to match.
-	UID string `json:"uid,omitempty"`
 }
 
 // Direction specifies in which direction to order.
