@@ -226,7 +226,7 @@ type QueryNestedResources struct {
 	QueryResources `json:",inline"`
 
 	// filters specifies how to filter the returned objects.
-	Filters []QueryFilter `json:"filter,omitempty"`
+	Filters []QueryFilter `json:"filters,omitempty"`
 }
 
 // QueryResources specifies how to return resources.
