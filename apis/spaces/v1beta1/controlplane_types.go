@@ -251,7 +251,6 @@ type ControlPlaneStatus struct {
 	// ControlPlane is in this condition.
 	Message        string `json:"message,omitempty"`
 	ControlPlaneID string `json:"controlPlaneID,omitempty"`
-	HostClusterID  string `json:"hostClusterID,omitempty"`
 }
 
 // +kubebuilder:object:root=true
