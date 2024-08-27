@@ -37,6 +37,7 @@ const SharedTelemetryConfigAnnotation = "spaces.upbound.io/sharedtelemetryconfig
 // +kubebuilder:printcolumn:name="Selected",type="string",JSONPath=`.metadata.annotations.sharedtelemetryconfig\.internal\.spaces\.upbound\.io/selected`
 // +kubebuilder:printcolumn:name="Failed",type="string",JSONPath=`.metadata.annotations.sharedtelemetryconfig\.internal\.spaces\.upbound\.io/failed`
 // +kubebuilder:printcolumn:name="Provisioned",type="string",JSONPath=`.metadata.annotations.sharedtelemetryconfig\.internal\.spaces\.upbound\.io/provisioned`
+// +kubebuilder:printcolumn:name="Validated",type="string",JSONPath=".status.conditions[?(@.type=='Validated')].status"
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:resource:scope=Namespaced,categories=observability,shortName=stc
 
@@ -145,6 +146,9 @@ const (
 	// ConditionTypeFailed indicates that the controlplane telemetry
 	// provisioning has failed.
 	ConditionTypeFailed xpv1.ConditionType = "Failed"
+	// ConditionTypeValidated indicates if the telemetry configuration
+	// is valid.
+	ConditionTypeValidated xpv1.ConditionType = "Validated"
 )
 
 const (
@@ -154,6 +158,12 @@ const (
 	// ReasonInvalidConfig indicates that the telemetry configuration is
 	// invalid.
 	ReasonInvalidConfig xpv1.ConditionReason = "InvalidTelemetryConfig"
+	// ReasonValidExportConfig indicates that the telemetry export configuration has
+	// been tested and is valid.
+	ReasonValidExportConfig xpv1.ConditionReason = "ValidExportConfig"
+	// ReasonInvalidExportConfig indicates that the telemetry export configuration has
+	// been tested and is invalid.
+	ReasonInvalidExportConfig xpv1.ConditionReason = "InvalidExportConfig"
 )
 
 // SelectorConflict returns a condition that indicates the controlplane is
@@ -177,6 +187,29 @@ func InvalidConfig(msg string) xpv1.Condition {
 		LastTransitionTime: metav1.Now(),
 		Reason:             ReasonInvalidConfig,
 		Message:            msg,
+	}
+}
+
+// InvalidExportConfig returns a condition that indicates the telemetry export
+// configuration is invalid.
+func InvalidExportConfig(msg string) xpv1.Condition {
+	return xpv1.Condition{
+		Type:               ConditionTypeValidated,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonInvalidExportConfig,
+		Message:            msg,
+	}
+}
+
+// ValidExportConfig returns a condition that indicates the telemetry export
+// configuration is valid.
+func ValidExportConfig() xpv1.Condition {
+	return xpv1.Condition{
+		Type:               ConditionTypeValidated,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonValidExportConfig,
 	}
 }
 
