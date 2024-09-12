@@ -257,7 +257,6 @@ type ControlPlaneStatus struct {
 // +kubebuilder:storageversion
 // +kubebuilder:printcolumn:name="Crossplane",type="string",JSONPath=".spec.crossplane.version"
 // +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
-// +kubebuilder:printcolumn:name="Healthy",type="string",JSONPath=".status.conditions[?(@.type=='Healthy')].status"
 // +kubebuilder:printcolumn:name="Message",type="string",JSONPath=`.status.message`
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:subresource:status
