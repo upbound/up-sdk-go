@@ -31,6 +31,7 @@ import (
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase"
 // +kubebuilder:printcolumn:name="Retries",type="integer",JSONPath=".status.retries"
+// +kubebuilder:printcolumn:name="TTL",type="string",JSONPath=".spec.ttl"
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:resource:scope=Namespaced,categories=spaces
 
@@ -78,11 +79,7 @@ type BackupDefinition struct {
 	// +kubebuilder:default=Orphan
 	DeletionPolicy xpv1.DeletionPolicy `json:"deletionPolicy,omitempty"`
 
-	// ExcludedResources is a slice of resource names that are not
-	// included in the backup. Used to filter the included extra resources.
-	// +optional
-	// +listType=set
-	ExcludedResources []string `json:"excludedResources,omitempty"`
+	ControlPlaneBackupConfig `json:",inline"`
 
 	// ConfigRef is a reference to the backup configuration.
 	// ApiGroup is optional and defaults to "spaces.upbound.io".
@@ -93,6 +90,15 @@ type BackupDefinition struct {
 	// +kubebuilder:validation:XValidation:rule="(!has(self.apiGroup) || self.apiGroup == 'spaces.upbound.io') && self.kind == 'SharedBackupConfig'",message="backup config ref must be a reference to a SharedBackupConfig"
 	// +kubebuilder:validation:XValidation:rule="size(self.name) > 0",message="backup config ref must have a name"
 	ConfigRef common.TypedLocalObjectReference `json:"configRef"`
+}
+
+// ControlPlaneBackupConfig defines the configuration for a controlplane backup.
+type ControlPlaneBackupConfig struct {
+	// ExcludedResources is a slice of resource names that are not
+	// included in the backup. Used to filter the included extra resources.
+	// +optional
+	// +listType=set
+	ExcludedResources []string `json:"excludedResources,omitempty"`
 }
 
 // BackupPhase is a string representation of the phase of a backup.
