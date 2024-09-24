@@ -21,7 +21,6 @@ limitations under the License.
 package v1beta1
 
 import (
-	"github.com/crossplane/crossplane-runtime/apis/common/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -91,16 +90,6 @@ func (in *ControlPlaneSpec) DeepCopyInto(out *ControlPlaneSpec) {
 		in, out := &in.WriteConnectionSecretToReference, &out.WriteConnectionSecretToReference
 		*out = new(SecretReference)
 		**out = **in
-	}
-	if in.PublishConnectionDetailsTo != nil {
-		in, out := &in.PublishConnectionDetailsTo, &out.PublishConnectionDetailsTo
-		*out = new(v1.PublishConnectionDetailsTo)
-		(*in).DeepCopyInto(*out)
-	}
-	if in.ManagementPolicies != nil {
-		in, out := &in.ManagementPolicies, &out.ManagementPolicies
-		*out = make(v1.ManagementPolicies, len(*in))
-		copy(*out, *in)
 	}
 	in.Crossplane.DeepCopyInto(&out.Crossplane)
 	if in.Restore != nil {

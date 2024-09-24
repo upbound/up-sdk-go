@@ -182,39 +182,6 @@ type ControlPlaneSpec struct {
 	// Deprecated: Use Hub or Upbound identities instead.
 	// +optional
 	WriteConnectionSecretToReference *SecretReference `json:"writeConnectionSecretToRef,omitempty"`
-	// PublishConnectionDetailsTo specifies the connection secret config which
-	// contains a name, metadata and a reference to secret store config to
-	// which any connection details for this managed resource should be written.
-	// Connection details frequently include the endpoint, username,
-	// and password required to connect to the managed resource.
-	//
-	// Deprecated: Use Hub or Upbound identities instead.
-	// +optional
-	PublishConnectionDetailsTo *xpv1.PublishConnectionDetailsTo `json:"publishConnectionDetailsTo,omitempty"`
-	// THIS IS AN ALPHA FIELD. Do not use it in production. It is not honored
-	// unless the relevant Crossplane feature flag is enabled, and may be
-	// changed or removed without notice.
-	// ManagementPolicies specify the array of actions Crossplane is allowed to
-	// take on the managed and external resources.
-	// This field is planned to replace the DeletionPolicy field in a future
-	// release. Currently, both could be set independently and non-default
-	// values would be honored if the feature flag is enabled. If both are
-	// custom, the DeletionPolicy field will be ignored.
-	// See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
-	// and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
-	// +optional
-	// +kubebuilder:default={"*"}
-	ManagementPolicies xpv1.ManagementPolicies `json:"managementPolicies,omitempty"`
-	// DeletionPolicy specifies what will happen to the underlying external
-	// resource when this managed resource is deleted - either "Delete" or
-	// "Orphan" the external resource.
-	// This field is planned to be deprecated in favor of the ManagementPolicy
-	// field in a future release. Currently, both could be set independently and
-	// non-default values would be honored if the feature flag is enabled.
-	// See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
-	// +optional
-	// +kubebuilder:default=Delete
-	DeletionPolicy xpv1.DeletionPolicy `json:"deletionPolicy,omitempty"`
 
 	// Crossplane defines the configuration for Crossplane.
 	Crossplane CrossplaneSpec `json:"crossplane,omitempty"`
@@ -285,26 +252,6 @@ func (mg *ControlPlane) GetCondition(ct xpv1.ConditionType) xpv1.Condition {
 	return mg.Status.GetCondition(ct)
 }
 
-// GetDeletionPolicy of this Environment.
-func (mg *ControlPlane) GetDeletionPolicy() xpv1.DeletionPolicy {
-	return mg.Spec.DeletionPolicy
-}
-
-// GetManagementPolicies of this ManagedControlPlane.
-func (mg *ControlPlane) GetManagementPolicies() xpv1.ManagementPolicies {
-	return mg.Spec.ManagementPolicies
-}
-
-// GetProviderConfigReference of this ControlPlane.
-func (mg *ControlPlane) GetProviderConfigReference() *xpv1.Reference {
-	return nil
-}
-
-// GetPublishConnectionDetailsTo of this ControlPlane.
-func (mg *ControlPlane) GetPublishConnectionDetailsTo() *xpv1.PublishConnectionDetailsTo {
-	return mg.Spec.PublishConnectionDetailsTo
-}
-
 // GetWriteConnectionSecretToReference of this ControlPlane.
 func (mg *ControlPlane) GetWriteConnectionSecretToReference() *xpv1.SecretReference {
 	if mg.Spec.WriteConnectionSecretToReference == nil {
@@ -319,25 +266,6 @@ func (mg *ControlPlane) GetWriteConnectionSecretToReference() *xpv1.SecretRefere
 // SetConditions of this ControlPlane.
 func (mg *ControlPlane) SetConditions(c ...xpv1.Condition) {
 	mg.Status.SetConditions(c...)
-}
-
-// SetDeletionPolicy of this ControlPlane.
-func (mg *ControlPlane) SetDeletionPolicy(r xpv1.DeletionPolicy) {}
-
-// SetManagementPolicies of this ManagedControlPlane.
-func (mg *ControlPlane) SetManagementPolicies(r xpv1.ManagementPolicies) {
-	mg.Spec.ManagementPolicies = r
-}
-
-// SetProviderReference of this ControlPlane.
-func (mg *ControlPlane) SetProviderReference(r *xpv1.Reference) {}
-
-// SetProviderConfigReference of this ControlPlane.
-func (mg *ControlPlane) SetProviderConfigReference(r *xpv1.Reference) {}
-
-// SetPublishConnectionDetailsTo of this ControlPlane.
-func (mg *ControlPlane) SetPublishConnectionDetailsTo(p *xpv1.PublishConnectionDetailsTo) {
-	mg.Spec.PublishConnectionDetailsTo = p
 }
 
 // SetWriteConnectionSecretToReference of this ControlPlane.
