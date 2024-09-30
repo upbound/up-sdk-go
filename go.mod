@@ -14,6 +14,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.29.1
+	k8s.io/apiextensions-apiserver v0.29.1
 	k8s.io/apimachinery v0.29.1
 	k8s.io/utils v0.0.0-20240102154912-e7106e64919e
 	sigs.k8s.io/controller-runtime v0.17.1
@@ -283,7 +284,6 @@ require (
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	inet.af/netaddr v0.0.0-20230525184311-b8eac61e914a // indirect
-	k8s.io/apiextensions-apiserver v0.29.1 // indirect
 	k8s.io/client-go v0.29.1 // indirect
 	k8s.io/component-base v0.29.1 // indirect
 	k8s.io/klog/v2 v2.120.1 // indirect
