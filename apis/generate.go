@@ -1,4 +1,4 @@
-// Copyright 2021 Upbound Inc
+// Copyright 2024 Upbound Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,10 +19,19 @@
 // https://github.com/golang/go/wiki/Modules#how-can-i-track-tool-dependencies-for-a-module
 
 // Add license headers to all files.
-//go:generate ./generate.sh
+//go:generate go run -tags generate github.com/google/addlicense -v -c "Upbound Inc" -ignore service/spaces/crossplane/supported_versions.yaml *.go .
+
+// Generate deepcopy methodsets and CRD manifests
+//go:generate go run -tags generate sigs.k8s.io/controller-tools/cmd/controller-gen object:headerFile=../hack/boilerplate.go.txt paths=./...
+
+// Generate crossplane-runtime methodsets (resource.Claim, etc)
+//go:generate go run -tags generate github.com/crossplane/crossplane-tools/cmd/angryjet generate-methodsets --header-file=../hack/boilerplate.go.txt ./...
 
 package generate
 
 import (
-	_ "github.com/google/addlicense" //nolint:typecheck
+	_ "github.com/google/addlicense"                    //nolint:typecheck
+	_ "sigs.k8s.io/controller-tools/cmd/controller-gen" //nolint:typecheck
+
+	_ "github.com/crossplane/crossplane-tools/cmd/angryjet" //nolint:typecheck
 )

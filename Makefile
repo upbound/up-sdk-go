@@ -29,9 +29,9 @@ NPROCS ?= 1
 # By default we reduce the parallelism to half the number of CPU cores.
 GO_TEST_PARALLEL := $(shell echo $$(( $(NPROCS) / 2 )))
 
-GO_SUBDIRS += errors service fake generate apis
+GO_SUBDIRS += errors service fake generate
 GO111MODULE = on
-GOLANGCILINT_VERSION := 1.56.0
+GOLANGCILINT_VERSION := 1.61.0
 -include build/makelib/golang.mk
 
 # generate/generate.sh needs to know what subdirs to generate files for.
@@ -62,6 +62,22 @@ cobertura:
 submodules:
 	@git submodule sync
 	@git submodule update --init --recursive
+
+go.generate: go.generate.apis
+go.generate.apis:
+	@$(INFO) "cd apis; go generate $(PLATFORM)"
+	cd apis; CGO_ENABLED=0 $(GOHOST) generate $(GO_GENERATE_FLAGS) ./... || $(FAIL)
+	@$(OK) "cd apis; go generate $(PLATFORM)"
+	@$(INFO) "cd apis; go mod tidy"
+	@cd apis; $(GOHOST) mod tidy || $(FAIL)
+	@$(OK) "cd apis; go mod tidy"
+
+go.lint: go.lint.apis
+go.lint.apis: $(GOLANGCILINT)
+	@$(INFO) "cd apis; golangci-lint"
+	@cd apis; mkdir -p $(GO_LINT_OUTPUT)
+	@cd apis; $(GOLANGCILINT) run $(GO_LINT_ARGS) || $(FAIL)
+	@$(OK) "cd apis; golangci-lint"
 
 .PHONY: cobertura submodules fallthrough
 
