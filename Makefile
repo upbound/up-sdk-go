@@ -72,6 +72,13 @@ go.generate.apis:
 	@cd apis; $(GOHOST) mod tidy || $(FAIL)
 	@$(OK) "cd apis; go mod tidy"
 
+go.lint: go.lint.apis
+go.lint.apis: $(GOLANGCILINT)
+	@$(INFO) "cd apis; golangci-lint"
+	@cd apis; mkdir -p $(GO_LINT_OUTPUT)
+	@cd apis; $(GOLANGCILINT) run $(GO_LINT_ARGS) || $(FAIL)
+	@$(OK) "cd apis; golangci-lint"
+
 .PHONY: cobertura submodules fallthrough
 
 # ====================================================================================

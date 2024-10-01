@@ -28,12 +28,13 @@ jobs:
           paths_ignore: '["**.md", "**.png", "**.jpg"]'
           do_not_skip: '["workflow_dispatch", "schedule", "push"]'
 
-
-  lint:
+  lint-matrix:
     runs-on: ubuntu-20.04
     needs: detect-noop
     if: needs.detect-noop.outputs.noop != 'true'
-
+    strategy:
+      matrix:
+        modules: [".", "./apis"]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -75,6 +76,18 @@ jobs:
           version: ${{ env.GOLANGCI_VERSION }}
           skip-pkg-cache: true
           skip-build-cache: true
+          working-directory: ${{ matrix.modules }}
+
+  lint:
+    runs-on: ubuntu-22.04
+    needs:
+    - lint-matrix
+    - detect-noop
+    if: (failure() || success()) && needs.detect-noop.outputs.noop != 'true' && !contains(needs.lint-matrix.result, 'skipped')
+    steps:
+    - name: noop
+      run: exit 1
+      if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
 
   check-diff:
     runs-on: ubuntu-20.04
