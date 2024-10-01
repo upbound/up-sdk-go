@@ -74,6 +74,7 @@ jobs:
         uses: golangci/golangci-lint-action@v4
         with:
           version: ${{ env.GOLANGCI_VERSION }}
+          args: --config=${{ github.workspace }}/.golangci.yaml
           skip-pkg-cache: true
           skip-build-cache: true
           working-directory: ${{ matrix.modules }}
