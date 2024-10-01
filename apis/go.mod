@@ -1,6 +1,6 @@
 module github.com/upbound/up-sdk-go/apis
 
-go 1.23.1
+go 1.22.1
 
 require (
 	github.com/crossplane/crossplane-runtime v1.15.1
