@@ -79,11 +79,16 @@ type SpaceBackupDefinition struct {
 	DeletionPolicy xpv1.DeletionPolicy `json:"deletionPolicy,omitempty"`
 
 	// Match is the selector for resources that should be included in the backup.
+	// By default, we'll back up all Groups and for each Group:
+	// - All ControlPlanes.
+	// - All Secrets.
+	// - All other Space API resources, e.g. SharedBackupConfigs, SharedUpboundPolicies, Backups, etc...
 	Match SpaceBackupResourceSelector `json:"match,omitempty"`
 
 	// Exclude is the selector for resources that should be excluded from the backup.
 	// If both Match and Exclude are specified, the Exclude selector will be applied
 	// after the Match selector.
+	// By default, no resources are excluded.
 	Exclude SpaceBackupResourceSelector `json:"exclude,omitempty"`
 
 	// ControlPlaneBackups is the definition of the control plane backups,
