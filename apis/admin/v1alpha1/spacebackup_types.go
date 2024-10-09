@@ -50,7 +50,11 @@ type SpaceBackupList struct {
 	Items           []SpaceBackup `json:"items"`
 }
 
-// SpaceBackupSpec defines a backup over a set of Match.
+// SpaceBackupSpec defines a backup over a set of Match
+// +kubebuilder:validation:XValidation:rule="!has(self.configRef) && !has(oldSelf.configRef) || (self.configRef == oldSelf.configRef) ",message="spec.configRef can't be changed or set after creation"
+// +kubebuilder:validation:XValidation:rule="!has(self.match) && !has(oldSelf.match) || (self.match == oldSelf.match) ",message="spec.match can't be changed or set after creation"
+// +kubebuilder:validation:XValidation:rule="!has(self.exclude) && !has(oldSelf.exclude) || (self.exclude == oldSelf.exclude) ",message="spec.exclude can't be changed or set after creation"
+// +kubebuilder:validation:XValidation:rule="!has(self.controlPlaneBackups) && !has(oldSelf.controlPlaneBackups) || (self.controlPlaneBackups == oldSelf.controlPlaneBackups) ",message="spec.controlPlaneBackups can't be changed or set after creation"
 type SpaceBackupSpec struct {
 	SpaceBackupDefinition `json:",inline"`
 }
@@ -83,17 +87,19 @@ type SpaceBackupDefinition struct {
 	// - All ControlPlanes.
 	// - All Secrets.
 	// - All other Space API resources, e.g. SharedBackupConfigs, SharedUpboundPolicies, Backups, etc...
-	Match SpaceBackupResourceSelector `json:"match,omitempty"`
+	// +optional
+	Match *SpaceBackupResourceSelector `json:"match,omitempty"`
 
 	// Exclude is the selector for resources that should be excluded from the backup.
 	// If both Match and Exclude are specified, the Exclude selector will be applied
 	// after the Match selector.
-	// By default, no resources are excluded.
-	Exclude SpaceBackupResourceSelector `json:"exclude,omitempty"`
+	// By default, only SpaceBackups are excluded.
+	// +optional
+	Exclude *SpaceBackupResourceSelector `json:"exclude,omitempty"`
 
 	// ControlPlaneBackups is the definition of the control plane backups,
-	// +kubebuilder:validation:XValidation:rule="(!has(self.excludedResources) && !has(oldSelf.excludedResources)) || self.excludedResources == oldSelf.excludedResources",message="backup excluded resources can not be changed after creation"
-	ControlPlaneBackups spacesv1alpha1.ControlPlaneBackupConfig `json:"controlPlaneBackups,omitempty"`
+	// +optional
+	ControlPlaneBackups *spacesv1alpha1.ControlPlaneBackupConfig `json:"controlPlaneBackups,omitempty"`
 }
 
 // SpaceBackupResourceSelector represents a selector for Groups and ControlPlanes.
@@ -126,8 +132,10 @@ type SpaceBackupResourceSelector struct {
 // GenericSpaceBackupResourceSelector represents a generic resource selector.
 type GenericSpaceBackupResourceSelector struct {
 	// APIVersion is the API version of the resource.
+	//+kubebuilder:validation:Required
 	APIVersion string `json:"apiVersion,omitempty"`
 	// Kind is the kind of the resource.
+	//+kubebuilder:validation:Required
 	Kind string `json:"kind,omitempty"`
 	// Namespaces is the namespaces of the resource.
 	spacesv1alpha1.ResourceSelector `json:",inline"`
@@ -143,6 +151,7 @@ type SpaceBackupStatus struct {
 	Phase spacesv1alpha1.BackupPhase `json:"phase,omitempty"`
 
 	// Retries is the number of times the backup has been retried.
+	// +optional
 	Retries int32 `json:"retries,omitempty"`
 }
 

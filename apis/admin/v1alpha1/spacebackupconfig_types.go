@@ -64,7 +64,6 @@ type SpaceBackupObjectStorage struct {
 	// Credentials specifies the credentials to access the object storage.
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:XValidation:rule="self.source != 'Secret' || (has(self.secretRef) && has(self.secretRef.name) && has(self.secretRef.__namespace__))",message="secretRef.name and namespace must be set when source is Secret"
-	// +kubebuilder:validation:XValidation:rule="self.source != 'Environment' || (has(self.env) && has(self.env.name))",message="env.name must be set when source is Environment"
 	Credentials SpaceBackupCredentials `json:"credentials"`
 }
 
@@ -72,7 +71,8 @@ type SpaceBackupObjectStorage struct {
 type SpaceBackupCredentials struct {
 	// Source of the credentials.
 	// Source "Secret" requires "get" permissions on the referenced Secret.
-	// +kubebuilder:validation:Enum=Secret;InjectedIdentity;Environment
+	// +kubebuilder:validation:Enum=Secret;InjectedIdentity
+	// +kubebuilder:validation:Required
 	Source xpv1.CredentialsSource `json:"source"`
 
 	// CommonCredentialSelectors provides common selectors for extracting

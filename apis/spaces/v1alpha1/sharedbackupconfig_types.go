@@ -109,6 +109,7 @@ type BackupCredentials struct {
 	// Source of the credentials.
 	// Source "Secret" requires "get" permissions on the referenced Secret.
 	// +kubebuilder:validation:Enum=Secret;InjectedIdentity
+	// +kubebuilder:validation:Required
 	Source xpv1.CredentialsSource `json:"source"`
 
 	// CommonCredentialSelectors provides common selectors for extracting

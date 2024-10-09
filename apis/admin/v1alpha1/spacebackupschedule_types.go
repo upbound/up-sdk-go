@@ -23,7 +23,7 @@ import (
 
 // SpaceBackupScheduleLabelKey is the label key used to identify SpaceBackups created by
 // a SpaceBackupSchedule.
-const SpaceBackupScheduleLabelKey = "spaces.upbound.io/spacebackupschedule"
+const SpaceBackupScheduleLabelKey = "admin.spaces.upbound.io/spacebackupschedule"
 
 // +kubebuilder:object:root=true
 // +kubebuilder:storageversion
