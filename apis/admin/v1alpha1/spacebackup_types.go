@@ -131,9 +131,9 @@ type SpaceBackupResourceSelector struct {
 
 // GenericSpaceBackupResourceSelector represents a generic resource selector.
 type GenericSpaceBackupResourceSelector struct {
-	// APIVersion is the API version of the resource.
+	// APIGroup is the group of the resource.
 	// +kubebuilder:validation:Required
-	APIVersion string `json:"apiVersion,omitempty"`
+	APIGroup string `json:"apiGroup,omitempty"`
 	// Kind is the kind of the resource.
 	// +kubebuilder:validation:Required
 	Kind                            string `json:"kind,omitempty"`
