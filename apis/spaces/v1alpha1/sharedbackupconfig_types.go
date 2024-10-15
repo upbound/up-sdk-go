@@ -73,6 +73,8 @@ const (
 )
 
 // BackupObjectStorage specifies the object storage configuration for the given provider.
+//
+// +kubebuilder:validation:XValidation:rule="self.credentials.source != 'Secret' || (has(self.credentials.secretRef) && has(self.credentials.secretRef.name))",message="credentials.secretRef.name must be set when source is Secret"
 type BackupObjectStorage struct {
 	// Provider is the name of the object storage provider.
 	// +kubebuilder:validation:Required
@@ -107,6 +109,7 @@ type BackupCredentials struct {
 	// Source of the credentials.
 	// Source "Secret" requires "get" permissions on the referenced Secret.
 	// +kubebuilder:validation:Enum=Secret;InjectedIdentity
+	// +kubebuilder:validation:Required
 	Source xpv1.CredentialsSource `json:"source"`
 
 	// CommonCredentialSelectors provides common selectors for extracting

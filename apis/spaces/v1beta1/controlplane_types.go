@@ -280,6 +280,8 @@ func (mg *ControlPlane) SetWriteConnectionSecretToReference(r *xpv1.SecretRefere
 var (
 	// ControlPlaneKind is the kind of the ControlPlane.
 	ControlPlaneKind = reflect.TypeOf(ControlPlane{}).Name()
+	// ControlPlaneListKind is the kind of a list of ControlPlane.
+	ControlPlaneListKind = reflect.TypeOf(ControlPlaneList{}).Name()
 )
 
 func init() {

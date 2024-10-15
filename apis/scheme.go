@@ -18,6 +18,7 @@ package apis
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 
+	adminv1alpha1 "github.com/upbound/up-sdk-go/apis/admin/v1alpha1"
 	connectv1alpha1 "github.com/upbound/up-sdk-go/apis/connect/v1alpha1"
 	policyv1alpha1 "github.com/upbound/up-sdk-go/apis/policy/v1alpha1"
 	queryv1alpha1 "github.com/upbound/up-sdk-go/apis/query/v1alpha1"
@@ -36,6 +37,7 @@ func init() {
 		queryv1alpha1.SchemeBuilder.AddToScheme,
 		upboundv1alpha1.SchemeBuilder.AddToScheme,
 		policyv1alpha1.SchemeBuilder.AddToScheme,
+		adminv1alpha1.SchemeBuilder.AddToScheme,
 		connectv1alpha1.SchemeBuilder.AddToScheme,
 	)
 }
