@@ -115,6 +115,11 @@ const (
 	CrossplaneStatePaused CrossplaneState = "Paused"
 )
 
+const (
+	// ClassDefault is the default class for the control plane.
+	ClassDefault = "default"
+)
+
 // CrossplaneAutoUpgradeSpec defines the auto upgrade policy for Crossplane.
 type CrossplaneAutoUpgradeSpec struct {
 	// Channel defines the upgrade channels for Crossplane. We support the following channels where 'Stable' is the
@@ -191,6 +196,11 @@ type ControlPlaneSpec struct {
 	// +optional
 	// +kubebuilder:validation:XValidation:rule="!has(oldSelf.finishedAt) || oldSelf.finishedAt == self.finishedAt",message="finishedAt is immutable once set"
 	Restore *Restore `json:"restore,omitempty"`
+
+	// Class specifies the class of the control plane.
+	// +optional
+	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="class is immutable"
+	Class string `json:"class,omitempty"`
 }
 
 // Restore specifies details about the backup to restore from.
