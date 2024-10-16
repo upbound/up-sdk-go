@@ -197,9 +197,11 @@ type ControlPlaneSpec struct {
 	// +kubebuilder:validation:XValidation:rule="!has(oldSelf.finishedAt) || oldSelf.finishedAt == self.finishedAt",message="finishedAt is immutable once set"
 	Restore *Restore `json:"restore,omitempty"`
 
+	// [[GATE:EnableClasses]]
 	// Class specifies the class of the control plane.
 	// +optional
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="class is immutable"
+	// +kubebuilder:default={"default"}
 	Class string `json:"class,omitempty"`
 }
 
