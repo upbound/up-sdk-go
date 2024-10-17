@@ -201,7 +201,7 @@ type ControlPlaneSpec struct {
 	// Class specifies the class of the control plane.
 	// +optional
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="class is immutable"
-	// +kubebuilder:default={"default"}
+	// +kubebuilder:default=default
 	Class string `json:"class,omitempty"`
 }
 
