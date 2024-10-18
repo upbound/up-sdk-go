@@ -197,7 +197,7 @@ type ControlPlaneSpec struct {
 	// +kubebuilder:validation:XValidation:rule="!has(oldSelf.finishedAt) || oldSelf.finishedAt == self.finishedAt",message="finishedAt is immutable once set"
 	Restore *Restore `json:"restore,omitempty"`
 
-	// [[GATE:EnableClasses]]
+	// [[GATE:EnableControlPlaneClasses]]
 	// Class specifies the class of the control plane. This affects the
 	// control plane sizing, including component replicas and resource
 	// requirements. There are multiple predefined classes, with "default"
