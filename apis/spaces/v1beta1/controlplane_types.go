@@ -197,8 +197,13 @@ type ControlPlaneSpec struct {
 	// +kubebuilder:validation:XValidation:rule="!has(oldSelf.finishedAt) || oldSelf.finishedAt == self.finishedAt",message="finishedAt is immutable once set"
 	Restore *Restore `json:"restore,omitempty"`
 
-	// [[GATE:EnableClasses]]
-	// Class specifies the class of the control plane.
+	// [[GATE:EnableControlPlaneClasses]]
+	// Class specifies the class of the control plane. This affects the
+	// control plane sizing, including component replicas and resource
+	// requirements. There are multiple predefined classes, with "default"
+	// being the standard Spaces control plane without any additional class
+	// configuration. Check the Upbound Cloud documentation for a list of all
+	// available classes. Defaults to "default".
 	// +optional
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="class is immutable"
 	// +kubebuilder:default=default
