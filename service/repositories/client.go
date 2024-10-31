@@ -39,15 +39,45 @@ func NewClient(cfg *up.Config) *Client {
 	}
 }
 
-// CreateOrUpdate a repository on Upbound.
+// CreateOrUpdate creates or updates a repository on Upbound. If a new
+// repository is created, it will be public. If the repository exists, it will
+// be made public.
+//
+// Deprecated: use CreateOrUpdateWithOpts instead.
 func (c *Client) CreateOrUpdate(ctx context.Context, account string, name string) error {
-	// TODO(hasheddan): allow passing parameters in body when supported by API.
-	// For now, a body is expected, but it may be empty.
-	req, err := c.Client.NewRequest(ctx, http.MethodPut, basePath, path.Join(account, name), struct{}{})
+	return c.CreateOrUpdateWithOptions(ctx, account, name, WithPublic())
+}
+
+// CreateOrUpdateWithOptions creates or updates a repository on
+// Upbound. Repositories will be created as or made private by default.
+func (c *Client) CreateOrUpdateWithOptions(ctx context.Context, account, name string, opts ...CreateOrUpdateOption) error {
+	body := &RepositoryCreateOrUpdateRequest{}
+	for _, opt := range opts {
+		opt(body)
+	}
+
+	req, err := c.Client.NewRequest(ctx, http.MethodPut, basePath, path.Join(account, name), body)
 	if err != nil {
 		return err
 	}
 	return c.Client.Do(req, nil)
+}
+
+// CreateOrUpdateOption is an option for the CreateOrUpdateWithOptions method.
+type CreateOrUpdateOption func(*RepositoryCreateOrUpdateRequest)
+
+// WithPrivate makes a repository private.
+func WithPrivate() CreateOrUpdateOption {
+	return func(req *RepositoryCreateOrUpdateRequest) {
+		req.Public = false
+	}
+}
+
+// WithPublic makes a repository public.
+func WithPublic() CreateOrUpdateOption {
+	return func(req *RepositoryCreateOrUpdateRequest) {
+		req.Public = true
+	}
 }
 
 // Get a repository on Upbound.
