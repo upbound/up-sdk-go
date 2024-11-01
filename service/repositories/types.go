@@ -86,3 +86,9 @@ type RepositoryListResponse struct {
 	Page         int          `json:"page"`
 	Count        int          `json:"count"`
 }
+
+// RepositoryCreateOrUpdateRequest is the HTTP body for creating or updating a
+// repository.
+type RepositoryCreateOrUpdateRequest struct {
+	Public bool `json:"public"`
+}

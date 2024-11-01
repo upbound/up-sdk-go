@@ -64,8 +64,12 @@ func TestCreate(t *testing.T) {
 						if urlPath != path.Join(testAccount, testRepo) {
 							t.Errorf("unexpected account: %s", urlPath)
 						}
-						if body != struct{}{} {
-							t.Errorf("unexpected body: %v", body)
+						req, ok := body.(*RepositoryCreateOrUpdateRequest)
+						if !ok {
+							t.Errorf("unexpected body type; expected *RepositoryCreateOrUpdateRequest, got %T", body)
+						}
+						if !req.Public {
+							t.Errorf("unexpected value for public; expected true, got false")
 						}
 						return nil, errBoom
 					},
@@ -91,8 +95,12 @@ func TestCreate(t *testing.T) {
 						if urlPath != path.Join(testAccount, testRepo) {
 							t.Errorf("unexpected account: %s", urlPath)
 						}
-						if body != struct{}{} {
-							t.Errorf("unexpected body: %v", body)
+						req, ok := body.(*RepositoryCreateOrUpdateRequest)
+						if !ok {
+							t.Errorf("unexpected body type; expected *RepositoryCreateOrUpdateRequest, got %T", body)
+						}
+						if !req.Public {
+							t.Errorf("unexpected value for public; expected true, got false")
 						}
 						return nil, nil
 					},
@@ -119,8 +127,12 @@ func TestCreate(t *testing.T) {
 						if urlPath != path.Join(testAccount, testRepo) {
 							t.Errorf("unexpected account: %s", urlPath)
 						}
-						if body != struct{}{} {
-							t.Errorf("unexpected body: %v", body)
+						req, ok := body.(*RepositoryCreateOrUpdateRequest)
+						if !ok {
+							t.Errorf("unexpected body type; expected *RepositoryCreateOrUpdateRequest, got %T", body)
+						}
+						if !req.Public {
+							t.Errorf("unexpected value for public; expected true, got false")
 						}
 						return nil, nil
 					},
@@ -133,6 +145,164 @@ func TestCreate(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			c := NewClient(tc.cfg)
 			err := c.CreateOrUpdate(context.Background(), tc.args.account, tc.args.name)
+			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
+				t.Errorf("\n%s\nCreateOrUpdate(...): -want error, +got error:\n%s", tc.reason, diff)
+			}
+		})
+	}
+}
+
+func TestCreateOrUpdateWithOptions(t *testing.T) {
+	errBoom := errors.New("boom")
+	testAccount := "testA"
+	testRepo := "testR"
+
+	type args struct {
+		account string
+		name    string
+		options []CreateOrUpdateOption
+	}
+	cases := map[string]struct {
+		reason string
+		args   args
+		cfg    *up.Config
+		err    error
+	}{
+		"NewRequestFailed": {
+			reason: "Failing to construct a request should return an error.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(_ context.Context, _, _, _ string, _ interface{}) (*http.Request, error) {
+						return nil, errBoom
+					},
+				},
+			},
+			err: errBoom,
+		},
+		"DoFailed": {
+			reason: "Failing to execute request should return an error.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(_ context.Context, _, _, _ string, _ interface{}) (*http.Request, error) {
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(errBoom),
+				},
+			},
+			err: errBoom,
+		},
+		"SuccessNoOptions": {
+			reason: "A successful request with no options should not return an error, and the repository should be private.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodPut {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						req, ok := body.(*RepositoryCreateOrUpdateRequest)
+						if !ok {
+							t.Errorf("unexpected body type; expected *RepositoryCreateOrUpdateRequest, got %T", body)
+						}
+						if req.Public {
+							t.Errorf("unexpected value for public; expected false, got true")
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(nil),
+				},
+			},
+		},
+		"SuccessWithPrivate": {
+			reason: "A successful request with the private option should not return an error, and the repository should be private.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+				options: []CreateOrUpdateOption{
+					WithPrivate(),
+				},
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodPut {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						req, ok := body.(*RepositoryCreateOrUpdateRequest)
+						if !ok {
+							t.Errorf("unexpected body type; expected *RepositoryCreateOrUpdateRequest, got %T", body)
+						}
+						if req.Public {
+							t.Errorf("unexpected value for public; expected false, got true")
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(nil),
+				},
+			},
+		},
+		"SuccessWithPublic": {
+			reason: "A successful request with the public option should not return an error, and the repository should be public.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+				options: []CreateOrUpdateOption{
+					WithPublic(),
+				},
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodPut {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						req, ok := body.(*RepositoryCreateOrUpdateRequest)
+						if !ok {
+							t.Errorf("unexpected body type; expected *RepositoryCreateOrUpdateRequest, got %T", body)
+						}
+						if !req.Public {
+							t.Errorf("unexpected value for public; expected true, got false")
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(nil),
+				},
+			},
+		},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			c := NewClient(tc.cfg)
+			err := c.CreateOrUpdateWithOptions(context.Background(), tc.args.account, tc.args.name, tc.args.options...)
 			if diff := cmp.Diff(tc.err, err, cmpopts.EquateErrors()); diff != "" {
 				t.Errorf("\n%s\nCreateOrUpdate(...): -want error, +got error:\n%s", tc.reason, diff)
 			}
