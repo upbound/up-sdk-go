@@ -35,6 +35,10 @@ const (
 	// SpaceProviderLabelKey is the key used to identify the cloud provider for
 	// the space. The value should always match the `spec.provider` field.
 	SpaceProviderLabelKey = "spaces.upbound.io/provider"
+
+	// SpaceInaccessibleLabelKey is the key used to indicate that the space
+	// cannot be accessed by the current user.
+	SpaceInaccessibleLabelKey = "spaces.upbound.io/inaccessible"
 )
 
 // SpaceMode is the mode in which the space connects to Upbound.
