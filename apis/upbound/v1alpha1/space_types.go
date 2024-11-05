@@ -36,8 +36,8 @@ const (
 	// the space. The value should always match the `spec.provider` field.
 	SpaceProviderLabelKey = "spaces.upbound.io/provider"
 
-	// SpaceInaccessibleLabelKey is the key used to indicate that the space
-	// cannot be accessed by the current user.
+	// SpaceInaccessibleLabelKey is the key used to indicate that the current
+	// user is not entitled to use the space.
 	SpaceInaccessibleLabelKey = "spaces.upbound.io/inaccessible"
 )
 
