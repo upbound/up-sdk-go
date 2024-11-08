@@ -35,7 +35,7 @@ const SpaceBackupScheduleLabelKey = "admin.spaces.upbound.io/spacebackupschedule
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:resource:scope=Cluster,categories=spaces
 
-// SpaceBackupSchedule represents a single ControlPlane schedule for Backups.
+// SpaceBackupSchedule represents a schedule to backup a Space.
 type SpaceBackupSchedule struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
