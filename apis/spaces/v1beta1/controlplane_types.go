@@ -235,6 +235,9 @@ type ControlPlaneStatus struct {
 	// ControlPlane is in this condition.
 	Message        string `json:"message,omitempty"`
 	ControlPlaneID string `json:"controlPlaneID,omitempty"`
+	// FirstAvailableAt is the time at which the control plane was available for the first time.
+	// +optional
+	FirstAvailableAt *metav1.Time `json:"firstAvailableAt,omitempty"`
 }
 
 // +kubebuilder:object:root=true
