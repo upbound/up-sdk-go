@@ -32,7 +32,7 @@ import (
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:resource:scope=Cluster,categories=spaces
 
-// SpaceBackup represents a single backup of a ControlPlane.
+// SpaceBackup represents a backup of a Space.
 type SpaceBackup struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -61,9 +61,9 @@ type SpaceBackupSpec struct {
 
 // SpaceBackupDefinition defines all the parameters for a space backup.
 type SpaceBackupDefinition struct {
-	// ConfigRef is a reference to the backup configuration.
+	// ConfigRef is a reference to the space backup configuration.
 	// ApiGroup is optional and defaults to "spaces.upbound.io".
-	// Kind is required, and the only supported value is "SharedBackupConfig" at
+	// Kind is required, and the only supported value is "SpaceBackupConfig" at
 	// the moment.
 	// Name is required.
 	// +kubebuilder:validation:Required
@@ -140,7 +140,7 @@ type GenericSpaceBackupResourceSelector struct {
 	spacesv1alpha1.ResourceSelector `json:",inline"`
 }
 
-// SpaceBackupStatus represents the observed state of a Backup.
+// SpaceBackupStatus represents the observed state of a SpaceBackup.
 type SpaceBackupStatus struct {
 	xpv1.ResourceStatus `json:",inline"`
 
