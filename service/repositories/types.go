@@ -27,6 +27,9 @@ const (
 	// RepositoryTypeConfiguration indicates that the repository contains a
 	// configuration.
 	RepositoryTypeConfiguration RepositoryType = "configuration"
+	// RepositoryTypeFunction indicates that the repository contains a
+	// function.
+	RepositoryTypeFunction RepositoryType = "function"
 )
 
 // Repository describes a repository.
