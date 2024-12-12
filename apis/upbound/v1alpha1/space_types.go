@@ -91,6 +91,15 @@ const (
 	ConnectionStatusUnknown ConnectionStatus = "unknown"
 )
 
+// FeatureName represents a feature that may be enabled on a Space.
+type FeatureName string
+
+const (
+	// FeatureControlPlaneClassSmall is the feature allowing for control planes
+	// with "class: small" in the spec.
+	FeatureControlPlaneClassSmall FeatureName = "ControlPlaneClassSmall"
+)
+
 // ConnectionDetails is the collection of statuses and timestamps surrounding
 // the connection to the space.
 type ConnectionDetails struct {
@@ -117,6 +126,10 @@ type SpaceStatus struct {
 	APIURL string `json:"apiURL,omitempty"`
 	// The statuses and timestamps surrounding the connection to the space
 	ConnectionDetails ConnectionDetails `json:"connection,omitempty"`
+	// SupportedFeatures is the set of features the Space support.
+	// +optional
+	// +kubebuilder:validation:MaxItems=64
+	SupportedFeatures []FeatureName `json:"supportedFeatures,omitempty"`
 }
 
 // +kubebuilder:object:root=true
