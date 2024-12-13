@@ -141,6 +141,7 @@ type CrossplaneAutoUpgradeSpec struct {
 type CrossplaneSpec struct {
 	// Version is the version of Universal Crossplane to install.
 	// +optional
+	// +kubebuilder:validation:XValidation:rule=(self.matches('^[^v].*')),message=The version must not start with a leading 'v'
 	Version *string `json:"version,omitempty"`
 
 	// AutoUpgrades defines the auto upgrade configuration for Crossplane.
