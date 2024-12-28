@@ -88,6 +88,25 @@ type SharedTelemetryConfigSpec struct {
 	// the selected ControlPlanes.
 	// +kubebuilder:validation:Required
 	ExportPipeline Pipeline `json:"exportPipeline,omitempty"`
+
+	// ConfigPatchSecretRefs allows defining patches sourced from secrets to be
+	// applied to the telemetry configuration.
+	ConfigPatchSecretRefs []ConfigPatchSecretRef `json:"configPatchSecretRefs,omitempty"`
+}
+
+// ConfigPatchSecretRef defines a config patch sourced from a secret to be
+// applied to the telemetry configuration.
+type ConfigPatchSecretRef struct {
+	xpv1.LocalSecretReference `json:",inline"`
+	// Key in the secret from which to source the patch.
+	// +kubebuilder:validation:Required
+	Key string `json:"key"`
+	// Path to the field in the telemetry configuration to patch.
+	// Currently, we only support patching exporters, so the path
+	// needs to start with "exporters".
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:XValidation:rule="self.startsWith('exporters.')",message="Only 'exporters' patching is supported, path must start with 'exporters.'"
+	Path string `json:"path"`
 }
 
 // Pipeline defines the telemetry exporter pipeline to configure on the
