@@ -15,6 +15,7 @@
 package v1alpha1
 
 import (
+	"fmt"
 	"reflect"
 
 	corev1 "k8s.io/api/core/v1"
@@ -175,6 +176,8 @@ const (
 	BackupRetryReason xpv1.ConditionReason = "BackupRetry"
 	// BackupSuccessReason is the reason for a successful backup.
 	BackupSuccessReason xpv1.ConditionReason = "BackupSuccess"
+	// BackupControlPlaneNotFoundReason is the reason for a control plane not being found.
+	BackupControlPlaneNotFoundReason xpv1.ConditionReason = "TargetControlPlaneNotFound"
 )
 
 // BackupFailed returns a condition indicating that the backup has failed.
@@ -196,6 +199,18 @@ func BackupRetry(msg string) xpv1.Condition {
 		LastTransitionTime: metav1.Now(),
 		Reason:             BackupRetryReason,
 		Message:            msg,
+	}
+}
+
+// BackupControlPlaneNotFound returns a condition indicating that the control
+// plane was not found.
+func BackupControlPlaneNotFound(ns, name string) xpv1.Condition {
+	return xpv1.Condition{
+		Type:               ConditionTypeFailed,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             BackupControlPlaneNotFoundReason,
+		Message:            fmt.Sprintf("target control plane '%s/%s' not found", ns, name),
 	}
 }
 
