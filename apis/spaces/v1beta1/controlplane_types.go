@@ -43,25 +43,6 @@ const (
 	ControlPlaneGroupProtectionKey = "spaces.upbound.io/group-deletion-protection"
 )
 
-// GitAuthType is the type of authentication to use to access a Git repository.
-type GitAuthType string
-
-// GitAuthType constants.
-const (
-	GitAuthTypeNone        = "None"
-	GitAuthTypeBasic       = "Basic"
-	GitAuthTypeBearerToken = "BearerToken"
-	GitAuthTypeSSH         = "SSH"
-
-	AuthSecretKeyUsername      = "username"
-	AuthSecretKeyPassword      = "password"
-	AuthSecretKeyBearerToken   = "bearerToken"
-	AuthSecretKeySSHIdentity   = "identity"
-	AuthSecretKeySSHKnownHosts = "knownHosts"
-
-	CASecretKeyCAFile = "ca.crt"
-)
-
 const (
 	// KubeCompositionAnnotation is an optional, alpha-level annotation that
 	// selects the KubeControlPlane composition for a specific ControlPlane.
