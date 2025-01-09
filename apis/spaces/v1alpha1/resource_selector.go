@@ -67,29 +67,32 @@ func (s *matchableObject) GetName() string {
 // Matches returns true if the provided object is matched by the selector
 func (r *ResourceSelector) Matches(obj client.Object) (bool, error) { //nolint:gocyclo
 	o := &matchableObject{obj: obj}
-	// no names in the list is a match
-	m := len(r.Names) == 0
+
+	// check if any name matches
+	namesMatch := len(r.Names) == 0 // no names in the list is a match
 	for _, n := range r.Names {
 		if o.GetName() == n {
-			m = true
+			namesMatch = true
 			break
 		}
 	}
-	// if there is no match on names, return early,
-	// no point to check labelSelectors at all.
-	if !m {
-		return m, nil
+	if !namesMatch {
+		return false, nil
 	}
+
 	// check if any label selector matches
+	if len(r.LabelSelectors) == 0 {
+		return true, nil
+	}
 	for i := range r.LabelSelectors {
 		labelSelector, err := metav1.LabelSelectorAsSelector(&r.LabelSelectors[i])
 		if err != nil {
 			return false, err
 		}
-		if m = m && labelSelector.Matches(o); m {
-			// match, return early
-			break
+		if labelSelector.Matches(o) {
+			return true, nil
 		}
 	}
-	return m, nil
+
+	return false, nil
 }
