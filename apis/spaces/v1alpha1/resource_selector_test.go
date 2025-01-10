@@ -151,6 +151,34 @@ func TestResourceSelector(t *testing.T) {
 			},
 			matched: false,
 		},
+		"SomeObjectLabelsMatch": {
+			reason: "object is matched if some labels selector matches, not necessarily all",
+			obj: object{
+				labels: map[string]string{
+					"l1": "v1",
+				},
+			},
+			selector: ResourceSelector{
+				LabelSelectors: []metav1.LabelSelector{
+					{
+						MatchLabels: map[string]string{
+							"l1": "something",
+						},
+					},
+					{
+						MatchLabels: map[string]string{
+							"l1": "v1",
+						},
+					},
+					{
+						MatchLabels: map[string]string{
+							"l1": "elephant",
+						},
+					},
+				},
+			},
+			matched: true,
+		},
 		"ObjectLabelsOrNameNotMatched": {
 			reason: "object is not matched if neither its name nor labels matche the declared selector",
 			obj: object{
