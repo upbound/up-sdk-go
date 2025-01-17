@@ -92,6 +92,19 @@ type SharedTelemetryConfigSpec struct {
 	// ConfigPatchSecretRefs allows defining patches sourced from secrets to be
 	// applied to the telemetry configuration.
 	ConfigPatchSecretRefs []ConfigPatchSecretRef `json:"configPatchSecretRefs,omitempty"`
+
+	// Processors defines the processors to configure on the selected ControlPlanes.
+	// Untyped as we use the underlying OpenTelemetryOperator to configure the
+	// OpenTelemetry collector's processors. Use the OpenTelemetry Collector
+	// documentation to configure the processors.
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +optional
+	Processors *common.JSONObject `json:"processors,omitempty"`
+
+	// ProcessorPipeline defines the telemetry processor pipeline to configure on
+	// the selected ControlPlanes.
+	// +optional
+	ProcessorPipeline Pipeline `json:"processorPipeline,omitempty"`
 }
 
 // ConfigPatchSecretRef defines a config patch sourced from a secret to be
