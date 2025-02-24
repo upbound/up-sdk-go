@@ -21,6 +21,9 @@ import (
 // RepositoryType is the base type for repository types
 type RepositoryType string
 
+// PublishingPolicy determines whether packages will be indexed
+type PublishPolicy string
+
 const (
 	// RepositoryTypeProvider indicates that the repository contains a provider.
 	RepositoryTypeProvider RepositoryType = "provider"
@@ -43,6 +46,7 @@ type Repository struct {
 	CurrentVersion *string         `json:"currentVersion,omitempty"`
 	CreatedAt      time.Time       `json:"createdAt"`
 	UpdatedAt      *time.Time      `json:"updatedAt,omitempty"`
+	Publish        *PublishPolicy  `json:"publishPolicy"`
 }
 
 // PackageStatusType indicates the status of a package.
@@ -93,5 +97,6 @@ type RepositoryListResponse struct {
 // RepositoryCreateOrUpdateRequest is the HTTP body for creating or updating a
 // repository.
 type RepositoryCreateOrUpdateRequest struct {
-	Public bool `json:"public"`
+	Public  bool `json:"public"`
+	Publish bool `json:"publish"`
 }
