@@ -298,6 +298,74 @@ func TestCreateOrUpdateWithOptions(t *testing.T) {
 				},
 			},
 		},
+		"SuccessWithDrafPolicy": {
+			reason: "A successful request disabling version publishing should not return an error, and the repository should have a draft publishing policy.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+				options: []CreateOrUpdateOption{
+					WithDraft(),
+				},
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodPut {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						req, ok := body.(*RepositoryCreateOrUpdateRequest)
+						if !ok {
+							t.Errorf("unexpected body type; expected *RepositoryCreateOrUpdateRequest, got %T", body)
+						}
+						if req.Publish {
+							t.Errorf("unexpected value for publish; expected false, got true")
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(nil),
+				},
+			},
+		},
+		"SuccessWithPublishPolicy": {
+			reason: "A successful request enabling version publishing should not return an error, and the repository should have a publish policy.",
+			args: args{
+				account: testAccount,
+				name:    testRepo,
+				options: []CreateOrUpdateOption{
+					WithPublish(),
+				},
+			},
+			cfg: &up.Config{
+				Client: &fake.MockClient{
+					MockNewRequest: func(_ context.Context, method, prefix, urlPath string, body interface{}) (*http.Request, error) {
+						if method != http.MethodPut {
+							t.Errorf("unexpected method: %s", method)
+						}
+						if prefix != basePath {
+							t.Errorf("unexpected prefix: %s", method)
+						}
+						if urlPath != path.Join(testAccount, testRepo) {
+							t.Errorf("unexpected account: %s", urlPath)
+						}
+						req, ok := body.(*RepositoryCreateOrUpdateRequest)
+						if !ok {
+							t.Errorf("unexpected body type; expected *RepositoryCreateOrUpdateRequest, got %T", body)
+						}
+						if !req.Publish {
+							t.Errorf("unexpected value for publish; expected true, got false")
+						}
+						return nil, nil
+					},
+					MockDo: fake.NewMockDoFn(nil),
+				},
+			},
+		},
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {

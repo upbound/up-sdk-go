@@ -80,6 +80,20 @@ func WithPublic() CreateOrUpdateOption {
 	}
 }
 
+// WithDraft stops a repository from indexing package versions to the Upbound Marketplace.
+func WithDraft() CreateOrUpdateOption {
+	return func(req *RepositoryCreateOrUpdateRequest) {
+		req.Publish = false
+	}
+}
+
+// WithPublish makes a repository index package versions to the Upbound Marketplace.
+func WithPublish() CreateOrUpdateOption {
+	return func(req *RepositoryCreateOrUpdateRequest) {
+		req.Publish = true
+	}
+}
+
 // Get a repository on Upbound.
 func (c *Client) Get(ctx context.Context, account, name string) (*RepositoryResponse, error) { // nolint:interfacer
 	req, err := c.Client.NewRequest(ctx, http.MethodGet, basePath, path.Join(account, name), nil)
