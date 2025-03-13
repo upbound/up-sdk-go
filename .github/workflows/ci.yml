@@ -10,13 +10,13 @@ on:
 
 env:
   # Common versions
-  GO_VERSION: '1.22.1'
+  GO_VERSION: '1.23.7'
   GOLANGCI_VERSION: 'v1.61.0'
   DOCKER_BUILDX_VERSION: 'v0.4.2'
 
 jobs:
   detect-noop:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       noop: ${{ steps.noop.outputs.should_skip }}
     steps:
@@ -29,7 +29,7 @@ jobs:
           do_not_skip: '["workflow_dispatch", "schedule", "push"]'
 
   lint-matrix:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: detect-noop
     if: needs.detect-noop.outputs.noop != 'true'
     strategy:
@@ -51,14 +51,14 @@ jobs:
         run: echo "::set-output name=cache::$(go env GOCACHE)"
 
       - name: Cache the Go Build Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ steps.go.outputs.cache }}
           key: ${{ runner.os }}-build-lint-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-build-lint-
 
       - name: Cache Go Dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: .work/pkg
           key: ${{ runner.os }}-pkg-${{ hashFiles('**/go.sum') }}
@@ -91,7 +91,7 @@ jobs:
       if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
 
   check-diff:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: detect-noop
     if: needs.detect-noop.outputs.noop != 'true'
 
@@ -111,14 +111,14 @@ jobs:
         run: echo "::set-output name=cache::$(go env GOCACHE)"
 
       - name: Cache the Go Build Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ steps.go.outputs.cache }}
           key: ${{ runner.os }}-build-check-diff-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-build-check-diff-
 
       - name: Cache Go Dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: .work/pkg
           key: ${{ runner.os }}-pkg-${{ hashFiles('**/go.sum') }}
@@ -131,7 +131,7 @@ jobs:
         run: make check-diff
 
   unit-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: detect-noop
     if: needs.detect-noop.outputs.noop != 'true'
 
@@ -154,14 +154,14 @@ jobs:
         run: echo "::set-output name=cache::$(go env GOCACHE)"
 
       - name: Cache the Go Build Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ steps.go.outputs.cache }}
           key: ${{ runner.os }}-build-unit-tests-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-build-unit-tests-
 
       - name: Cache Go Dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: .work/pkg
           key: ${{ runner.os }}-pkg-${{ hashFiles('**/go.sum') }}
