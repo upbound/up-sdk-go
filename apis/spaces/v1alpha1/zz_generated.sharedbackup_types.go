@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Generated from spaces/v1beta1/sharedbackup_types.go by ../hack/duplicate_api_type.sh. DO NOT EDIT.
+
 package v1alpha1
 
 import (
@@ -26,7 +28,6 @@ import (
 const SharedBackupLabelKey = "spaces.upbound.io/sharedbackup"
 
 // +kubebuilder:object:root=true
-// +kubebuilder:storageversion
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Completed",type="string",JSONPath=`.metadata.annotations.sharedbackup\.internal\.spaces\.upbound\.io/completed`
 // +kubebuilder:printcolumn:name="Failed",type="string",JSONPath=`.metadata.annotations.sharedbackup\.internal\.spaces\.upbound\.io/failed`
