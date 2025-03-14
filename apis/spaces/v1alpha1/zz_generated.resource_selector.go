@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Generated from spaces/v1beta1/resource_selector.go by ../hack/duplicate_api_type.sh. DO NOT EDIT.
+
 package v1alpha1
 
 import (
