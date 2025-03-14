@@ -18,6 +18,15 @@
 // NOTE(negz): See the below link for details on what is happening here.
 // https://github.com/golang/go/wiki/Modules#how-can-i-track-tool-dependencies-for-a-module
 
+// Replicate identical API versions.
+//go:generate ../hack/duplicate_api_type.sh spaces/v1beta1/backup_types.go spaces/v1alpha1 true
+//go:generate ../hack/duplicate_api_type.sh spaces/v1beta1/backupschedule_types.go spaces/v1alpha1 true
+//go:generate ../hack/duplicate_api_type.sh spaces/v1beta1/resource_selector.go spaces/v1alpha1
+//go:generate ../hack/duplicate_api_type.sh spaces/v1beta1/sharedbackup_types.go spaces/v1alpha1 true
+//go:generate ../hack/duplicate_api_type.sh spaces/v1beta1/sharedbackupconfig_types.go spaces/v1alpha1 true
+//go:generate ../hack/duplicate_api_type.sh spaces/v1beta1/sharedbackupconfig_types.go spaces/v1alpha1 true
+//go:generate ../hack/duplicate_api_type.sh spaces/v1beta1/sharedbackupschedule_types.go spaces/v1alpha1 true
+
 // Add license headers to all files.
 //go:generate go run -tags generate github.com/google/addlicense -v -c "Upbound Inc" -ignore service/spaces/crossplane/supported_versions.yaml *.go .
 

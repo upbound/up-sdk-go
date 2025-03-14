@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Generated from spaces/v1beta1/sharedbackupconfig_types.go by ../hack/duplicate_api_type.sh. DO NOT EDIT.
+
 package v1alpha1
 
 import (
@@ -24,7 +26,6 @@ import (
 )
 
 // +kubebuilder:object:root=true
-// +kubebuilder:storageversion
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Provider",type="string",JSONPath=".spec.objectStorage.provider"
 // +kubebuilder:printcolumn:name="Bucket",type="string",JSONPath=".spec.objectStorage.bucket"

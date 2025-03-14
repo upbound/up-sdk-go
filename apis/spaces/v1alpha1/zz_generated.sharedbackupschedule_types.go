@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Generated from spaces/v1beta1/sharedbackupschedule_types.go by ../hack/duplicate_api_type.sh. DO NOT EDIT.
+
 package v1alpha1
 
 import (
@@ -26,7 +28,6 @@ import (
 const SharedBackupScheduleLabelKey = "spaces.upbound.io/sharedbackupschedule"
 
 // +kubebuilder:object:root=true
-// +kubebuilder:storageversion
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Schedule",type="string",JSONPath=".spec.schedule"
 // +kubebuilder:printcolumn:name="Suspended",type="boolean",JSONPath=".spec.suspend"
