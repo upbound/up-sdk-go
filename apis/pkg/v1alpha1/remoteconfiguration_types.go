@@ -1,4 +1,4 @@
-// Copyright 2024 Upbound Inc.
+// Copyright 2025 Upbound Inc
 // All rights reserved
 
 // Package v1alpha1 contains pkg.upbound.io APIs in version v1alpha1.

@@ -1,4 +1,4 @@
-// Copyright 2024 Upbound Inc.
+// Copyright 2025 Upbound Inc
 // All rights reserved
 
 package v1alpha1

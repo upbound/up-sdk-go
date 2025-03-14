@@ -1,4 +1,4 @@
-// Copyright 2024 Upbound Inc.
+// Copyright 2025 Upbound Inc
 // All rights reserved
 
 package v1alpha1
@@ -40,6 +40,7 @@ type ControllerRevision struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
+	// +kubebuilder:validation:XValidation:rule="!has(oldSelf.helm) || self.helm == oldSelf.helm",message="helm specification is immutable"
 	Spec   ControllerRevisionSpec   `json:"spec"`
 	Status ControllerRevisionStatus `json:"status,omitempty"`
 }
@@ -51,7 +52,6 @@ type ControllerRevisionSpec struct {
 
 	// Helm specific configuration for a controller revision. This field is
 	// managed by the controller and should not be modified directly.
-	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="helm specification is immutable"
 	Helm *HelmSpec `json:"helm,omitempty"`
 }
 

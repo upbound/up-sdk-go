@@ -1,4 +1,4 @@
-// Copyright 2024 Upbound Inc
+// Copyright 2025 Upbound Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,11 +41,13 @@ type Controller struct {
 	Spec ControllerSpec `json:"spec"`
 }
 
-// ControllerSpec specifies the configuration of an Controller.
+// ControllerSpec specifies the configuration of a Controller.
 //
 // +k8s:deepcopy-gen=true
 type ControllerSpec struct {
 	// PackagingType is the type of the Controller.
+	// +kube:validation:Enum=Helm
+	// +kubebuilder:default=Helm
 	PackagingType ControllerPackagingType `json:"packagingType"`
 	// Helm specific configuration.
 	Helm *HelmSpec `json:"helm,omitempty"`
@@ -67,13 +69,13 @@ type HelmSpec struct {
 	Values runtime.RawExtension `json:"values,omitempty"`
 }
 
-// GetCrossplaneConstraints gets the Configuration package's Crossplane version
+// GetCrossplaneConstraints gets the Controller package's Crossplane version
 // constraints.
 func (c *Controller) GetCrossplaneConstraints() *v1.CrossplaneConstraints {
 	return c.Spec.MetaSpec.Crossplane
 }
 
-// GetDependencies gets the Configuration package's dependencies.
+// GetDependencies gets the Controller package's dependencies.
 func (c *Controller) GetDependencies() []v1.Dependency {
 	return c.Spec.MetaSpec.DependsOn
 }
