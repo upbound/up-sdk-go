@@ -12,5 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package upbound contains upbound.io API versions.
-package upbound
+package v1alpha1
+
+// Hub marks this type as the conversion hub.
+func (c *Controller) Hub() {}

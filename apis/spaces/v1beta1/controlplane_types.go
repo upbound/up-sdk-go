@@ -37,10 +37,14 @@ const (
 	// ControlPlaneGroupLabelKey is the key used to identify namespaces as groups. The
 	// value will be "true".
 	ControlPlaneGroupLabelKey = "spaces.upbound.io/group"
+
 	// ControlPlaneGroupProtectionKey is the key used to prevent deletion of groups
 	// via the Spaces API. Deletion will not be protected if the underlying namespace
 	// is deleted.
 	ControlPlaneGroupProtectionKey = "spaces.upbound.io/group-deletion-protection"
+
+	// The value expected by ControlPlaneGroupLabelKey and ManagedBySpacesAPILabelKey.
+	LabelValueTrue = "true"
 )
 
 const (
@@ -61,6 +65,9 @@ const (
 	// limits are only applicable when the account gate is enabled using the
 	// features annotation.
 	TierLimitsAnnotation = "internal.spaces.upbound.io/tier-limits"
+	// ManagedBySpacesAPILabelKey is the key used to identify resources managed through spaces-api. The
+	// value will be "true".
+	ManagedBySpacesAPILabelKey = "internal.spaces.upbound.io/managed-by-spaces-api"
 )
 
 // CrossplaneUpgradeChannel is the channel for Crossplane upgrades.

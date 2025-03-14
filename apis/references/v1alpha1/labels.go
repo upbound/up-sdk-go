@@ -12,5 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package upbound contains upbound.io API versions.
-package upbound
+package v1alpha1
+
+const (
+	// ClaimCRDReferenceSchemaAnnotationKey is the key used to store the schema
+	// additions of references embedded in the XRD schema. It's JSON encoded
+	// of kind ReferenceSchema in references.upbound.io/v1alpha1.
+	ClaimCRDReferenceSchemaAnnotationKey = "references.upbound.io/schema"
+)

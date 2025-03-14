@@ -12,5 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package upbound contains upbound.io API versions.
-package upbound
+// Package references contains references.upbound.io API versions.
+package references
