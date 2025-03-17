@@ -28,6 +28,7 @@ import (
 const BackupScheduleLabelKey = "spaces.upbound.io/backupschedule"
 
 // +kubebuilder:object:root=true
+// +kubebuilder:storageversion
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Schedule",type="string",JSONPath=".spec.schedule"
 // +kubebuilder:printcolumn:name="LastBackup",type="date",JSONPath=".status.lastBackup"
@@ -47,6 +48,7 @@ type BackupSchedule struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:storageversion
 
 // BackupScheduleList contains a list of BackupSchedules.
 type BackupScheduleList struct {

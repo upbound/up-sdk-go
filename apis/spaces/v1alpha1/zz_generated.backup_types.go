@@ -30,6 +30,7 @@ import (
 )
 
 // +kubebuilder:object:root=true
+// +kubebuilder:storageversion
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase"
 // +kubebuilder:printcolumn:name="Retries",type="integer",JSONPath=".status.retries"
@@ -50,6 +51,7 @@ type Backup struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:storageversion
 
 // BackupList contains a list of Backups.
 type BackupList struct {
