@@ -28,6 +28,7 @@ import (
 const SharedBackupScheduleLabelKey = "spaces.upbound.io/sharedbackupschedule"
 
 // +kubebuilder:object:root=true
+// +kubebuilder:storageversion
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Schedule",type="string",JSONPath=".spec.schedule"
 // +kubebuilder:printcolumn:name="Suspended",type="boolean",JSONPath=".spec.suspend"
@@ -46,6 +47,7 @@ type SharedBackupSchedule struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:storageversion
 
 // SharedBackupScheduleList contains a list of SharedBackupSchedules.
 type SharedBackupScheduleList struct {

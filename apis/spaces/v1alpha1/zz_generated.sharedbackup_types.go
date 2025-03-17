@@ -28,6 +28,7 @@ import (
 const SharedBackupLabelKey = "spaces.upbound.io/sharedbackup"
 
 // +kubebuilder:object:root=true
+// +kubebuilder:storageversion
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Completed",type="string",JSONPath=`.metadata.annotations.sharedbackup\.internal\.spaces\.upbound\.io/completed`
 // +kubebuilder:printcolumn:name="Failed",type="string",JSONPath=`.metadata.annotations.sharedbackup\.internal\.spaces\.upbound\.io/failed`
@@ -48,6 +49,7 @@ type SharedBackup struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:storageversion
 
 // SharedBackupList contains a list of SharedBackups.
 type SharedBackupList struct {

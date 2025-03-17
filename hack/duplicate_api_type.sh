@@ -33,7 +33,7 @@ case $STORAGE_VERSION in
       exit 1
     fi
     # Add the storageVersion marker before // +genclient
-    sed -i '\/\/ +genclient$/i\/\/ +kubebuilder:storageversion' ${TO_PATH}
+    sed -i '\/\/ +kubebuilder:object:root=true$/a\/\/ +kubebuilder:storageversion' ${TO_PATH}
     echo "Duplicated ${FROM_PATH} (package ${FROM_PACKAGE}) to ${TO_PATH} (package ${TO_PACKAGE})."
     ;;
   false)

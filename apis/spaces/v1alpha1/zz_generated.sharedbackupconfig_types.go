@@ -26,6 +26,7 @@ import (
 )
 
 // +kubebuilder:object:root=true
+// +kubebuilder:storageversion
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Provider",type="string",JSONPath=".spec.objectStorage.provider"
 // +kubebuilder:printcolumn:name="Bucket",type="string",JSONPath=".spec.objectStorage.bucket"
@@ -43,6 +44,7 @@ type SharedBackupConfig struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:storageversion
 
 // SharedBackupConfigList contains a list of SharedBackupConfig.
 type SharedBackupConfigList struct {
