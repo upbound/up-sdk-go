@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package v1alpha1
+package v1beta1
 
 import (
 	"reflect"
@@ -26,7 +26,6 @@ import (
 const BackupScheduleLabelKey = "spaces.upbound.io/backupschedule"
 
 // +kubebuilder:object:root=true
-// +kubebuilder:storageversion
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Schedule",type="string",JSONPath=".spec.schedule"
 // +kubebuilder:printcolumn:name="LastBackup",type="date",JSONPath=".status.lastBackup"
