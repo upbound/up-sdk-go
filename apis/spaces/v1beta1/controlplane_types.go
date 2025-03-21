@@ -226,7 +226,21 @@ type ControlPlaneStatus struct {
 	ControlPlaneID string `json:"controlPlaneID,omitempty"`
 	// FirstAvailableAt is the time at which the control plane was available for the first time.
 	// +optional
-	FirstAvailableAt *metav1.Time `json:"firstAvailableAt,omitempty"`
+	FirstAvailableAt *metav1.Time            `json:"firstAvailableAt,omitempty"`
+	Size             *ControlPlaneSizeStatus `json:"size,omitempty"`
+}
+
+// ControlPlaneSizeStatus defines the status of the control plane size.
+type ControlPlaneSizeStatus struct {
+	ResourceUsage *ResourceUsage `json:"resourceUsage,omitempty"`
+}
+
+// ResourceUsage represents the resource limits and consumption of the control plane.
+type ResourceUsage struct {
+	// CPU represents the CPU resource usage.
+	CPU string `json:"cpu,omitempty"`
+	// Memory represents the memory resource usage.
+	Memory string `json:"memory,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -234,6 +248,9 @@ type ControlPlaneStatus struct {
 // +kubebuilder:printcolumn:name="Crossplane",type="string",JSONPath=".spec.crossplane.version"
 // +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="Message",type="string",JSONPath=`.status.message`
+// +kubebuilder:printcolumn:name="Class",type="string",JSONPath=".spec.class",priority=1
+// +kubebuilder:printcolumn:name="CPU Usage",type="string",JSONPath=".status.size.resourceUsage.cpu",priority=1
+// +kubebuilder:printcolumn:name="Memory Usage",type="string",JSONPath=".status.size.resourceUsage.memory",priority=1
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Namespaced,categories=spaces,shortName=ctp;ctps
