@@ -226,8 +226,11 @@ type ControlPlaneStatus struct {
 	ControlPlaneID string `json:"controlPlaneID,omitempty"`
 	// FirstAvailableAt is the time at which the control plane was available for the first time.
 	// +optional
-	FirstAvailableAt *metav1.Time            `json:"firstAvailableAt,omitempty"`
-	Size             *ControlPlaneSizeStatus `json:"size,omitempty"`
+	FirstAvailableAt *metav1.Time `json:"firstAvailableAt,omitempty"`
+	// [[GATE:EnableControlPlaneClasses]]
+	// Size holds the status information about the control plane size,
+	// including resource usage.
+	Size *ControlPlaneSizeStatus `json:"size,omitempty"`
 }
 
 // ControlPlaneSizeStatus defines the status of the control plane size.
