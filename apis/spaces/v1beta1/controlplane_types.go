@@ -104,8 +104,12 @@ const (
 )
 
 const (
-	// ClassDefault is the default class for the control plane.
+	// ClassDefault is the default class for the control plane and is intended
+	// for production.
 	ClassDefault = "default"
+	// ClassSmall is the small class for the control plane, which disables HA
+	// and is intended for development.
+	ClassSmall = "small"
 )
 
 // CrossplaneAutoUpgradeSpec defines the auto upgrade policy for Crossplane.
