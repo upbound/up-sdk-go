@@ -259,6 +259,7 @@ type ResourceUsage struct {
 // +kubebuilder:resource:scope=Namespaced,categories=spaces,shortName=ctp;ctps
 
 // ControlPlane defines a managed Crossplane instance.
+// +kubebuilder:validation:XValidation:rule="self.metadata.name.size() <= 63",message="control plane name cannot exceed 63 characters"
 type ControlPlane struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
