@@ -108,7 +108,9 @@ const (
 	// for production.
 	ClassDefault = "default"
 	// ClassSmall is the small class for the control plane, which disables HA
-	// and is intended for development.
+	// and is intended for development. This class should only be used with
+	// Upbound cloud and will be removed in favour of control plane sizes when
+	// they become available.
 	ClassSmall = "small"
 )
 
