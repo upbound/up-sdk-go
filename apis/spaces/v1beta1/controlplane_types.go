@@ -244,6 +244,8 @@ type ResourceUsage struct {
 	CPU string `json:"cpu,omitempty"`
 	// Memory represents the memory resource usage.
 	Memory string `json:"memory,omitempty"`
+	// Storage represents the storage resource usage.
+	Storage string `json:"storage,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -254,6 +256,7 @@ type ResourceUsage struct {
 // +kubebuilder:printcolumn:name="Class",type="string",JSONPath=".spec.class",priority=1
 // +kubebuilder:printcolumn:name="CPU Usage",type="string",JSONPath=".status.size.resourceUsage.cpu",priority=1
 // +kubebuilder:printcolumn:name="Memory Usage",type="string",JSONPath=".status.size.resourceUsage.memory",priority=1
+// +kubebuilder:printcolumn:name="Storage Usage",type="string",JSONPath=".status.size.resourceUsage.storage",priority=1
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Namespaced,categories=spaces,shortName=ctp;ctps
