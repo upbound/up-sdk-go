@@ -228,13 +228,17 @@ type ControlPlaneStatus struct {
 	// +optional
 	FirstAvailableAt *metav1.Time `json:"firstAvailableAt,omitempty"`
 	// [[GATE:EnableControlPlaneClasses]]
+	// Class holds the status about the control plane class.
+	Class *ControlPlaneClassStatus `json:"class,omitempty"`
+}
+
+type ControlPlaneClassStatus struct {
 	// Size holds the status information about the control plane size,
 	// including resource usage.
 	Size *ControlPlaneSizeStatus `json:"size,omitempty"`
-	// [[GATE:EnableControlPlaneClasses]]
-	// Class holds the status about the control plane class, including a history
-	// of its class transitions.
-	Class *ControlPlaneClassStatus `json:"class,omitempty"`
+	// History contains a list of the control plane's class transitions and the
+	// time they were observed.
+	History []*ClassTransition `json:"history,omitempty"`
 }
 
 // ControlPlaneSizeStatus defines the status of the control plane size.
@@ -250,12 +254,6 @@ type ResourceUsage struct {
 	Memory string `json:"memory,omitempty"`
 	// Storage represents the storage resource usage.
 	Storage string `json:"storage,omitempty"`
-}
-
-type ControlPlaneClassStatus struct {
-	// History contains a list of the control plane's class transitions and the
-	// time they were observed.
-	History []*ClassTransition `json:"history,omitempty"`
 }
 
 type ClassTransition struct {
