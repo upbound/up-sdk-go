@@ -228,9 +228,19 @@ type ControlPlaneStatus struct {
 	// +optional
 	FirstAvailableAt *metav1.Time `json:"firstAvailableAt,omitempty"`
 	// [[GATE:EnableControlPlaneClasses]]
+	// Class holds the status about the control plane class.
+	Class *ControlPlaneClassStatus `json:"class,omitempty"`
+}
+
+// ControlPlaneClassStatus represents the status of the ControlPlane's class.
+type ControlPlaneClassStatus struct {
 	// Size holds the status information about the control plane size,
 	// including resource usage.
 	Size *ControlPlaneSizeStatus `json:"size,omitempty"`
+	// History contains a list of the control plane's class transitions and the
+	// time they were observed.
+	// +kubebuilder:validation:MaxItems=5
+	History []*ClassTransition `json:"history,omitempty"`
 }
 
 // ControlPlaneSizeStatus defines the status of the control plane size.
@@ -246,6 +256,19 @@ type ResourceUsage struct {
 	Memory string `json:"memory,omitempty"`
 	// Storage represents the storage resource usage.
 	Storage string `json:"storage,omitempty"`
+}
+
+// ClassTransition represents a record of the control plane's transition to a different class.
+type ClassTransition struct {
+	// Class is the class to which the control plane was observed to have
+	// transitioned.
+	// +required
+	// +kubebuilder:validation:MinLength=1
+	Class string `json:"class"`
+	// ObservedAt is the time at which the control plane was observed to have
+	// transitioned to the associated class.
+	// +required
+	ObservedAt *metav1.Time `json:"observedAt"`
 }
 
 // +kubebuilder:object:root=true
