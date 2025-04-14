@@ -232,12 +232,14 @@ type ControlPlaneStatus struct {
 	Class *ControlPlaneClassStatus `json:"class,omitempty"`
 }
 
+// ControlPlaneClassStatus represents the status of the ControlPlane's class.
 type ControlPlaneClassStatus struct {
 	// Size holds the status information about the control plane size,
 	// including resource usage.
 	Size *ControlPlaneSizeStatus `json:"size,omitempty"`
 	// History contains a list of the control plane's class transitions and the
 	// time they were observed.
+	// +kubebuilder:validation:MaxItems=5
 	History []*ClassTransition `json:"history,omitempty"`
 }
 
@@ -256,12 +258,16 @@ type ResourceUsage struct {
 	Storage string `json:"storage,omitempty"`
 }
 
+// ClassTransition represents a record of the control plane's transition to a different class.
 type ClassTransition struct {
 	// Class is the class to which the control plane was observed to have
 	// transitioned.
+	// +required
+	// +kubebuilder:validation:MinLength=1
 	Class string `json:"class"`
 	// ObservedAt is the time at which the control plane was observed to have
 	// transitioned to the associated class.
+	// +required
 	ObservedAt *metav1.Time `json:"observedAt"`
 }
 
