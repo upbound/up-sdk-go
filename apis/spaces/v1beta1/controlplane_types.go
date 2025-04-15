@@ -192,10 +192,9 @@ type ControlPlaneSpec struct {
 	// requirements. There are multiple predefined classes, with "default"
 	// being the standard Spaces control plane without any additional class
 	// configuration. Check the Upbound Cloud documentation for a list of all
-	// available classes. Defaults to "default".
+	// available classes. Defaults to the configured default class, if not set.
+	// Can only be updated to a compatible class, having the same declared type.
 	// +optional
-	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="class is immutable"
-	// +kubebuilder:default=default
 	Class string `json:"class,omitempty"`
 }
 
