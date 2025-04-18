@@ -18,11 +18,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"path"
 	"time"
+
+	"github.com/crossplane/crossplane-runtime/pkg/errors"
 
 	uerrors "github.com/upbound/up-sdk-go/errors"
 	"github.com/upbound/up-sdk-go/http/headers"
@@ -114,7 +117,7 @@ func (c *HTTPClient) NewRequest(ctx context.Context, method, prefix, urlPath str
 func (c *HTTPClient) Do(req *http.Request, obj interface{}) error {
 	res, err := c.HTTP.Do(req)
 	if err != nil {
-		return err
+		return errors.Wrap(err, fmt.Sprintf("failed to perform request with ID: %s", request.IDFromContext(req.Context())))
 	}
 	defer res.Body.Close() // nolint:errcheck
 	if err := c.handleErrors(res); err != nil {
