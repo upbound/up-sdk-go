@@ -25,6 +25,8 @@ import (
 	"time"
 
 	uerrors "github.com/upbound/up-sdk-go/errors"
+	"github.com/upbound/up-sdk-go/http/headers"
+	"github.com/upbound/up-sdk-go/http/request"
 )
 
 const (
@@ -50,7 +52,8 @@ func NewClient(modifiers ...ClientModifierFn) *HTTPClient {
 		BaseURL:      b,
 		ErrorHandler: &DefaultErrorHandler{},
 		HTTP: &http.Client{
-			Timeout: defaultHTTPTimeout,
+			Timeout:   defaultHTTPTimeout,
+			Transport: NewContextTransport(),
 		},
 		UserAgent: defaultUserAgent,
 	}
@@ -180,40 +183,26 @@ func (h *DefaultErrorHandler) Handle(res *http.Response) error {
 	}
 }
 
-// ClientTransport is a http.RoundTripper that enables the caller to specify
-// custom headers and a custom transport for operating on outgoing
-// http.Requests.
-type ClientTransport struct {
-	headers   map[string]HeaderFn
+// ContextTransport is a http.RoundTripper that enables the caller to propagate
+// information within the req.Context to external HTTP targets.
+type ContextTransport struct {
 	transport http.RoundTripper
 }
 
-// ClientTransportOption modifies the underlying ClientTransport.
-type ClientTransportOption func(*ClientTransport)
-
-// HeaderFn returns the value for a header.
-type HeaderFn func() string
-
-// WithHeaderFns overrides the default headers supplied to the incoming request
-// through the ClientTransport.
-func WithHeaderFns(h map[string]HeaderFn) ClientTransportOption {
-	return func(ct *ClientTransport) {
-		ct.headers = h
-	}
-}
+// ContextTransportOption modifies the underlying ContextTransport.
+type ContextTransportOption func(*ContextTransport)
 
 // WithTransport overrides the default http.Roundtripper for the
-// ClientTransport.
-func WithTransport(t http.RoundTripper) ClientTransportOption {
-	return func(ct *ClientTransport) {
+// ContextTransport.
+func WithTransport(t http.RoundTripper) ContextTransportOption {
+	return func(ct *ContextTransport) {
 		ct.transport = t
 	}
 }
 
-// NewClientTransport constructs a new ClientTransport.
-func NewClientTransport(opts ...ClientTransportOption) *ClientTransport {
-	c := &ClientTransport{
-		headers:   make(map[string]HeaderFn),
+// NewContextTransport constructs a new ContextTransport.
+func NewContextTransport(opts ...ContextTransportOption) *ContextTransport {
+	c := &ContextTransport{
 		transport: http.DefaultTransport,
 	}
 
@@ -223,12 +212,17 @@ func NewClientTransport(opts ...ClientTransportOption) *ClientTransport {
 	return c
 }
 
-// RoundTrip adds headers configured with the ClientTransport and invokes the
-// corresponding delegating transport to move the request forward.
-func (c *ClientTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	for k, v := range c.headers {
-		req.Header.Add(k, v())
+// RoundTrip adds information that is deemed important to propagate to the
+// target. Today we only propagate the request-id, but could expand this in
+// the future.
+func (c *ContextTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	// Retrieve x-request-id value from context.
+	id := request.IDFromContext(req.Context())
+	if id == "" {
+		id = request.NewID()
 	}
+	// Add value to the request.
+	req.Header.Add(headers.RequestIDHeader, id)
 
 	return c.transport.RoundTrip(req)
 }
