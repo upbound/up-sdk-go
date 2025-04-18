@@ -179,3 +179,56 @@ func (h *DefaultErrorHandler) Handle(res *http.Response) error {
 		Detail: details,
 	}
 }
+
+// ClientTransport is a http.RoundTripper that enables the caller to specify
+// custom headers and a custom transport for operating on outgoing
+// http.Requests.
+type ClientTransport struct {
+	headers   map[string]HeaderFn
+	transport http.RoundTripper
+}
+
+// ClientTransportOption modifies the underlying ClientTransport.
+type ClientTransportOption func(*ClientTransport)
+
+// HeaderFn returns the value for a header.
+type HeaderFn func() string
+
+// WithHeaderFns overrides the default headers supplied to the incoming request
+// through the ClientTransport.
+func WithHeaderFns(h map[string]HeaderFn) ClientTransportOption {
+	return func(ct *ClientTransport) {
+		ct.headers = h
+	}
+}
+
+// WithTransport overrides the default http.Roundtripper for the
+// ClientTransport.
+func WithTransport(t http.RoundTripper) ClientTransportOption {
+	return func(ct *ClientTransport) {
+		ct.transport = t
+	}
+}
+
+// NewClientTransport constructs a new ClientTransport.
+func NewClientTransport(opts ...ClientTransportOption) *ClientTransport {
+	c := &ClientTransport{
+		headers:   make(map[string]HeaderFn),
+		transport: http.DefaultTransport,
+	}
+
+	for _, o := range opts {
+		o(c)
+	}
+	return c
+}
+
+// RoundTrip adds headers configured with the ClientTransport and invokes the
+// corresponding delegating transport to move the request forward.
+func (c *ClientTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	for k, v := range c.headers {
+		req.Header.Add(k, v())
+	}
+
+	return c.transport.RoundTrip(req)
+}
