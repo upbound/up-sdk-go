@@ -18,13 +18,18 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"path"
 	"time"
 
+	"github.com/crossplane/crossplane-runtime/pkg/errors"
+
 	uerrors "github.com/upbound/up-sdk-go/errors"
+	"github.com/upbound/up-sdk-go/http/headers"
+	"github.com/upbound/up-sdk-go/http/request"
 )
 
 const (
@@ -50,7 +55,8 @@ func NewClient(modifiers ...ClientModifierFn) *HTTPClient {
 		BaseURL:      b,
 		ErrorHandler: &DefaultErrorHandler{},
 		HTTP: &http.Client{
-			Timeout: defaultHTTPTimeout,
+			Timeout:   defaultHTTPTimeout,
+			Transport: NewContextTransport(),
 		},
 		UserAgent: defaultUserAgent,
 	}
@@ -111,7 +117,7 @@ func (c *HTTPClient) NewRequest(ctx context.Context, method, prefix, urlPath str
 func (c *HTTPClient) Do(req *http.Request, obj interface{}) error {
 	res, err := c.HTTP.Do(req)
 	if err != nil {
-		return err
+		return errors.Wrap(err, fmt.Sprintf("failed to perform request with ID: %s", request.IDFromContext(req.Context())))
 	}
 	defer res.Body.Close() // nolint:errcheck
 	if err := c.handleErrors(res); err != nil {
@@ -178,4 +184,48 @@ func (h *DefaultErrorHandler) Handle(res *http.Response) error {
 		Title:  http.StatusText(status),
 		Detail: details,
 	}
+}
+
+// ContextTransport is a http.RoundTripper that enables the caller to propagate
+// information within the req.Context to external HTTP targets.
+type ContextTransport struct {
+	transport http.RoundTripper
+}
+
+// ContextTransportOption modifies the underlying ContextTransport.
+type ContextTransportOption func(*ContextTransport)
+
+// WithTransport overrides the default http.Roundtripper for the
+// ContextTransport.
+func WithTransport(t http.RoundTripper) ContextTransportOption {
+	return func(ct *ContextTransport) {
+		ct.transport = t
+	}
+}
+
+// NewContextTransport constructs a new ContextTransport.
+func NewContextTransport(opts ...ContextTransportOption) *ContextTransport {
+	c := &ContextTransport{
+		transport: http.DefaultTransport,
+	}
+
+	for _, o := range opts {
+		o(c)
+	}
+	return c
+}
+
+// RoundTrip adds information that is deemed important to propagate to the
+// target. Today we only propagate the request-id, but could expand this in
+// the future.
+func (c *ContextTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	// Retrieve x-request-id value from context.
+	id := request.IDFromContext(req.Context())
+	if id == "" {
+		id = request.NewID()
+	}
+	// Add value to the request.
+	req.Header.Add(headers.RequestIDHeader, id)
+
+	return c.transport.RoundTrip(req)
 }
