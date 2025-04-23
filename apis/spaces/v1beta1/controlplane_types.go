@@ -276,9 +276,9 @@ type ClassTransition struct {
 // +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="Message",type="string",JSONPath=`.status.message`
 // +kubebuilder:printcolumn:name="Class",type="string",JSONPath=".spec.class",priority=1
-// +kubebuilder:printcolumn:name="CPU Usage",type="string",JSONPath=".status.size.resourceUsage.cpu",priority=1
-// +kubebuilder:printcolumn:name="Memory Usage",type="string",JSONPath=".status.size.resourceUsage.memory",priority=1
-// +kubebuilder:printcolumn:name="Storage Usage",type="string",JSONPath=".status.size.resourceUsage.storage",priority=1
+// +kubebuilder:printcolumn:name="CPU Usage",type="string",JSONPath=".status.class.size.resourceUsage.cpu",priority=1
+// +kubebuilder:printcolumn:name="Memory Usage",type="string",JSONPath=".status.class.size.resourceUsage.memory",priority=1
+// +kubebuilder:printcolumn:name="Storage Usage",type="string",JSONPath=".status.class.size.resourceUsage.storage",priority=1
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Namespaced,categories=spaces,shortName=ctp;ctps
