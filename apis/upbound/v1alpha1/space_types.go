@@ -51,6 +51,8 @@ const (
 	ModeLegacy SpaceMode = "legacy"
 	// ModeManaged represents an Upbound managed space.
 	ModeManaged SpaceMode = "managed"
+	// ModeDedicated represents an Upbound dedicated space.
+	ModeDedicated SpaceMode = "dedicated"
 )
 
 // CloudProvider is the hosting cloud provider for the space.
