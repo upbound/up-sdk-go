@@ -233,6 +233,8 @@ type ControlPlaneStatus struct {
 
 // ControlPlaneClassStatus represents the status of the ControlPlane's class.
 type ControlPlaneClassStatus struct {
+	// Current holds the actual class of the control plane after a successful transition.
+	Current string `json:"current,omitempty"`
 	// Size holds the status information about the control plane size,
 	// including resource usage.
 	Size *ControlPlaneSizeStatus `json:"size,omitempty"`
