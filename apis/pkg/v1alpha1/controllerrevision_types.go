@@ -88,6 +88,36 @@ type PackageRevisionRuntimeSpec struct {
 // Implement XP Package interface for ControllerRevision.
 var _ pkgv1.PackageRevision = &ControllerRevision{}
 
+// GetAppliedImageConfigRefs returns the applied image config references.
+func (in *ControllerRevision) GetAppliedImageConfigRefs() []pkgv1.ImageConfigRef {
+	return in.Status.AppliedImageConfigRefs
+}
+
+// SetAppliedImageConfigRefs sets the applied image config references.
+func (in *ControllerRevision) SetAppliedImageConfigRefs(refs ...pkgv1.ImageConfigRef) {
+	in.Status.AppliedImageConfigRefs = refs
+}
+
+// ClearAppliedImageConfigRef clears the applied image config reference for a given reason.
+func (in *ControllerRevision) ClearAppliedImageConfigRef(reason pkgv1.ImageConfigRefReason) {
+	for i := range in.Status.AppliedImageConfigRefs {
+		if in.Status.AppliedImageConfigRefs[i].Reason == reason {
+			in.Status.AppliedImageConfigRefs = append(in.Status.AppliedImageConfigRefs[:i], in.Status.AppliedImageConfigRefs[i+1:]...)
+			return
+		}
+	}
+}
+
+// GetResolvedSource returns the resolved source package.
+func (in *ControllerRevision) GetResolvedSource() string {
+	return in.Status.ResolvedPackage
+}
+
+// SetResolvedSource sets the resolved source package.
+func (in *ControllerRevision) SetResolvedSource(s string) {
+	in.Status.ResolvedPackage = s
+}
+
 // SetConditions sets the status conditions for the ControllerRevision.
 func (in *ControllerRevision) SetConditions(c ...xpv1.Condition) {
 	in.Status.SetConditions(c...)

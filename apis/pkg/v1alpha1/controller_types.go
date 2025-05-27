@@ -82,6 +82,36 @@ type RuntimeConfigReference struct {
 // Implement XP Package interface for Controller.
 var _ pkgv1.Package = &Controller{}
 
+// GetAppliedImageConfigRefs returns the applied image config references.
+func (in *Controller) GetAppliedImageConfigRefs() []pkgv1.ImageConfigRef {
+	return in.Status.AppliedImageConfigRefs
+}
+
+// SetAppliedImageConfigRefs sets the applied image config references.
+func (in *Controller) SetAppliedImageConfigRefs(refs ...pkgv1.ImageConfigRef) {
+	in.Status.AppliedImageConfigRefs = refs
+}
+
+// ClearAppliedImageConfigRef clears the applied image config reference for a given reason.
+func (in *Controller) ClearAppliedImageConfigRef(reason pkgv1.ImageConfigRefReason) {
+	for i := range in.Status.AppliedImageConfigRefs {
+		if in.Status.AppliedImageConfigRefs[i].Reason == reason {
+			in.Status.AppliedImageConfigRefs = append(in.Status.AppliedImageConfigRefs[:i], in.Status.AppliedImageConfigRefs[i+1:]...)
+			return
+		}
+	}
+}
+
+// GetResolvedSource returns the resolved source package.
+func (in *Controller) GetResolvedSource() string {
+	return in.Status.ResolvedPackage
+}
+
+// SetResolvedSource sets the resolved source package.
+func (in *Controller) SetResolvedSource(s string) {
+	in.Status.ResolvedPackage = s
+}
+
 // SetConditions sets the status conditions for the Controller.
 func (in *Controller) SetConditions(c ...xpv1.Condition) {
 	in.Status.SetConditions(c...)
