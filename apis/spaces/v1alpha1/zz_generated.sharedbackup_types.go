@@ -21,6 +21,7 @@ import (
 
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 // SharedBackupLabelKey is the label key used to identify Backups that are
@@ -72,7 +73,17 @@ type SharedBackupSpec struct {
 	// +optional
 	UseOwnerReferencesInBackup bool `json:"useOwnerReferencesInBackup,omitempty"`
 
+	// Failures defines the failure tolerance for the backup.
+	Failures SharedBackupFailuresConfig `json:"failures,omitempty"`
+
 	BackupDefinition `json:",inline"`
+}
+
+// SharedBackupFailuresConfig defines the failure tolerance for a SharedBackup.
+type SharedBackupFailuresConfig struct {
+	// ControlPlanes is the percentage of control planes that are allowed to fail and still consider the backup successful.
+	// Can be specified as an integer (e.g., 50) or a percentage string (e.g., "50%").
+	ControlPlanes *intstr.IntOrString `json:"controlPlanes,omitempty"`
 }
 
 // SharedBackupStatus represents the observed state of a SharedBackup.

@@ -125,9 +125,9 @@ const (
 
 // Condition types for backups
 const (
-	// BackupCompleted indicates that the backup has completed successfully.
+	// ConditionTypeCompleted indicates that the backup has completed successfully.
 	ConditionTypeCompleted xpv1.ConditionType = "Completed"
-	// BackupFailed indicates that the backup has failed.
+	// ConditionTypeFailed indicates that the backup has failed.
 	ConditionTypeFailed xpv1.ConditionType = "Failed"
 )
 
@@ -149,6 +149,16 @@ func SharedBackupCompleted() xpv1.Condition {
 	}
 }
 
+func SharedBackupCompletedWithFailures(total, failures int32) xpv1.Condition {
+	return xpv1.Condition{
+		Type:               ConditionTypeCompleted,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             BackupCompletedWithFailuresReason,
+		Message:            fmt.Sprintf("%d/%d control planes backups failed, within allowed range.", failures, total),
+	}
+}
+
 // SharedBackupFailed returns a condition indicating that at least one backup
 // has failed.
 func SharedBackupFailed(err error) xpv1.Condition {
@@ -158,6 +168,18 @@ func SharedBackupFailed(err error) xpv1.Condition {
 		LastTransitionTime: metav1.Now(),
 		Reason:             AtLeastOneFailed,
 		Message:            err.Error(),
+	}
+}
+
+// BackupCompletedWithFailures returns a condition indicating that the backup had some failures backing
+// up controlplanes, but is still considered successful within the allowed failure rate.
+func BackupCompletedWithFailures(total, failures int32) xpv1.Condition {
+	return xpv1.Condition{
+		Type:               ConditionTypeCompleted,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             BackupCompletedWithFailuresReason,
+		Message:            fmt.Sprintf("%d/%d control planes backups failed, within allowed range.", failures, total),
 	}
 }
 
@@ -179,6 +201,9 @@ const (
 	BackupRetryReason xpv1.ConditionReason = "BackupRetry"
 	// BackupSuccessReason is the reason for a successful backup.
 	BackupSuccessReason xpv1.ConditionReason = "BackupSuccess"
+	// BackupCompletedWithFailuresReason is the reason for a successful backup, with some failures,
+	// within the allowed failure percentage.
+	BackupCompletedWithFailuresReason xpv1.ConditionReason = "BackupWithFailures"
 	// BackupControlPlaneNotFoundReason is the reason for a control plane not being found.
 	BackupControlPlaneNotFoundReason xpv1.ConditionReason = "TargetControlPlaneNotFound"
 )
