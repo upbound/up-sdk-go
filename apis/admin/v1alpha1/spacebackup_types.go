@@ -21,6 +21,7 @@ import (
 	"github.com/upbound/up-sdk-go/apis/common"
 	spacesv1alpha1 "github.com/upbound/up-sdk-go/apis/spaces/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 // +kubebuilder:object:root=true
@@ -28,6 +29,7 @@ import (
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase"
 // +kubebuilder:printcolumn:name="Retries",type="integer",JSONPath=".status.retries"
+// +kubebuilder:printcolumn:name="Failed",type="string",JSONPath=`.metadata.annotations.spacebackup\.internal\.spaces\.upbound\.io/failed`
 // +kubebuilder:printcolumn:name="TTL",type="string",JSONPath=".spec.ttl"
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:resource:scope=Cluster,categories=spaces
@@ -100,6 +102,9 @@ type SpaceBackupDefinition struct {
 	// ControlPlaneBackups is the definition of the control plane backups,
 	// +optional
 	ControlPlaneBackups *spacesv1alpha1.ControlPlaneBackupConfig `json:"controlPlaneBackups,omitempty"`
+
+	// Failures defines the failure tolerance for the backup.
+	Failures SpaceBackupFailuresConfig `json:"failures,omitempty"`
 }
 
 // SpaceBackupResourceSelector represents a selector for Groups and ControlPlanes.
@@ -140,6 +145,13 @@ type GenericSpaceBackupResourceSelector struct {
 	spacesv1alpha1.ResourceSelector `json:",inline"`
 }
 
+// SpaceBackupFailuresConfig defines the failure tolerance for a SpaceBackup.
+type SpaceBackupFailuresConfig struct {
+	// ControlPlanes is the percentage of control planes that are allowed to fail and still consider the backup successful.
+	// Can be specified as an integer (e.g., 50) or a percentage string (e.g., "50%").
+	ControlPlanes *intstr.IntOrString `json:"controlPlanes,omitempty"`
+}
+
 // SpaceBackupStatus represents the observed state of a SpaceBackup.
 type SpaceBackupStatus struct {
 	xpv1.ResourceStatus `json:",inline"`
@@ -152,6 +164,20 @@ type SpaceBackupStatus struct {
 	// Retries is the number of times the backup has been retried.
 	// +optional
 	Retries int32 `json:"retries,omitempty"`
+
+	// ControlPlanes contains details about the control planes that were backed up,
+	// total number of control planes and failures.
+	ControlPlanes SpaceBackupControlPlanesStatus `json:"controlPlanes,omitempty"`
+}
+
+// SpaceBackupControlPlanesStatus contains details about the control planes that were backed up.
+type SpaceBackupControlPlanesStatus struct {
+	// Total is the total number of control planes that were attempted to be backed up.
+	// +optional
+	Total int32 `json:"total,omitempty"`
+	// Failed is the number of control planes that failed to backup.
+	// +optional
+	Failed int32 `json:"failed,omitempty"`
 }
 
 var (
