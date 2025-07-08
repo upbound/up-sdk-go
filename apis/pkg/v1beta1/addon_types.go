@@ -1,7 +1,7 @@
 // Copyright 2025 Upbound Inc
 // All rights reserved
 
-package v1alpha1
+package v1beta1
 
 import (
 	corev1 "k8s.io/api/core/v1"
@@ -15,7 +15,7 @@ import (
 // +genclient
 // +genclient:nonNamespaced
 
-// A Controller installs an OCI compatible Upbound package, extending a Control
+// An AddOn installs an OCI compatible Upbound package, extending a Control
 // Plane with new capabilities.
 // +kubebuilder:subresource:status
 // +kubebuilder:storageversion
@@ -24,33 +24,33 @@ import (
 // +kubebuilder:printcolumn:name="PACKAGE",type="string",JSONPath=".spec.package"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:resource:scope=Cluster,categories={upbound,pkg}
-type Controller struct {
+type AddOn struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   ControllerSpec   `json:"spec"`
-	Status ControllerStatus `json:"status,omitempty"`
+	Spec   AddOnSpec   `json:"spec"`
+	Status AddOnStatus `json:"status,omitempty"`
 }
 
-// ControllerSpec specifies the configuration of a Controller.
-type ControllerSpec struct {
+// AddOnSpec specifies the configuration of an AddOn.
+type AddOnSpec struct {
 	pkgv1.PackageSpec  `json:",inline"`
 	PackageRuntimeSpec `json:",inline"`
 }
 
-// ControllerStatus represents the observed state of an Controller.
-type ControllerStatus struct {
+// AddOnStatus represents the observed state of an AddOn.
+type AddOnStatus struct {
 	xpv1.ConditionedStatus `json:",inline"`
 	pkgv1.PackageStatus    `json:",inline"`
 }
 
 // +kubebuilder:object:root=true
 
-// ControllerList contains a list of Controller.
-type ControllerList struct {
+// AddOnList contains a list of AddOn.
+type AddOnList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Controller `json:"items"`
+	Items           []AddOn `json:"items"`
 }
 
 // PackageRuntimeSpec specifies configuration for the runtime of a package.
@@ -71,27 +71,27 @@ type RuntimeConfigReference struct {
 	APIVersion *string `json:"apiVersion,omitempty"`
 	// Kind of the referent.
 	// +optional
-	// +kubebuilder:default="ControllerRuntimeConfig"
+	// +kubebuilder:default="AddOnRuntimeConfig"
 	Kind *string `json:"kind,omitempty"`
 	// Name of the RuntimeConfig.
 	Name string `json:"name"`
 }
 
-// Implement XP Package interface for Controller.
-var _ pkgv1.Package = &Controller{}
+// Implement XP Package interface for AddOn.
+var _ pkgv1.Package = &AddOn{}
 
 // GetAppliedImageConfigRefs returns the applied image config references.
-func (in *Controller) GetAppliedImageConfigRefs() []pkgv1.ImageConfigRef {
+func (in *AddOn) GetAppliedImageConfigRefs() []pkgv1.ImageConfigRef {
 	return in.Status.AppliedImageConfigRefs
 }
 
 // SetAppliedImageConfigRefs sets the applied image config references.
-func (in *Controller) SetAppliedImageConfigRefs(refs ...pkgv1.ImageConfigRef) {
+func (in *AddOn) SetAppliedImageConfigRefs(refs ...pkgv1.ImageConfigRef) {
 	in.Status.AppliedImageConfigRefs = refs
 }
 
 // ClearAppliedImageConfigRef clears the applied image config reference for a given reason.
-func (in *Controller) ClearAppliedImageConfigRef(reason pkgv1.ImageConfigRefReason) {
+func (in *AddOn) ClearAppliedImageConfigRef(reason pkgv1.ImageConfigRefReason) {
 	for i := range in.Status.AppliedImageConfigRefs {
 		if in.Status.AppliedImageConfigRefs[i].Reason == reason {
 			in.Status.AppliedImageConfigRefs = append(in.Status.AppliedImageConfigRefs[:i], in.Status.AppliedImageConfigRefs[i+1:]...)
@@ -101,142 +101,133 @@ func (in *Controller) ClearAppliedImageConfigRef(reason pkgv1.ImageConfigRefReas
 }
 
 // GetResolvedSource returns the resolved source package.
-func (in *Controller) GetResolvedSource() string {
+func (in *AddOn) GetResolvedSource() string {
 	return in.Status.ResolvedPackage
 }
 
 // SetResolvedSource sets the resolved source package.
-func (in *Controller) SetResolvedSource(s string) {
+func (in *AddOn) SetResolvedSource(s string) {
 	in.Status.ResolvedPackage = s
 }
 
-// SetConditions sets the status conditions for the Controller.
-func (in *Controller) SetConditions(c ...xpv1.Condition) {
+// SetConditions sets the status conditions for the AddOn.
+func (in *AddOn) SetConditions(c ...xpv1.Condition) {
 	in.Status.SetConditions(c...)
 }
 
 // GetCondition returns the condition for the given ConditionType if it exists,
 // otherwise returns an empty condition.
-func (in *Controller) GetCondition(ct xpv1.ConditionType) xpv1.Condition {
+func (in *AddOn) GetCondition(ct xpv1.ConditionType) xpv1.Condition {
 	return in.Status.GetCondition(ct)
 }
 
-// CleanConditions removes all conditions from the Controller.
-func (in *Controller) CleanConditions() {
+// CleanConditions removes all conditions from the AddOn.
+func (in *AddOn) CleanConditions() {
 	in.Status.Conditions = []xpv1.Condition{}
 }
 
 // GetSource returns the package source.
-func (in *Controller) GetSource() string {
+func (in *AddOn) GetSource() string {
 	return in.Spec.Package
 }
 
 // SetSource sets the package source.
-func (in *Controller) SetSource(s string) {
+func (in *AddOn) SetSource(s string) {
 	in.Spec.Package = s
 }
 
 // GetActivationPolicy returns the revision activation policy.
-func (in *Controller) GetActivationPolicy() *pkgv1.RevisionActivationPolicy {
+func (in *AddOn) GetActivationPolicy() *pkgv1.RevisionActivationPolicy {
 	return in.Spec.RevisionActivationPolicy
 }
 
 // SetActivationPolicy sets the revision activation policy.
-func (in *Controller) SetActivationPolicy(a *pkgv1.RevisionActivationPolicy) {
+func (in *AddOn) SetActivationPolicy(a *pkgv1.RevisionActivationPolicy) {
 	in.Spec.RevisionActivationPolicy = a
 }
 
 // GetPackagePullSecrets returns the package pull secrets.
-func (in *Controller) GetPackagePullSecrets() []corev1.LocalObjectReference {
+func (in *AddOn) GetPackagePullSecrets() []corev1.LocalObjectReference {
 	return in.Spec.PackagePullSecrets
 }
 
 // SetPackagePullSecrets sets the package pull secrets.
-func (in *Controller) SetPackagePullSecrets(s []corev1.LocalObjectReference) {
+func (in *AddOn) SetPackagePullSecrets(s []corev1.LocalObjectReference) {
 	in.Spec.PackagePullSecrets = s
 }
 
 // GetPackagePullPolicy returns the package pull policy.
-func (in *Controller) GetPackagePullPolicy() *corev1.PullPolicy {
+func (in *AddOn) GetPackagePullPolicy() *corev1.PullPolicy {
 	return in.Spec.PackagePullPolicy
 }
 
 // SetPackagePullPolicy sets the package pull policy.
-func (in *Controller) SetPackagePullPolicy(i *corev1.PullPolicy) {
+func (in *AddOn) SetPackagePullPolicy(i *corev1.PullPolicy) {
 	in.Spec.PackagePullPolicy = i
 }
 
 // GetRevisionHistoryLimit returns the revision history limit.
-func (in *Controller) GetRevisionHistoryLimit() *int64 {
+func (in *AddOn) GetRevisionHistoryLimit() *int64 {
 	return in.Spec.RevisionHistoryLimit
 }
 
 // SetRevisionHistoryLimit sets the revision history limit.
-func (in *Controller) SetRevisionHistoryLimit(l *int64) {
+func (in *AddOn) SetRevisionHistoryLimit(l *int64) {
 	in.Spec.RevisionHistoryLimit = l
 }
 
 // GetIgnoreCrossplaneConstraints returns whether to ignore crossplane constraints.
-func (in *Controller) GetIgnoreCrossplaneConstraints() *bool {
+func (in *AddOn) GetIgnoreCrossplaneConstraints() *bool {
 	return in.Spec.IgnoreCrossplaneConstraints
 }
 
 // SetIgnoreCrossplaneConstraints sets whether to ignore crossplane constraints.
-func (in *Controller) SetIgnoreCrossplaneConstraints(b *bool) {
+func (in *AddOn) SetIgnoreCrossplaneConstraints(b *bool) {
 	in.Spec.IgnoreCrossplaneConstraints = b
 }
 
 // GetCurrentRevision returns the current revision.
-func (in *Controller) GetCurrentRevision() string {
+func (in *AddOn) GetCurrentRevision() string {
 	return in.Status.CurrentRevision
 }
 
 // SetCurrentRevision sets the current revision.
-func (in *Controller) SetCurrentRevision(r string) {
+func (in *AddOn) SetCurrentRevision(r string) {
 	in.Status.CurrentRevision = r
 }
 
 // GetCurrentIdentifier returns the current identifier.
-func (in *Controller) GetCurrentIdentifier() string {
+func (in *AddOn) GetCurrentIdentifier() string {
 	return in.Status.CurrentIdentifier
 }
 
 // SetCurrentIdentifier sets the current identifier.
-func (in *Controller) SetCurrentIdentifier(r string) {
+func (in *AddOn) SetCurrentIdentifier(r string) {
 	in.Status.CurrentIdentifier = r
 }
 
 // GetSkipDependencyResolution returns whether to skip dependency resolution.
-func (in *Controller) GetSkipDependencyResolution() *bool {
+func (in *AddOn) GetSkipDependencyResolution() *bool {
 	return in.Spec.SkipDependencyResolution
 }
 
 // SetSkipDependencyResolution sets whether to skip dependency resolution.
-func (in *Controller) SetSkipDependencyResolution(skip *bool) {
+func (in *AddOn) SetSkipDependencyResolution(skip *bool) {
 	in.Spec.SkipDependencyResolution = skip
 }
 
 // GetCommonLabels returns the common labels.
-func (in *Controller) GetCommonLabels() map[string]string {
+func (in *AddOn) GetCommonLabels() map[string]string {
 	return in.Spec.CommonLabels
 }
 
 // SetCommonLabels sets the common labels.
-func (in *Controller) SetCommonLabels(l map[string]string) {
+func (in *AddOn) SetCommonLabels(l map[string]string) {
 	in.Spec.CommonLabels = l
 }
 
-// GetControllerConfigRef returns the controller config reference.
-func (in *Controller) GetControllerConfigRef() *pkgv1.ControllerConfigReference {
-	return nil
-}
-
-// SetControllerConfigRef sets the controller config reference.
-func (in *Controller) SetControllerConfigRef(_ *pkgv1.ControllerConfigReference) {
-}
-
 // GetRuntimeConfigRef returns the runtime config reference.
-func (in *Controller) GetRuntimeConfigRef() *pkgv1.RuntimeConfigReference {
+func (in *AddOn) GetRuntimeConfigRef() *pkgv1.RuntimeConfigReference {
 	if in.Spec.RuntimeConfigReference == nil {
 		return nil
 	}
@@ -248,7 +239,7 @@ func (in *Controller) GetRuntimeConfigRef() *pkgv1.RuntimeConfigReference {
 }
 
 // SetRuntimeConfigRef sets the runtime config reference.
-func (in *Controller) SetRuntimeConfigRef(r *pkgv1.RuntimeConfigReference) {
+func (in *AddOn) SetRuntimeConfigRef(r *pkgv1.RuntimeConfigReference) {
 	in.Spec.RuntimeConfigReference = &RuntimeConfigReference{
 		APIVersion: r.APIVersion,
 		Kind:       r.Kind,
@@ -257,11 +248,11 @@ func (in *Controller) SetRuntimeConfigRef(r *pkgv1.RuntimeConfigReference) {
 }
 
 // GetTLSServerSecretName returns the TLS server secret name.
-func (in *Controller) GetTLSServerSecretName() *string {
+func (in *AddOn) GetTLSServerSecretName() *string {
 	return nil
 }
 
 // GetTLSClientSecretName returns the TLS client secret name.
-func (in *Controller) GetTLSClientSecretName() *string {
+func (in *AddOn) GetTLSClientSecretName() *string {
 	return nil
 }
