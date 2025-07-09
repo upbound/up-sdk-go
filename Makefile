@@ -31,7 +31,7 @@ GO_TEST_PARALLEL := $(shell echo $$(( $(NPROCS) / 2 )))
 
 GO_SUBDIRS += errors service fake generate
 GO111MODULE = on
-GOLANGCILINT_VERSION := 1.61.0
+GOLANGCILINT_VERSION := 1.64.8
 -include build/makelib/golang.mk
 
 # generate/generate.sh needs to know what subdirs to generate files for.
