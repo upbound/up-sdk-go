@@ -28,13 +28,14 @@ const (
 //
 // +kubebuilder:subresource:status
 // +kubebuilder:storageversion
-// +kubebuilder:printcolumn:name="HEALTHY",type="string",JSONPath=".status.conditions[?(@.type=='Healthy')].status"
-// +kubebuilder:printcolumn:name="REVISION",type="string",JSONPath=".spec.revision"
+// +kubebuilder:printcolumn:name="HEALTHY",type="string",JSONPath=".status.conditions[?(@.type=='RevisionHealthy')].status"
+// +kubebuilder:printcolumn:name="RUNTIME",type="string",JSONPath=".status.conditions[?(@.type=='RuntimeHealthy')].status"
 // +kubebuilder:printcolumn:name="IMAGE",type="string",JSONPath=".spec.image"
 // +kubebuilder:printcolumn:name="STATE",type="string",JSONPath=".spec.desiredState"
-// +kubebuilder:printcolumn:name="DEP-FOUND",type="string",JSONPath=".status.foundDependencies"
-// +kubebuilder:printcolumn:name="DEP-INSTALLED",type="string",JSONPath=".status.installedDependencies"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
+// +kubebuilder:printcolumn:name="REVISION",type="string",JSONPath=".spec.revision",priority=1
+// +kubebuilder:printcolumn:name="DEP-FOUND",type="string",JSONPath=".status.foundDependencies",priority=1
+// +kubebuilder:printcolumn:name="DEP-INSTALLED",type="string",JSONPath=".status.installedDependencies",priority=1
 // +kubebuilder:resource:scope=Cluster,categories={upbound,pkgrev}
 type AddOnRevision struct {
 	metav1.TypeMeta   `json:",inline"`
@@ -67,7 +68,8 @@ type HelmSpec struct {
 
 // AddOnRevisionStatus represents the observed state of an AddOnRevision.
 type AddOnRevisionStatus struct {
-	pkgv1.PackageRevisionStatus `json:",inline"`
+	pkgv1.PackageRevisionStatus        `json:",inline"`
+	pkgv1.PackageRevisionRuntimeStatus `json:",inline"`
 }
 
 // +kubebuilder:object:root=true
@@ -272,6 +274,22 @@ func (in *AddOnRevision) GetTLSClientSecretName() *string {
 
 // SetTLSClientSecretName sets the TLS client secret name.
 func (in *AddOnRevision) SetTLSClientSecretName(_ *string) {}
+
+// GetObservedTLSServerSecretName returns the observed TLS server secret name.
+func (in *AddOnRevision) GetObservedTLSServerSecretName() *string {
+	return nil
+}
+
+// SetObservedTLSServerSecretName sets the observed TLS server secret name.
+func (in *AddOnRevision) SetObservedTLSServerSecretName(_ *string) {}
+
+// GetObservedTLSClientSecretName returns the observed TLS client secret name.
+func (in *AddOnRevision) GetObservedTLSClientSecretName() *string {
+	return nil
+}
+
+// SetObservedTLSClientSecretName sets the observed TLS client secret name.
+func (in *AddOnRevision) SetObservedTLSClientSecretName(_ *string) {}
 
 // Implement XP Revision List interface for AddOnRevisionList.
 var _ pkgv1.PackageRevisionList = &AddOnRevisionList{}
