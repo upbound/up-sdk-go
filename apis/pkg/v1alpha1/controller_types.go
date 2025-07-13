@@ -226,15 +226,6 @@ func (in *Controller) SetCommonLabels(l map[string]string) {
 	in.Spec.CommonLabels = l
 }
 
-// GetControllerConfigRef returns the controller config reference.
-func (in *Controller) GetControllerConfigRef() *pkgv1.ControllerConfigReference {
-	return nil
-}
-
-// SetControllerConfigRef sets the controller config reference.
-func (in *Controller) SetControllerConfigRef(_ *pkgv1.ControllerConfigReference) {
-}
-
 // GetRuntimeConfigRef returns the runtime config reference.
 func (in *Controller) GetRuntimeConfigRef() *pkgv1.RuntimeConfigReference {
 	if in.Spec.RuntimeConfigReference == nil {
