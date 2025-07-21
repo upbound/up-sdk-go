@@ -136,6 +136,16 @@ func (in *AddOnRevision) CleanConditions() {
 	in.Status.Conditions = []xpv1.Condition{}
 }
 
+// GetCapabilities of this AddOnRevision.
+func (in *AddOnRevision) GetCapabilities() []string {
+	return in.Status.Capabilities
+}
+
+// SetCapabilities of this AddOnRevision.
+func (in *AddOnRevision) SetCapabilities(caps []string) {
+	in.Status.Capabilities = caps
+}
+
 // GetObjects returns the objects associated with the AddOnRevision.
 func (in *AddOnRevision) GetObjects() []xpv1.TypedReference {
 	return in.Status.ObjectRefs

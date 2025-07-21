@@ -104,6 +104,16 @@ func (in *RemoteConfigurationRevision) CleanConditions() {
 	in.Status.Conditions = []xpv1.Condition{}
 }
 
+// GetCapabilities of this RemoteConfigurationRevision.
+func (in *RemoteConfigurationRevision) GetCapabilities() []string {
+	return in.Status.Capabilities
+}
+
+// SetCapabilities of this RemoteConfigurationRevision.
+func (in *RemoteConfigurationRevision) SetCapabilities(caps []string) {
+	in.Status.Capabilities = caps
+}
+
 // GetObjects returns the objects.
 func (in *RemoteConfigurationRevision) GetObjects() []xpv1.TypedReference {
 	return in.Status.ObjectRefs
