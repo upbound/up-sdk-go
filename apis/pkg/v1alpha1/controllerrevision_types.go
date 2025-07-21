@@ -134,6 +134,16 @@ func (in *ControllerRevision) CleanConditions() {
 	in.Status.Conditions = []xpv1.Condition{}
 }
 
+// GetCapabilities of this ControllerRevision.
+func (in *ControllerRevision) GetCapabilities() []string {
+	return in.Status.Capabilities
+}
+
+// SetCapabilities of this ControllerRevision.
+func (in *ControllerRevision) SetCapabilities(caps []string) {
+	in.Status.Capabilities = caps
+}
+
 // GetObjects returns the objects associated with the ControllerRevision.
 func (in *ControllerRevision) GetObjects() []xpv1.TypedReference {
 	return in.Status.ObjectRefs

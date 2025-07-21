@@ -3,8 +3,8 @@ module github.com/upbound/up-sdk-go/apis
 go 1.24.3
 
 require (
-	github.com/crossplane/crossplane v1.21.0-rc.0.0.20250712044748-30938ef73ab1
-	github.com/crossplane/crossplane-runtime v1.21.0-rc.0.0.20250620185748-0d81d3f7c2d8
+	github.com/crossplane/crossplane v1.21.0-rc.0.0.20250721080030-e4e442e27027
+	github.com/crossplane/crossplane-runtime v1.21.0-rc.0.0.20250719014028-ab24452c43ea
 	github.com/crossplane/crossplane-tools v0.0.0-20230925130601-628280f8bf79
 	github.com/external-secrets/external-secrets v0.9.13
 	github.com/google/addlicense v1.1.1
