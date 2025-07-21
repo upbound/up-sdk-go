@@ -79,3 +79,8 @@ func (c *Controller) GetCrossplaneConstraints() *v1.CrossplaneConstraints {
 func (c *Controller) GetDependencies() []v1.Dependency {
 	return c.Spec.MetaSpec.DependsOn
 }
+
+// GetCapabilities gets the Controller package's capabilities.
+func (c *Controller) GetCapabilities() []string {
+	return c.Spec.Capabilities
+}

@@ -82,3 +82,8 @@ func (a *AddOn) GetCrossplaneConstraints() *v1.CrossplaneConstraints {
 func (a *AddOn) GetDependencies() []v1.Dependency {
 	return a.Spec.MetaSpec.DependsOn
 }
+
+// GetCapabilities gets the AddOn package's capabilities.
+func (a *AddOn) GetCapabilities() []string {
+	return a.Spec.Capabilities
+}
