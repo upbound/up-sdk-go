@@ -111,8 +111,8 @@ type ObjectSpec struct {
 	// release. Currently, both could be set independently and non-default
 	// values would be honored if the feature flag is enabled. If both are
 	// custom, the DeletionPolicy field will be ignored.
-	// See the design doc for more information: https://github.com/crossplane/crossplane/v2/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
-	// and this one: https://github.com/crossplane/crossplane/v2/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
+	// See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
+	// and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
 	// +optional
 	// +kubebuilder:default={"*"}
 	ManagementPolicies xpv1.ManagementPolicies `json:"managementPolicies,omitempty"`
@@ -123,7 +123,7 @@ type ObjectSpec struct {
 	// This field is planned to be deprecated in favor of the ManagementPolicies
 	// field in a future release. Currently, both could be set independently and
 	// non-default values would be honored if the feature flag is enabled.
-	// See the design doc for more information: https://github.com/crossplane/crossplane/v2/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
+	// See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
 	// +optional
 	// +kubebuilder:default=Delete
 	DeletionPolicy xpv1.DeletionPolicy `json:"deletionPolicy,omitempty"`
