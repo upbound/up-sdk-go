@@ -25,7 +25,7 @@ import (
 	"path"
 	"time"
 
-	"github.com/crossplane/crossplane-runtime/pkg/errors"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/errors"
 
 	uerrors "github.com/upbound/up-sdk-go/errors"
 	"github.com/upbound/up-sdk-go/http/headers"

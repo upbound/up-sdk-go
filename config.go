@@ -15,7 +15,7 @@
 package up
 
 import (
-	"github.com/crossplane/crossplane-runtime/pkg/logging"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/logging"
 )
 
 // Config represents common configuration for Upbound SDK clients.

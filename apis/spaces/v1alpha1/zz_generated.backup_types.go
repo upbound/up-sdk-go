@@ -26,7 +26,7 @@ import (
 
 	"github.com/upbound/up-sdk-go/apis/common"
 
-	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
+	xpv1 "github.com/crossplane/crossplane-runtime/v2/apis/common/v1"
 )
 
 // +kubebuilder:object:root=true
