@@ -224,9 +224,9 @@ linters-settings:
         - $all
         deny:
         - pkg: github.com/pkg/errors
-          desc: "Use github.com/crossplane/crossplane-runtime/pkg/errors instead"
+          desc: "Use github.com/crossplane/crossplane-runtime/v2/pkg/errors instead"
         - pkg: errors
-          desc: "Use github.com/crossplane/crossplane-runtime/pkg/errors instead"
+          desc: "Use github.com/crossplane/crossplane-runtime/v2/pkg/errors instead"
 
   interfacebloat:
     max: 5
