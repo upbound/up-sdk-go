@@ -283,6 +283,22 @@ func (in *ControllerRevision) GetTLSClientSecretName() *string {
 // SetTLSClientSecretName sets the TLS client secret name.
 func (in *ControllerRevision) SetTLSClientSecretName(_ *string) {}
 
+// GetObservedTLSServerSecretName returns the observed TLS server secret name.
+func (in *ControllerRevision) GetObservedTLSServerSecretName() *string {
+	return nil
+}
+
+// SetObservedTLSServerSecretName sets the observed TLS server secret name.
+func (in *ControllerRevision) SetObservedTLSServerSecretName(_ *string) {}
+
+// GetObservedTLSClientSecretName returns the observed TLS client secret name.
+func (in *ControllerRevision) GetObservedTLSClientSecretName() *string {
+	return nil
+}
+
+// SetObservedTLSClientSecretName sets the observed TLS client secret name.
+func (in *ControllerRevision) SetObservedTLSClientSecretName(_ *string) {}
+
 // Implement XP Revision List interface for ControllerRevisionList.
 var _ pkgv1.PackageRevisionList = &ControllerRevisionList{}
 
