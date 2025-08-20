@@ -48,12 +48,6 @@ const (
 )
 
 const (
-	// KubeCompositionAnnotation is an optional, alpha-level annotation that
-	// selects the KubeControlPlane composition for a specific ControlPlane.
-	// The default value is "k8s".
-	//
-	// It is gated by the "EnableKine" feature gate.
-	KubeCompositionAnnotation = "internal.spaces.upbound.io/kube-composition"
 	// FeaturesAnnotation is an optional annotation that enables features
 	// gates within the control plane compositions. Value should be defined
 	// as an inline map of key value pairs expressing features to be enabled.
@@ -159,8 +153,8 @@ type SecretReference struct {
 }
 
 // A ControlPlaneSpec represents the desired state of the ControlPlane.
-// +kubebuilder:validation:XValidation:rule="!has(oldSelf.restore) || has(self.restore)",message="[[GATE:EnableSharedBackup]] restore source can not be unset"
-// +kubebuilder:validation:XValidation:rule="has(oldSelf.restore) || !has(self.restore)",message="[[GATE:EnableSharedBackup]] restore source can not be set after creation"
+// +kubebuilder:validation:XValidation:rule="!has(oldSelf.restore) || has(self.restore)",message="restore source can not be unset"
+// +kubebuilder:validation:XValidation:rule="has(oldSelf.restore) || !has(self.restore)",message="restore source can not be set after creation"
 // +kubebuilder:validation:XValidation:rule="!has(self.crossplane.autoUpgrade) || self.crossplane.autoUpgrade.channel != \"None\" || self.crossplane.version != \"\"",message="\"version\" cannot be empty when upgrade channel is \"None\""
 type ControlPlaneSpec struct {
 	// WriteConnectionSecretToReference specifies the namespace and name of a
@@ -180,7 +174,6 @@ type ControlPlaneSpec struct {
 	// Crossplane defines the configuration for Crossplane.
 	Crossplane CrossplaneSpec `json:"crossplane,omitempty"`
 
-	// [[GATE:EnableSharedBackup]] THIS IS AN ALPHA FIELD. Do not use it in production.
 	// Restore specifies details about the control planes restore configuration.
 	// +optional
 	// +kubebuilder:validation:XValidation:rule="!has(oldSelf.finishedAt) || oldSelf.finishedAt == self.finishedAt",message="finishedAt is immutable once set"
