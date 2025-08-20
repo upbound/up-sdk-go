@@ -48,12 +48,6 @@ const (
 )
 
 const (
-	// KubeCompositionAnnotation is an optional, alpha-level annotation that
-	// selects the KubeControlPlane composition for a specific ControlPlane.
-	// The default value is "k8s".
-	//
-	// It is gated by the "EnableKine" feature gate.
-	KubeCompositionAnnotation = "internal.spaces.upbound.io/kube-composition"
 	// FeaturesAnnotation is an optional annotation that enables features
 	// gates within the control plane compositions. Value should be defined
 	// as an inline map of key value pairs expressing features to be enabled.
