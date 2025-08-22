@@ -68,12 +68,32 @@ func (s *SharedTelemetryConfigList) Objects() []client.Object {
 	return objs
 }
 
+// Audit configures the API server auditing for a ControlPlane.
+type Audit struct {
+	// Enabled enables or disables API server auditing for a ControlPlane.
+	// +optional
+	Enabled *bool `json:"enabled,omitempty"`
+}
+
+// APIServer configures the observability aspects for
+// a ControlPlane's API server.
+type APIServer struct {
+	// Audit configures the auditing aspects of the API server.
+	// +optional
+	Audit *Audit `json:"audit,omitempty"`
+}
+
 // SharedTelemetryConfigSpec defines a telemetry configuration over a set of ControlPlanes.
 type SharedTelemetryConfigSpec struct {
 	// ControlPlaneSelector defines the selector for ControlPlanes on which to
 	// configure telemetry.
 	// +kubebuilder:validation:XValidation:rule="(has(self.labelSelectors) || has(self.names)) && (size(self.labelSelectors) > 0 || size(self.names) > 0)",message="either names or a labelSelector must be specified"
 	ControlPlaneSelector spacesv1alpha1.ResourceSelector `json:"controlPlaneSelector"`
+
+	// APIServer configures the API server observability aspects
+	// for the target ControlPlanes.
+	// +optional
+	APIServer *APIServer `json:"apiServer,omitempty"`
 
 	// Exporters defines the exporters to configure on the selected ControlPlanes.
 	// Untyped as we use the underlying OpenTelemetryOperator to configure the
