@@ -20,7 +20,7 @@ import (
 	xpv1 "github.com/crossplane/crossplane-runtime/v2/apis/common/v1"
 	corev1 "k8s.io/api/core/v1"
 
-	esv1beta1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
+	esv1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -92,11 +92,11 @@ type SharedSecretStoreSpec struct {
 	NamespaceSelector ResourceSelector `json:"namespaceSelector"`
 
 	// Used to configure the provider. Only one provider may be set.
-	Provider esv1beta1.SecretStoreProvider `json:"provider"`
+	Provider esv1.SecretStoreProvider `json:"provider"`
 
 	// Used to configure http retries if failed.
 	// +optional
-	RetrySettings *esv1beta1.SecretStoreRetrySettings `json:"retrySettings,omitempty"`
+	RetrySettings *esv1.SecretStoreRetrySettings `json:"retrySettings,omitempty"`
 
 	// Used to configure store refresh interval in seconds.
 	// +optional
@@ -198,7 +198,7 @@ type SecretStoreProvisioningFailure struct {
 
 	// List of occurred conditions.
 	// +optional
-	Conditions []esv1beta1.SecretStoreStatusCondition `json:"conditions,omitempty"`
+	Conditions []esv1.SecretStoreStatusCondition `json:"conditions,omitempty"`
 }
 
 // SecretStoreProvisioningSuccess defines secret store provision success.

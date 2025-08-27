@@ -21,7 +21,7 @@ limitations under the License.
 package v1alpha1
 
 import (
-	"github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
+	externalsecretsv1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -663,7 +663,7 @@ func (in *SecretStoreProvisioningFailure) DeepCopyInto(out *SecretStoreProvision
 	*out = *in
 	if in.Conditions != nil {
 		in, out := &in.Conditions, &out.Conditions
-		*out = make([]v1beta1.SecretStoreStatusCondition, len(*in))
+		*out = make([]externalsecretsv1.SecretStoreStatusCondition, len(*in))
 		for i := range *in {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
@@ -1058,7 +1058,7 @@ func (in *SharedExternalSecretProvisioningFailure) DeepCopyInto(out *SharedExter
 	*out = *in
 	if in.Conditions != nil {
 		in, out := &in.Conditions, &out.Conditions
-		*out = make([]v1beta1.ClusterExternalSecretStatusCondition, len(*in))
+		*out = make([]externalsecretsv1.ClusterExternalSecretStatusCondition, len(*in))
 		copy(*out, *in)
 	}
 }
@@ -1220,7 +1220,7 @@ func (in *SharedSecretStoreSpec) DeepCopyInto(out *SharedSecretStoreSpec) {
 	in.Provider.DeepCopyInto(&out.Provider)
 	if in.RetrySettings != nil {
 		in, out := &in.RetrySettings, &out.RetrySettings
-		*out = new(v1beta1.SecretStoreRetrySettings)
+		*out = new(externalsecretsv1.SecretStoreRetrySettings)
 		(*in).DeepCopyInto(*out)
 	}
 }

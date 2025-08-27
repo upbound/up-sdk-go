@@ -17,7 +17,7 @@ package v1alpha1
 import (
 	"reflect"
 
-	esv1beta1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
+	esv1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -86,7 +86,7 @@ type SharedExternalSecretSpec struct {
 	NamespaceSelector ResourceSelector `json:"namespaceSelector"`
 
 	// The spec for the ExternalSecrets to be created.
-	ExternalSecretSpec esv1beta1.ExternalSecretSpec `json:"externalSecretSpec"`
+	ExternalSecretSpec esv1.ExternalSecretSpec `json:"externalSecretSpec"`
 
 	// Used to configure secret refresh interval in seconds.
 	// +optional
@@ -125,7 +125,7 @@ type SharedExternalSecretProvisioningFailure struct {
 
 	// List of conditions.
 	// +optional
-	Conditions []esv1beta1.ClusterExternalSecretStatusCondition `json:"conditions,omitempty"`
+	Conditions []esv1.ClusterExternalSecretStatusCondition `json:"conditions,omitempty"`
 }
 
 // SharedExternalSecretProvisioningSuccess defines external secret provisioning success.
