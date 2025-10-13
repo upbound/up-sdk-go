@@ -33,8 +33,8 @@ const (
 	// TypeUsageCompliant indicates whether the current usage is within the licensed capacity.
 	TypeUsageCompliant xpv1.ConditionType = "UsageCompliant"
 
-	// TypeMeasurementFailed indicates whether fetching measurements failed.
-	TypeMeasurementFailed xpv1.ConditionType = "MeasurementFailed"
+	// TypeMeasurementSucceeded indicates whether fetching measurements succeeded.
+	TypeMeasurementSucceeded xpv1.ConditionType = "MeasurementSucceeded"
 )
 
 // Reasons for LicenseValid condition.
@@ -45,6 +45,8 @@ const (
 	ReasonLicenseExpiredFinal   xpv1.ConditionReason = "LicenseExpiredFinal"
 	ReasonLicenseInvalid        xpv1.ConditionReason = "LicenseInvalid"
 	ReasonCommunityEdition      xpv1.ConditionReason = "CommunityEdition"
+	ReasonMeasurementActive     xpv1.ConditionReason = "MeasurementActive"
+	ReasonMeasurementFailed     xpv1.ConditionReason = "MeasurementFailed"
 )
 
 // Reasons for UsageCompliant condition.
@@ -141,12 +143,24 @@ func UsageExceedsCapacity(message string) xpv1.Condition {
 	}
 }
 
-func MeasurementFailed(message string) xpv1.Condition {
+// MeasurementSucceeded indicates that usage measurements are being collected successfully.
+func MeasurementSucceeded(message string) xpv1.Condition {
 	return xpv1.Condition{
-		Type:               TypeMeasurementFailed,
+		Type:               TypeMeasurementSucceeded,
 		Status:             corev1.ConditionTrue,
 		LastTransitionTime: metav1.Now(),
-		Reason:             "MeasurementError",
+		Reason:             ReasonMeasurementActive,
+		Message:            "Usage measurements are being collected successfully.",
+	}
+}
+
+// MeasurementFailed indicates that fetching or processing measurements failed.
+func MeasurementFailed(message string) xpv1.Condition {
+	return xpv1.Condition{
+		Type:               TypeMeasurementSucceeded,
+		Status:             corev1.ConditionFalse,
+		LastTransitionTime: metav1.Now(),
+		Reason:             ReasonMeasurementFailed,
 		Message:            message,
 	}
 }
