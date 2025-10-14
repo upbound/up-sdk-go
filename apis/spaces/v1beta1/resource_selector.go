@@ -51,15 +51,25 @@ type matchableObject struct {
 	obj client.Object
 }
 
+// Has implements Matchable.
 func (s *matchableObject) Has(label string) (exists bool) {
-	_, has := s.obj.GetLabels()[label]
-	return has
+	_, exists = s.Lookup(label)
+	return exists
 }
 
+// Get implements Matchable.
 func (s *matchableObject) Get(label string) (value string) {
-	return s.obj.GetLabels()[label]
+	value, _ = s.Lookup(label)
+	return value
 }
 
+// Lookup implements Matchable.
+func (s *matchableObject) Lookup(label string) (value string, exists bool) {
+	value, exists = s.obj.GetLabels()[label]
+	return value, exists
+}
+
+// GetName implements Matchable.
 func (s *matchableObject) GetName() string {
 	return s.obj.GetName()
 }
