@@ -28,6 +28,11 @@ type QuerySpec struct {
 
 	// freshness specifies resource versions per control plane to wait for before
 	// returning results. It's helpful to ensure consistency for read-after-write.
+	//
+	// Deprecated: Freshness is unsupported in Spaces v1.15+ and in standalone
+	// UXP control planes. Queries setting freshness will return an error in
+	// versions where freshness is unsupported.
+	//
 	// +optional
 	// +listType=map
 	// +listMapKey=group
